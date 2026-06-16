@@ -54,7 +54,7 @@ body {
     border-left: 6px solid var(--color-yellow); /* reintroduced yellow accent */
     display: flex;
     flex-direction: column;
-    min-height: 200px; /* uniform card height */
+    min-height: 50px; /* uniform card height */
 }
 
 .card h2, .card h3 {

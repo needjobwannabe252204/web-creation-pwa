@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 1</title>
+    <title>About</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
- <!-- Top header with site title and menu control -->
-    <header class="header">
+<!-- Header: site title and menu (hamburger) -->
+     <header class="header">
         <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <h1 class="title">Web Creation</h1>
         <img src="../../../assets/image/cdm-logo.jpeg" alt="cdm logo" class="logo">
@@ -17,13 +17,17 @@
     <!-- Primary navigation / sidebar -->
     <nav class="sidebar" id="sidebar" aria-hidden="true">
         <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">Home</a>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
     </nav>
 
-    <main>
-        
+    <main class="container">
+        <div class="card">
+            <h2>⁉️ About</h2>
+            <p class="competency">Interactive Learning Module</p>
+            <p class="description">Master HTML and CSS through hands-on lessons and real projects.</p>
+        </div>
     </main>
 
     <div class="overlay" id="overlay"></div>
