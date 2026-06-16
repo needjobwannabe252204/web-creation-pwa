@@ -100,7 +100,9 @@
     border-left: 6px solid var(--color-yellow);
     box-shadow: 0 12px 40px rgba(57, 169, 255, 0.25);
 }
-
+.card-highlight .competency {
+    color: #ffeb3b;
+}
 .card-highlight h3 {
     color: #ffffff;
 }
