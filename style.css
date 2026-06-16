@@ -1,0 +1,293 @@
+/* all contents style sheet */
+/* ==========================================================
+   1) Universal
+   - Universal selectors and box-sizing for predictable layout
+   ========================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Theme variables: school green + ICT light blue palette */
+:root {
+    --color-bg: #0b1220;
+    --color-surface: #0f1a2b;
+    --color-text: #e6eef8;
+    /* Adjusted greens: keep a lighter main green and a moderate dark variant */
+    --color-green: #2e8b57;
+    --color-green-dark: #196d2f;
+    --color-ict-blue: #39a9ff;
+    --color-ict-blue-dark: #0b84d9;
+    --color-yellow: #ffca28;
+    --accent: var(--color-ict-blue);
+}
+
+
+/* ==========================================================
+   2) Base / Typography
+   - Global font and basic text defaults
+   ========================================================== */
+
+.body, body {
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Helvetica Neue', sans-serif;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px 15px; /* Reduced padding for mobile */
+    display: grid;
+    gap: 1rem;
+}
+.card {
+    /* Darker card surface for better contrast with text */
+    background: linear-gradient(140deg,  #23a727 0%,  #05174d 100%);
+    color: var(--color-text);
+    padding: 1.25rem;
+    margin: 0; /* spacing handled by grid gap above */
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.55);
+    border-left: 6px solid var(--color-yellow); /* reintroduced yellow accent */
+    display: flex;
+    flex-direction: column;
+    min-height: 200px; /* uniform card height */
+}
+
+.card h2, .card h3 {
+    font-weight: 700; /* stronger heading weight for readability */
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+}
+
+.card .competency {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ict-blue);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card .description {
+    color: rgba(230,238,248,0.9);
+    flex-grow: 1; /* pushes button to bottom */
+    margin-bottom: 1rem;
+}
+
+.card button {
+    margin-top: auto; /* pushes button to bottom */
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background-color: #4a90d9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.06s ease;
+}
+.card button:hover {
+    background-color: var(--color-ict-blue-dark);
+    transform: translateY(-1px);
+}
+
+/* Highlighted card for the final project lesson */
+.card-highlight {
+    background: linear-gradient(140deg, var(--color-ict-blue) 0%, var(--color-green) 100%);
+    border-left: 6px solid var(--color-yellow);
+    box-shadow: 0 12px 40px rgba(57, 169, 255, 0.25);
+}
+
+.card-highlight h3 {
+    color: #ffffff;
+}
+
+/* Primary button variant for final project */
+.btn-primary {
+    background: linear-gradient(90deg, var(--color-yellow), #ffb300) !important;
+    color: #000000 !important;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #ffb300, var(--color-yellow)) !important;
+    box-shadow: 0 4px 12px rgba(255, 202, 40, 0.3);
+}
+
+/* ==========================================================
+   3) Layout: Header
+   - Rules related to the top header bar and its children
+   ========================================================== */
+
+.header {
+    display: grid;
+    grid-template-columns: 50px 1fr 50px;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #23a727 0%, #1b5e20 50% 100%);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffd700, #ff8c00, #ffd700);
+}
+.menu-btn {
+    justify-self: start;
+
+    color: white;
+    background: rgba(57,169,255,0.08); /* subtle ICT-blue tint */
+    font-size: 1.6rem;
+    border-radius: 12px;
+    padding: 0.6rem 0.8rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.08s ease;
+}
+
+.menu-btn:hover { background: rgba(57,169,255,0.14); transform: translateY(-1px); }
+
+.title {
+    text-align: center;
+    font-size: 1.25rem;
+    color: white;
+    font-style: italic;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    justify-self: end;
+}
+
+
+/* ==========================================================
+   4) Layout: Sidebar
+   - Sidebar panel, open state, and internal links
+   ========================================================== */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0; /* kept for a11y; transform handles the hidden state */
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(180deg, #05600b 0%, #d7e207 100%);
+    color: #e6eef8;
+    padding: 1.25rem;
+    box-shadow: 2px 0 20px rgba(2, 6, 23, 0.7);
+    transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.25s ease;
+    transform: translateX(-100%); /* hidden by default */
+    z-index: 1000;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-bottom: 1rem;
+    padding: 0.25rem;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 0.5rem;
+    text-decoration: none;
+    color: rgba(255,255,255,0.85);
+    border-radius: 6px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.sidebar a:hover,
+.sidebar a:focus {
+    background: rgba(57,169,255,0.08);
+    color: rgb(255, 242, 0);
+    border-bottom: 2px solid var(--color-ict-blue);
+    outline: none;
+}
+
+/* Thin custom scrollbar for the sidebar */
+.sidebar::-webkit-scrollbar { width: 8px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 8px; }
+
+
+/* ==========================================================
+   5) Components: Overlay / Modals / Small UI pieces
+   - Overlays and component-level show/hide states
+   ========================================================== */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+.overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ==========================================================
+   6) Content / Sections
+   - Page content area and typographic spacing inside it
+   ========================================================== */
+
+.main-content {
+    padding: 1rem;
+}
+
+.main-content h2 {
+    margin-bottom: 1rem;
+}
+
+.main-content p {
+    margin-bottom: 1rem;
+}
+
+/* ==========================================================
+   7) Utilities & Responsive (placeholder)
+   - Small helper classes and media query area for future rules
+   ========================================================== */
+
+/* Example utility (uncomment when needed)
+.u-hidden { display: none !important; }
+*/
+
+/*
+@media (max-width: 600px) {
+    "responsive overrides go here"
+}
+*/
