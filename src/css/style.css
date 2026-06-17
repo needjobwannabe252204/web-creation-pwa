@@ -94,6 +94,28 @@ body {
     transform: translateY(-1px);
 }
 
+.card a {
+    display: block;
+    margin-top: auto;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background-color: #4a90d9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.18s ease,
+                transform 0.06s ease;
+    box-sizing: border-box;
+}
+
+.card a:hover {
+    background-color: var(--color-ict-blue-dark);
+    transform: translateY(-1px);
+}
+
 /* Highlighted card for the final project lesson */
 .card-highlight {
     background: linear-gradient(140deg, var(--color-ict-blue) 0%, var(--color-green) 100%);

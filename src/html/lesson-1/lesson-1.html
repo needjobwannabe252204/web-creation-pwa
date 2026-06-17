@@ -24,7 +24,7 @@
     <div class="overlay" id="overlay"></div>
     <main class="container">
         <div class="card">
-            <h3>🚀 Lesson 1</h3>
+            <h3>📚 Lesson 1</h3>
             <p class="competency">Lesson Description:</p>
             <p class="description">
                 Before creating websites, web developers need the right tools. In this lesson, you will explore the different tools used in web design, including code editors, web browsers, and design tools. Understanding these tools will help you work more efficiently when developing websites using HTML and CSS.
@@ -40,6 +40,12 @@
                 <li>Explore the functionality of web browsers in testing and debugging websites</li>
                 <li>Learn about design tools for creating visual layouts and prototypes</li>
             </ul>
+        </div>
+        <div class="card">
+            <div class="progress-container">
+                <div id="lessonProgress" class="progress-bar"></div>
+            </div>
+            <p id="progressText">Progress: 0%</p>
         </div>
         <div class="card">
             <h3>💻 Topic 1: Code Editors</h3>
@@ -105,7 +111,7 @@
                 Your browser does not support the video tag.
             </video>
             <br>
-            <button onclick="doneLesson()">Done!</button>
+            <button id="topic1Btn" onclick="completeTopic(1)">Done!</button>
         </div>
         <div class="card">
             <h3>🌐 Topic 2: Web Browsers</h3>
@@ -147,7 +153,7 @@
                 <li>Ensure users have a good experience.</li>
             </ul>
             <br>
-            <button onclick="doneLesson()">Done!</button>
+            <button id="topic2Btn" onclick="completeTopic(2)">Done!</button>
         </div>
         <div class="card">
             <h3>🎨 Topic 3: Design Tools</h3>
@@ -192,7 +198,7 @@
                 <li>Save development time.</li>
             </ul>
             <br>
-            <button onclick="doneLesson()">Done!</button>
+            <button id="topic3Btn" onclick="completeTopic(3)">Done!</button>
         </div>
         <div class="card" id="quiz-1">
             <h2>📝 Quick Check</h2>
@@ -267,7 +273,7 @@
                     </label><br>
                     <label>
                         <input type="radio" name="q4" value="b">
-                        b. o test and preview websites
+                        b. To test and preview websites
                     </label><br>
                     <label>
                         <input type="radio" name="q4" value="c">
@@ -331,13 +337,16 @@
                 </a>
             </div>
             <br>
-            <a><button>Download VS Code</button></a>
+            <button
+                id="activityBtn"
+                onclick="startActivity()">
+                🔒 Complete Lesson First
+            </button>
         </div>
         
 
     </main>
-    <script src="../../js/quiz.js"></script>   
-    <script src="../../js/script.js"></script>     
-    <script src="../../js/gallary.js"></script>   
+    <script src="../../js/script.js"></script>
+    <script src="../../js/lesson-1.js"></script>
 </body>
 </html>
