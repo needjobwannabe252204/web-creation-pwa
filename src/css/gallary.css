@@ -2,7 +2,6 @@
 .gallary {
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: auto;
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
@@ -11,7 +10,7 @@
 /* Thumbnail images */
 .thumbnail {
     width: 100%;
-    max-width: 100px;
+    max-width: 90px;
     height: auto;
 
     border-radius: 10px;
