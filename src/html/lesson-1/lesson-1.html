@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="../../css/lesson-1.css">
 </head>
+
 <body>
 <!-- Header: site title and menu (hamburger) -->
      <header class="header">
@@ -14,6 +16,7 @@
         <h1 class="title">Web Creation</h1>
         <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
     </header>
+    
     <!-- Primary navigation / sidebar -->
     <nav class="sidebar" id="sidebar" aria-hidden="true">
         <button class="close-btn" id="closeBtn">✕</button>
@@ -21,19 +24,22 @@
         <a href="/src/html/nav-pages/about.html">⁉️ About</a>
         <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
     </nav>
+    
     <div class="overlay" id="overlay"></div>
+    
     <main class="container">
+        
         <div class="card">
-            <h3>📚 Lesson 1</h3>
+            <h2>📚 Lesson 1</h2>
             <p class="competency">Lesson Description:</p>
             <p class="description">
                 Before creating websites, web developers need the right tools. In this lesson, you will explore the different tools used in web design, including code editors, web browsers, and design tools. Understanding these tools will help you work more efficiently when developing websites using HTML and CSS.
             </p>
         </div>
+        
         <div class="card">
-            <h3>🎯 Learning Objectives</h3>
+            <h2>🎯 Learning Objectives</h2>
             <p class="competency">By the end of this lesson, you will be able to:</p>
-            
             <ul style="padding-left: 20px;">
                 <li>Identify the essential tools for web development</li>
                 <li>Understand the role of code editors in writing HTML and CSS</li>
@@ -41,12 +47,14 @@
                 <li>Learn about design tools for creating visual layouts and prototypes</li>
             </ul>
         </div>
+        
         <div class="card">
             <div class="progress-container">
                 <div id="lessonProgress" class="progress-bar"></div>
             </div>
             <p id="progressText">Progress: 0%</p>
         </div>
+        
         <div class="card">
             <h3>💻 Topic 1: Code Editors</h3>
             <p class="competency">What are Code Editors?</p>
@@ -113,6 +121,7 @@
             <br>
             <button id="topic1Btn" onclick="completeTopic(1)">Done!</button>
         </div>
+        
         <div class="card">
             <h3>🌐 Topic 2: Web Browsers</h3>
             <p class="competency">What are Web Browsers?</p>
@@ -155,6 +164,7 @@
             <br>
             <button id="topic2Btn" onclick="completeTopic(2)">Done!</button>
         </div>
+        
         <div class="card">
             <h3>🎨 Topic 3: Design Tools</h3>
             <p class="competency">What are Design Tools?</p>
@@ -200,6 +210,7 @@
             <br>
             <button id="topic3Btn" onclick="completeTopic(3)">Done!</button>
         </div>
+        
         <div class="card" id="quiz-1">
             <h2>📝 Quick Check</h2>
                 <p><strong>Directions:</strong> Choose the correct answer.</p>
@@ -344,9 +355,10 @@
             </button>
         </div>
         
-
     </main>
+
     <script src="../../js/script.js"></script>
     <script src="../../js/lesson-1.js"></script>
+    
 </body>
 </html>

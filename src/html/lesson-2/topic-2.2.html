@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<!-- Header: site title and menu (hamburger) -->
+     <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+        <div class="card">
+            <h2>🎯 HTML Structure Drag-and-Drop Challenge </h2>
+
+        <p class="competency">Instructions:</p>
+        <p class="description">🖱️ Drag each HTML tag from the Tag Bank and drop it into the correct description box. 
+        Click ✅ Check Answers when you are finished.</p>
+        </div>
+         <div class="card">
+             <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .tag-bank {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .tag {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: grab;
+        }
+
+        .question {
+            margin: 15px 0;
+            font-size: 18px;
+        }
+
+        .drop-box {
+            display: inline-block;
+            width: 120px;
+            height: 35px;
+            border: 2px dashed #666;
+            vertical-align: middle;
+            text-align: center;
+            line-height: 35px;
+            margin-left: 10px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🎮 Drag and Drop: Match the HTML Tags</h2>
+<p>Drag the correct HTML tag into each box.</p>
+
+<div class="tag-bank">
+    <div class="tag" draggable="true" id="html">&lt;html&gt;</div>
+    <div class="tag" draggable="true" id="head">&lt;head&gt;</div>
+    <div class="tag" draggable="true" id="title">&lt;title&gt;</div>
+    <div class="tag" draggable="true" id="body">&lt;body&gt;</div>
+</div>
+
+<div class="question">
+    Root element of the webpage:
+    <div class="drop-box" data-answer="html"></div>
+</div>
+
+<div class="question">
+    Contains webpage information:
+    <div class="drop-box" data-answer="head"></div>
+</div>
+
+<div class="question">
+    Displays browser tab title:
+    <div class="drop-box" data-answer="title"></div>
+</div>
+
+<div class="question">
+    Contains visible webpage content:
+    <div class="drop-box" data-answer="body"></div>
+</div>
+
+<button onclick="checkAnswers()">Check Answers</button>
+
+<div id="result"></div>
+
+<script>
+    const tags = document.querySelectorAll('.tag');
+    const dropBoxes = document.querySelectorAll('.drop-box');
+
+    tags.forEach(tag => {
+        tag.addEventListener('dragstart', dragStart);
+    });
+
+    function dragStart(e) {
+        e.dataTransfer.setData('text', e.target.id);
+    }
+
+    dropBoxes.forEach(box => {
+        box.addEventListener('dragover', dragOver);
+        box.addEventListener('drop', drop);
+    });
+
+    function dragOver(e) {
+        e.preventDefault();
+    }
+
+    function drop(e) {
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text');
+        const draggedElement = document.getElementById(id);
+
+        if (e.target.innerHTML === '') {
+            e.target.appendChild(draggedElement);
+        }
+    }
+
+    function checkAnswers() {
+        let score = 0;
+
+        dropBoxes.forEach(box => {
+            if (box.firstChild &&
+                box.firstChild.id === box.dataset.answer) {
+                score++;
+            }
+        });
+
+        document.getElementById('result').innerHTML =
+            `🏆 Score: ${score}/4`;
+    }
+</script>
+
+         </div>
+    </main>
+    
+
+     
+
+    <script src="../../js/script.js"></script>
+</body>
+</html>
