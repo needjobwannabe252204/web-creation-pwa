@@ -1,0 +1,39 @@
+/* Added per request: code-box, table wrapper and table rules */
+    .code-box{
+        background:#0d1117;
+        padding:20px;
+        width:100%;
+        max-width:500px;
+        border-radius:8px;
+        color:#d4d4d4;
+        overflow-x:auto;
+    }
+
+    .table-wrapper{
+        overflow-x:auto;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+    }
+
+    .code-box pre{
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin:0;
+        font-family: Consolas, monospace;
+        font-size:13px;
+    }
+
+    /* basic table visuals to replace deprecated bgcolor/font usage */
+    table th{
+        background:#000;
+        color:#fff;
+        padding:8px;
+        text-align:left;
+    }
+    table td{padding:8px;border:1px solid #ccc}
+
+    .tag{color:#569cd6}
+    .text{color:#ce9178}

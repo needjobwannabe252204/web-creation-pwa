@@ -85,3 +85,18 @@ window.addEventListener("keydown", function (e) {
 });
 
 // End of script
+ 
+// Simple handler for lesson buttons used in markup (inline handlers)
+function doneLesson() {
+   // Minimal feedback — non-blocking and safe if DOM is missing
+   try {
+      // Optionally, show a subtle confirmation using alert for now
+      // You can replace with a nicer UI (toast) later.
+      alert('Marked as read. Good job!');
+   } catch (e) {
+      // swallow errors to avoid breaking the page
+      console.warn('doneLesson handler failed', e);
+   }
+}
+
+window.doneLesson = doneLesson;
