@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson 1</title>
     <link rel="stylesheet" href="../../css/style.css">
-    <link rel="stylesheet" href="../../css/gallary.css">
+    <link rel="stylesheet" href="../../css/lesson-1.css">
 </head>
 <body>
 <!-- Header: site title and menu (hamburger) -->
@@ -63,20 +63,20 @@
             <div class="gallary" id="code-editor">
                 <img class="thumbnail"
                     src="/assets/image/code-editor/vs-code.png"
-                    alt="Image 1"
-                    onclick="openImage(this.src)">
+                    alt="Visual Studio Code logo"
+                    onclick="openImage(this)">
                 <img class="thumbnail"
                     src="/assets/image/code-editor/sublime.png"
-                    alt="Image 2"
-                    onclick="openImage(this.src)">
+                    alt="Sublime Text logo"
+                    onclick="openImage(this)">
                 <img class="thumbnail"
                     src="/assets/image/code-editor/notepad++.png"
-                    alt="Image 3"
-                    onclick="openImage(this.src)">
+                    alt="Notepad++ logo"
+                    onclick="openImage(this)">
             </div>
             <div id="imageModal" class="modal" onclick="closeImage()">
-                <span class="close">&times;</span>
-                <img id="modalImage" class="modal-content">
+                <span class="close" onclick="closeImage()">&times;</span>
+                <img id="modalImage" class="modal-content" onclick="event.stopPropagation()">
             </div>
             <br>
             <ul style="padding-left: 20px;">
@@ -105,7 +105,7 @@
                 Your browser does not support the video tag.
             </video>
             <br>
-            <button onclick="doneLesson()">Done</button>
+            <button onclick="doneLesson()">Done!</button>
         </div>
         <div class="card">
             <h3>🌐 Topic 2: Web Browsers</h3>
@@ -118,16 +118,16 @@
             <div class="gallary" id="web-browser">
                 <img class="thumbnail"
                     src="/assets/image/browser/chrome.png"
-                    alt="Image 1"
-                    onclick="openImage(this.src)">
+                    alt="Google Chrome logo"
+                    onclick="openImage(this)">
                 <img class="thumbnail"
                     src="/assets/image/browser/firefox.png"
-                    alt="Image 2"
-                    onclick="openImage(this.src)">
+                    alt="Mozilla Firefox logo"
+                    onclick="openImage(this)">
                 <img class="thumbnail"
                     src="/assets/image/browser/edge.png"
-                    alt="Image 3"
-                    onclick="openImage(this.src)">
+                    alt="Microsoft Edge logo"
+                    onclick="openImage(this)">
             </div>
             <br>
             <ul style="padding-left: 20px;">
@@ -147,7 +147,7 @@
                 <li>Ensure users have a good experience.</li>
             </ul>
             <br>
-            <button onclick="doneLesson()">Done reading</button>
+            <button onclick="doneLesson()">Done!</button>
         </div>
         <div class="card">
             <h3>🎨 Topic 3: Design Tools</h3>
@@ -170,16 +170,16 @@
             <div class="gallary" id="design-tools">
                 <img class="thumbnail"
                     src="/assets/image/design-tools/adobe.png"
-                    alt="Image 1"
-                    onclick="openImage(this.src)">
+                    alt="Adobe logo"
+                    onclick="openImage(this)">
                 <img class="thumbnail"
                     src="/assets/image/design-tools/figma.png"
-                    alt="Image 2"
-                    onclick="openImage(this.src)">
+                    alt="Figma logo"
+                    onclick="openImage(this)">
                 <img class="thumbnail"
                     src="/assets/image/design-tools/canva.png"
-                    alt="Image 3"
-                    onclick="openImage(this.src)">
+                    alt="Canva logo"
+                    onclick="openImage(this)">
             </div>
             <br>
             <hr>
@@ -192,7 +192,7 @@
                 <li>Save development time.</li>
             </ul>
             <br>
-            <button onclick="doneLesson()">Done reading</button>
+            <button onclick="doneLesson()">Done!</button>
         </div>
         <div class="card" id="quiz-1">
             <h2>📝 Quick Check</h2>
@@ -259,19 +259,19 @@
                 <br>
                 <!-- Question 4 -->
                 <div class="question">
-                    <p>4. What does HTML mainly do?</p>
+                    <p>4. What is the main purpose of a web browser in web development?</p>
                     <br>
                     <label>
                         <input type="radio" name="q4" value="a">
-                        a. Styles a webpage
+                        a. To create website layouts
                     </label><br>
                     <label>
                         <input type="radio" name="q4" value="b">
-                        b. Structures webpage content
+                        b. o test and preview websites
                     </label><br>
                     <label>
                         <input type="radio" name="q4" value="c">
-                        c. Connects to Wi-Fi
+                        c. To store project files
                     </label>
                 </div>
                 <br>
@@ -279,32 +279,59 @@
                 <br>
                 <!-- Question 5 -->
                 <div class="question">
-                    <p>5. What does CSS mainly do?</p>
+                    <p>5. Why do developers use design tools before coding?</p>
                     <br>
                     <label>
                         <input type="radio" name="q5" value="a">
-                        a. Styles and formats webpages
+                        a. To plan and visualize website layouts
                     </label><br>
                     <label>
                         <input type="radio" name="q5" value="b">
-                        b. Stores files
+                        b. To connect websites to the internet
                     </label><br>
                     <label>
                         <input type="radio" name="q5" value="c">
-                        c. Creates folders
+                        c. To compile programming code
                     </label>
                 </div>
                 <br>
-                <button onclick="checkQuiz()">Submit Quiz</button>
-                <br>
-                <p id="result"></p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                    <button id="submitQuiz" onclick="checkQuiz()">Submit Quiz</button>
+                    <button id="resetQuiz" style="display:none">Reset / Try Again</button>
+                    <div id="result" class="quiz-result"></div>
+                </div>
         </div>
 
         <div class="card">
+            <h3>⭐ Activity 1</h3>
+            <p class="competency">Set Up Your Code Editor</p>
+            <p>In this activity, you will set up a code editor on your computer to start writing HTML and CSS code.</p>
+            <br>
             <video controls width="100%">
                 <source src="/assets/video/vs-code-setup-2.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
+            <br>
+
+            <h3>📱 Mobile Code Editor</h3>
+            <div class="mobile-code-editor">
+                <div class="editor-info">
+                    <p>
+                        If you do not have access to a computer, you can still practice
+                        HTML and CSS using a mobile code editor. Tap the image to visit
+                        the download page and install the application.
+                    </p>
+                </div>
+
+                <a href="https://play.google.com/store/apps/details?id=com.foxdebug.acodefree"
+                target="_blank"
+                class="editor-image">
+                    <img src="/assets/image/code-editor/web-code.png"
+                        alt="Acode Mobile Editor">
+                </a>
+            </div>
+            <br>
+            <a><button>Download VS Code</button></a>
         </div>
         
 
