@@ -1,0 +1,79 @@
+/* Gallery container */
+.gallary {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Thumbnail images */
+.thumbnail {
+    width: 100%;
+    max-width: 100px;
+    height: auto;
+
+    border-radius: 10px;
+    cursor: pointer;
+
+    transition: transform 0.3s ease;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+}
+
+/* Modal background */
+.modal {
+    display: none;
+
+    position: fixed;
+    z-index: 1000;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.8);
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 1rem;
+}
+
+/* Enlarged image */
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
+
+    border-radius: 10px;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+
+    top: 20px;
+    right: 30px;
+
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+/* Tablet and desktop layout */
+@media (min-width: 768px) {
+    .gallary {
+        flex-wrap: nowrap;
+    }
+
+    .thumbnail {
+        width: 200px;
+    }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/gallary.css">
+</head>
+<body>
+<!-- Header: site title and menu (hamburger) -->
+     <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+
+    <main class="container">
+        <div class="card">
+            <h2>🚀 Lesson 1</h2>
+            <p class="competency">Lesson Description:</p>
+            <p class="description">
+                Before creating websites, web developers need the right tools. In this lesson, you will explore the different tools used in web design, including code editors, web browsers, and design tools. Understanding these tools will help you work more efficiently when developing websites using HTML and CSS.
+            </p>
+        </div>
+        
+        <div class="card">
+            <h2>🎯 Learning Objectives</h2>
+            <p class="competency">By the end of this lesson, you will be able to:</p>
+            
+            <ul style="padding-left: 20px;">
+                <li>Identify the essential tools for web development</li>
+                <li>Understand the role of code editors in writing HTML and CSS</li>
+                <li>Explore the functionality of web browsers in testing and debugging websites</li>
+                <li>Learn about design tools for creating visual layouts and prototypes</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>💻 Topic 1: Code Editors</h2>
+            <p class="competency">What are Code Editors?</p>
+            <p>
+                Code editors are software applications used by web developers to write, edit, and organize website code such as HTML and CSS.
+                <br>
+                <br>
+                They make coding easier through features like:            
+            </p>
+            <ul style="padding-left: 20px;">
+                <li>Syntax highlighting: Colors code elements for better readability.</li>
+                <li>Auto-completion: Suggests code snippets and tags as you type.</li>
+                <li>File management: Organizes project files and folders.</li>
+                <li>Debugging tools: Helps identify and fix errors in code.</li>
+            </ul>
+            <br>
+            <hr>
+            <br>
+            <h2>Examples of code editors</h2>
+            <div class="gallary" id="code-editor">
+                <img class="thumbnail"
+                    src="/assets/image/code-editor/vs-code.png"
+                    alt="Image 1"
+                    onclick="openImage(this.src)">
+                <img class="thumbnail"
+                    src="/assets/image/code-editor/sublime.png"
+                    alt="Image 2"
+                    onclick="openImage(this.src)">
+                <img class="thumbnail"
+                    src="/assets/image/code-editor/notepad++.png"
+                    alt="Image 3"
+                    onclick="openImage(this.src)">
+            </div>
+
+            <div id="imageModal" class="modal" onclick="closeImage()">
+                <span class="close">&times;</span>
+                <img id="modalImage" class="modal-content">
+            </div>
+
+
+
+
+        </div>
+
+    </main>
+
+            <div class="overlay" id="overlay"></div>
+
+    
+    
+
+    <script src="../../js/script.js"></script>     
+    <script src="../../js/gallary.js"></script>   
+</body>
+</html>
