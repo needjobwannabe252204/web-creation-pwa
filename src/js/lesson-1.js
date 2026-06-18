@@ -1,12 +1,13 @@
 /* ==========================================================
-   LESSON 1 — organized module
-   - State
-   - Helpers
-   - Progress / topics
-   - Quiz
-   - Image modal
-   - Init and exports
-   ========================================================== */
+    LESSON 1 — lesson-specific behaviors
+    Purpose: handles progress state, per-lesson quiz logic, image
+    modal, and activity gating for Lesson 1 pages. This file is
+    intentionally lesson-scoped — global UI is in `script.js`.
+
+    Exports (attached to `window`):
+    - openImage, closeImage, completeTopic, checkQuiz, resetQuiz,
+      startActivity
+    ========================================================== */
 
 "use strict";
 
@@ -59,12 +60,15 @@ function updateProgress() {
     if (progressText) progressText.textContent = `Progress: ${percentage}%`;
 
     const activityBtn = getEl('activityBtn');
+    const nextBtn = getEl('nextLessonBtn');
     if (!activityBtn) return;
 
     if (completedTopics.topic1 && completedTopics.topic2 && completedTopics.topic3 && quizPassed) {
         activityBtn.innerHTML = '🚀 Install VS Code';
+        if (nextBtn) nextBtn.style.display = 'inline-block';
     } else {
         activityBtn.innerHTML = '🔒 Complete Lesson First';
+        if (nextBtn) nextBtn.style.display = 'none';
     }
 }
 
@@ -203,6 +207,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const activityBtn = getEl('activityBtn');
     if (activityBtn) activityBtn.addEventListener('click', startActivity);
 
+    const returnBtn = getEl('returnHomeBtn');
+    if (returnBtn) {
+        const url = returnBtn.dataset?.href || returnBtn.getAttribute('data-href');
+        returnBtn.addEventListener('click', () => { if (url) window.location.href = url; });
+    }
+
+    const nextNavBtn = getEl('nextLessonBtn');
+    if (nextNavBtn) {
+        const url2 = nextNavBtn.dataset?.href || nextNavBtn.getAttribute('data-href');
+        nextNavBtn.addEventListener('click', () => { if (url2) window.location.href = url2; });
+    }
+
     updateProgress();
 });
 
@@ -214,3 +230,4 @@ window.completeTopic = completeTopic;
 window.checkQuiz = checkQuiz;
 window.resetQuiz = resetQuiz;
 window.startActivity = startActivity;
+

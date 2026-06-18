@@ -100,3 +100,13 @@ function doneLesson() {
 }
 
 window.doneLesson = doneLesson;
+
+// Global navigation: buttons with `data-href` should navigate like links.
+document.addEventListener('DOMContentLoaded', () => {
+   document.querySelectorAll('button[data-href]').forEach(btn => {
+      btn.addEventListener('click', () => {
+         const target = btn.dataset?.href || btn.getAttribute('data-href');
+         if (target) window.location.href = target;
+      });
+   });
+});

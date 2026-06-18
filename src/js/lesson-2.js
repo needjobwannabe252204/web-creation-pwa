@@ -8,3 +8,13 @@ if (runBtn) {
         output.innerHTML = editor.value;
     });
 }
+
+/* ==========================================================
+   LESSON 2 — lesson-specific behaviors
+   Purpose: small utilities for Lesson 2 pages (code runner,
+   activity helpers). Navigation buttons using `data-href` are
+   handled globally by `src/js/script.js` to avoid duplication.
+   ========================================================== */
+
+// Attach click behavior to buttons that use data-href for navigation
+// (Navigation handled globally by src/js/script.js)

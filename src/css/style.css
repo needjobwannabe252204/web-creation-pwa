@@ -95,6 +95,28 @@ body {
     transform: translateY(-1px);
 }
 
+/* ==========================================================
+     Button utilities (global)
+     - Shared button styles used across pages. Keep lightweight
+         so lesson-specific variants can override in their files.
+     ========================================================== */
+.btn {
+        display: inline-block;
+        padding: 0.6rem 1rem;
+        background-color: #4a90d9;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: background-color 0.18s ease, transform 0.06s ease;
+}
+.btn:hover { background-color: var(--color-ict-blue-dark); transform: translateY(-1px); }
+
+.nav-buttons { display:flex; gap:8px; align-items:center; margin-top:12px; }
+
+
 .progress-container{
     width:100%;
     height:20px;
@@ -330,6 +352,11 @@ body {
 /* Example utility (uncomment when needed)
 .u-hidden { display: none !important; }
 */
+
+/* Small reusable utilities */
+.list-indent { padding-left: 20px; }
+.actions-flex { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
 
 /*
 @media (max-width: 600px) {

@@ -40,7 +40,7 @@
         <div class="card">
             <h2>🎯 Learning Objectives</h2>
             <p class="competency">By the end of this lesson, you will be able to:</p>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Identify the essential tools for web development</li>
                 <li>Understand the role of code editors in writing HTML and CSS</li>
                 <li>Explore the functionality of web browsers in testing and debugging websites</li>
@@ -64,7 +64,7 @@
                 <br>
                 They make coding easier through features like:            
             </p>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Syntax highlighting: Colors code elements for better readability.</li>
                 <li>Auto-completion: Suggests code snippets and tags as you type.</li>
                 <li>File management: Organizes project files and folders.</li>
@@ -93,7 +93,7 @@
                 <img id="modalImage" class="modal-content" onclick="event.stopPropagation()">
             </div>
             <br>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Visual Studio Code (VS Code) – One of the most popular editors used by developers.</li>
                 <li>Sublime Text – A lightweight and fast code editor.</li>
                 <li>Notepad++ – Beginner-friendly editor available on Windows.</li>
@@ -108,7 +108,7 @@
                 <br>
                 These tools help developers:
             </p>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Write code faster</li>
                 <li>Find mistakes more easily</li>
                 <li>Organize project files</li>
@@ -145,7 +145,7 @@
                     onclick="openImage(this)">
             </div>
             <br>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Google Chrome – The most widely used web browser.</li>
                 <li>Mozilla Firefox – Known for its privacy features.</li>
                 <li>Microsoft Edge – A modern browser built on Chromium.</li>
@@ -155,7 +155,7 @@
             <br>
             <h3>Why are Browsers Important?</h3>
             <p>Browsers help developers:</p>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Preview their websites.</li>
                 <li>Test functionality.</li>
                 <li>Identify layout problems.</li>
@@ -173,7 +173,7 @@
                <br>
                They are used to create:
             </p>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Wireframes</li>
                 <li>Layouts</li>
                 <li>Prototypes</li>
@@ -202,7 +202,7 @@
             <br>
             <h3>Why are Design Tools Important?</h3>
             <p>They help teams:</p>
-            <ul style="padding-left: 20px;">
+            <ul class="list-indent">
                 <li>Visualize ideas before coding.</li>
                 <li>Improve user experience.</li>
                 <li>Save development time.</li>
@@ -312,7 +312,7 @@
                     </label>
                 </div>
                 <br>
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <div class="actions-flex">
                     <button id="submitQuiz" onclick="checkQuiz()">Submit Quiz</button>
                     <button id="resetQuiz" style="display:none">Reset / Try Again</button>
                     <div id="result" class="quiz-result"></div>
@@ -361,6 +361,11 @@
                 onclick="startActivity()">
                 🔒 Complete Lesson First
             </button>
+
+            <div class="nav-buttons" style="display:flex;gap:8px;margin-top:12px">
+                <button class="btn" id="returnHomeBtn" data-href="../../../index.html" aria-label="Return Home">← Return Home</button>
+                <button class="btn btn-primary" id="nextLessonBtn" data-href="../lesson-2/lesson-2.html" aria-label="Next Lesson" style="display:none">Next Lesson →</button>
+            </div>
 
         </div>
         

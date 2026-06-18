@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<!-- Header: site title and menu (hamburger) -->
+     <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+        <div class="card">
+            <h2>🔗links</h2>
+            <ul class="list-indent">
+            <p class="competency"> what is a link? </p>
+            <li> Links allow users to navigate from one webpage to another or to other resources on the internet. 
+            They are created using the&lt;a&gt;(anchor) tag.</li> 
+            </ul>
+        </p>
+        <br>
+        <hr>
+        <br>
+        <h2> 🏷️ Basic Syntax of a Link </h2>
+        <br>
+        
+       <div style="background:#1e1e1e;padding:15px;border-radius:8px;overflow-x:auto;">
+<pre style="margin:0;font-family:Consolas,monospace;font-size:14px;line-height:1.5;">
+<span style="color:#569CD6;">&lt;a</span> <span style="color:#9CDCFE;">href</span>=<span style="color:#CE9178;">"https://www.google.com"</span><span style="color:#569CD6;">&gt;</span><span style="color:#DCDCAA;">Visit Me</span><span style="color:#569CD6;">&lt;/a&gt;</span>
+        </pre>
+        </div>
+        <br>
+        <h3> ouput: </h3>
+        <ul class="list-indent">
+            <p class="competency"> visit google </p>
+        </ul>
+        <br><br>
+
+         <video controls width="100%">
+                <source src="/assets/video/YTDown_YouTube_How-to-Insert-a-Link-in-HTML-Quick-Tutor_Media_-nM2NYvaf2o_001_1080p.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <br><br>
+        
+        <table style="width:100%; border-collapse:collapse;">
+    <thead>
+        <tr>
+            <th style="padding:12px; text-align:left; border:1px solid #fff;">
+                Part
+            </th>
+            <th style="padding:12px; text-align:left; border:1px solid #fff;">
+                Example
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td style="padding:12px; border:1px solid #fff;">
+                Tag
+            </td>
+            <td style="padding:12px; border:1px solid #fff;">
+                <div style="background:transparent; font-family:Consolas,monospace;">
+                    <span style="color:#569CD6;">&lt;a&gt;</span>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px; border:1px solid #fff;">
+                Attribute
+            </td>
+            <td style="padding:12px; border:1px solid #fff;">
+                <div style="background:transparent; font-family:Consolas,monospace;">
+                    <span style="color:#9CDCFE;">href</span>=<span style="color:#CE9178;">"https://www.google.com"</span>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px; border:1px solid #fff;">
+                Link Text
+            </td>
+            <td style="padding:12px; border:1px solid #fff;">
+                <span style="color:#DCDCAA;">Visit Google</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding:12px; border:1px solid #fff;">
+                Closing Tag
+            </td>
+            <td style="padding:12px; border:1px solid #fff;">
+                <div style="background:transparent; font-family:Consolas,monospace;">
+                    <span style="color:#569CD6;">&lt;/a&gt;</span>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+            </div>
+
+             <div class="card">
+                <button class="btn" data-href="test-2.3.html"> Test me </button>
+             </div>    
+        
+</div>
+
+   </main>
+
+    <script src="../../js/script.js"></script>
+</body>
+
+</html>
