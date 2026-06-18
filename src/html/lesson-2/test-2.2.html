@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<!-- Header: site title and menu (hamburger) -->
+     <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+        <div class="card">
+            <h2> activity </h2>
+            <p class="competency">Interactive Learning Module</p>
+            <p class="description">Master HTML and CSS through hands-on lessons and real projects.</p>
+        </div>
+         <div class="card">
+            ```html id="hdgact01"
+<div class="activity-container">
+
+    <div class="instructions">
+        <strong>Directions:</strong> Complete the missing HTML heading tag so the text displays as a main heading.
+    </div>
+
+    <div class="image-link">
+        <strong>Expected Output:</strong><br><br>
+        <h1>Welcome to Web Creation</h1>
+    </div>
+
+    <textarea id="editor" class="code-editor">
+<___>Welcome to Web Creation</h1>
+    </textarea>
+
+    <button class="run-btn" onclick="runCode()">▶ Run Code</button>
+
+    <div id="output" class="output-box" style="color:#555555;">
+        Your heading will appear here...
+    </div>
+
+    <div id="feedback" class="feedback"></div>
+
+</div>
+
+<script>
+function runCode(){
+
+    const code = document.getElementById("editor").value;
+
+    document.getElementById("output").innerHTML = code;
+
+    if(code.includes("<h1>")){
+        document.getElementById("feedback").innerHTML =
+        "✅ Correct! The missing tag is &lt;h1&gt;.";
+        document.getElementById("feedback").style.color = "green";
+    } else {
+        document.getElementById("feedback").innerHTML =
+        "❌ Incorrect. Check the opening heading tag.";
+        document.getElementById("feedback").style.color = "red";
+    }
+}
+</script>
+```
+
+         </div>
+
+    </main>
+
+    <script src="../../js/script.js"></script>
+</body>
+</html>
