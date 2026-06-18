@@ -114,7 +114,7 @@ body {
     text-align:center;
 }
 
-.card a {
+.card hyper-btn {
     display: block;
     margin-top: auto;
     width: 100%;
