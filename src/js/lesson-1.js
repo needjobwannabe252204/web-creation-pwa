@@ -243,6 +243,16 @@ function startActivity() {
     // mark lesson completed and persist state so index can reflect completion
     lessonCompleted = true;
     saveState();
+    // also update central courseProgress so other lessons can unlock
+    try {
+        const raw = localStorage.getItem('courseProgress');
+        const cp = raw ? JSON.parse(raw) : { lessonsUnlocked: {}, lessonsCompleted: {} };
+        cp.lessonsCompleted = cp.lessonsCompleted || {};
+        cp.lessonsUnlocked = cp.lessonsUnlocked || {};
+        cp.lessonsCompleted[1] = true;
+        cp.lessonsUnlocked[1] = true;
+        localStorage.setItem('courseProgress', JSON.stringify(cp));
+    } catch (e) { console.warn('Could not update courseProgress from lesson-1', e); }
     // update UI immediately so activity card shows completed state
     try {
         const activityCard = getEl('activity-card');

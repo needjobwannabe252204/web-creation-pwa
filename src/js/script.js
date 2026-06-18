@@ -104,7 +104,12 @@ window.doneLesson = doneLesson;
 // Global navigation: buttons with `data-href` should navigate like links.
 document.addEventListener('DOMContentLoaded', () => {
    document.querySelectorAll('button[data-href]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (ev) => {
+         // Prevent the generic navigation if the button is in a special locked/unlock state
+         if (btn.classList.contains('locked') || btn.classList.contains('can-unlock')) {
+            ev.preventDefault();
+            return; // let the specialized handlers manage click behavior
+         }
          const target = btn.dataset?.href || btn.getAttribute('data-href');
          if (target) window.location.href = target;
       });
@@ -150,31 +155,202 @@ document.addEventListener('DOMContentLoaded', () => {
          if (!confirm('Clear Lesson 1 progress? This cannot be undone.')) return;
          try {
             localStorage.removeItem('lesson1State');
-         } catch (e) { console.warn('Could not clear lesson1State', e); }
+            localStorage.removeItem('courseProgress');
+         } catch (e) { console.warn('Could not clear lesson1State or courseProgress', e); }
          location.reload();
       });
    }
 
-   // Prevent entering Lesson 2 unless Lesson 1 is completed
-   const lesson2Btn = document.getElementById('index-lesson2-btn');
-   if (lesson2Btn) {
-      lesson2Btn.addEventListener('click', (e) => {
-         e.preventDefault();
-         try {
-            const raw = localStorage.getItem('lesson1State');
-            const s = raw ? JSON.parse(raw) : null;
-            if (s && s.lessonCompleted) {
-               window.location.href = 'src/html/lesson-2/lesson-2.html';
-            } else {
-               if (confirm('You need to finish Lesson 1 before starting Lesson 2. Go to Lesson 1 now?')) {
-                  window.location.href = 'src/html/lesson-1/lesson-1.html';
+   // Generic gatekeeping utility for lessons
+   // Buttons on the index with `data-lesson` will be checked against their
+   // `data-prereq` attribute (comma-separated lesson numbers). This creates
+   // a central place to add future lesson-locking logic.
+   function parsePrereqString(str) {
+      if (!str) return [];
+      return String(str).split(',').map(s => Number(s.trim())).filter(Boolean);
+   }
+
+   function isPrereqsMet(prereqArr) {
+      // Check `courseProgress` first (future-proof), then fallback to legacy
+      // `lesson1State` when checking lesson 1 specifically.
+      try {
+         const rawCourse = localStorage.getItem('courseProgress');
+         const course = rawCourse ? JSON.parse(rawCourse) : null;
+         for (const n of prereqArr) {
+            if (!n) continue;
+            // prefer centralised courseProgress structure
+            if (course && course.lessonsCompleted && typeof course.lessonsCompleted[n] !== 'undefined') {
+               if (!course.lessonsCompleted[n]) return false;
+               continue;
+            }
+            // legacy: only lesson 1 state exists today
+            if (n === 1) {
+               const raw1 = localStorage.getItem('lesson1State');
+               const s1 = raw1 ? JSON.parse(raw1) : null;
+               if (!(s1 && s1.lessonCompleted)) return false;
+               continue;
+            }
+            // if we don't know about the lesson, treat as locked
+            return false;
+         }
+         return true;
+      } catch (e) {
+         console.warn('isPrereqsMet failed', e);
+         return false;
+      }
+   }
+
+   // Course progress helpers: centralised unlocked/completed state
+   function loadCourseProgress() {
+      try {
+         const raw = localStorage.getItem('courseProgress');
+         return raw ? JSON.parse(raw) : { lessonsUnlocked: {}, lessonsCompleted: {} };
+      } catch (e) { return { lessonsUnlocked: {}, lessonsCompleted: {} }; }
+   }
+
+   function saveCourseProgress(cp) {
+      try { localStorage.setItem('courseProgress', JSON.stringify(cp)); } catch (e) { console.warn('Could not save courseProgress', e); }
+   }
+
+   function initLessonGates() {
+      const cp = loadCourseProgress();
+      document.querySelectorAll('button[data-lesson]').forEach(btn => {
+         const prereqStr = btn.getAttribute('data-prereq') || '';
+         const prereqArr = parsePrereqString(prereqStr);
+         const href = btn.getAttribute('data-href');
+
+         // store original label for restoration when unlocked
+         if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent.trim();
+
+         // mark card-level locked state for visual treatment
+         const card = btn.closest('.card');
+         const lessonNum = Number(btn.getAttribute('data-lesson')) || 0;
+         const isUnlocked = !!(cp.lessonsUnlocked && cp.lessonsUnlocked[lessonNum]);
+
+         if (prereqArr.length && !isPrereqsMet(prereqArr) && !isUnlocked) {
+            // fully locked: user cannot unlock yet
+            btn.classList.add('locked');
+            if (card) card.classList.add('locked');
+            btn.textContent = '🔒 Locked';
+            btn.title = `Locked — complete lesson(s): ${prereqStr}`;
+            // add a lock badge if not present
+            if (card && !card.querySelector('.lock-badge')) {
+               const span = document.createElement('span');
+               span.className = 'lock-badge';
+               span.innerHTML = '🔒 Locked';
+               card.appendChild(span);
+            }
+         } else if (isUnlocked) {
+            // already unlocked: show start label
+            btn.classList.remove('locked');
+            if (card) card.classList.remove('locked');
+            btn.classList.remove('can-unlock');
+            btn.title = '';
+            if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
+            if (card) {
+               const lb = card.querySelector('.lock-badge'); if (lb) lb.remove();
+            }
+         } else if (prereqArr.length && isPrereqsMet(prereqArr)) {
+            // prerequisites are met, but require explicit user action to unlock
+            btn.classList.remove('locked');
+            btn.classList.add('can-unlock');
+            if (card) {
+               card.classList.add('locked');
+               card.classList.add('can-unlock');
+               // ensure lock-badge exists to indicate pending-unlock
+               if (!card.querySelector('.lock-badge')) {
+                  const span = document.createElement('span');
+                  span.className = 'lock-badge';
+                  span.innerHTML = '🔓 Unlock';
+                  card.appendChild(span);
+               } else {
+                  const lb = card.querySelector('.lock-badge'); if (lb) lb.innerHTML = '🔓 Unlock';
                }
             }
-         } catch (err) {
-            console.warn('lesson2 navigation check failed', err);
-            // Fallback: allow navigation if something goes wrong with storage
-            window.location.href = 'src/html/lesson-2/lesson-2.html';
+            btn.textContent = '🔓 Unlock';
+            btn.title = 'Click to unlock this lesson';
+         } else {
+            // no prerequisites — normal behaviour
+            btn.classList.remove('locked');
+            if (card) card.classList.remove('locked');
+            btn.title = '';
+            // restore original label
+            if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
+            // remove lock badge if present
+            if (card) {
+               const lb = card.querySelector('.lock-badge'); if (lb) lb.remove();
+            }
          }
+
+         // Intercept clicks to provide guided navigation when locked or to
+         // perform an explicit unlock when prerequisites were already met.
+         btn.addEventListener('click', (ev) => {
+            // If no prerequisites exist, follow link
+            if (!prereqArr.length) {
+               if (href) window.location.href = href;
+               return;
+            }
+
+            // If this button is in the special "can-unlock" state, the user
+            // explicitly unlocks by clicking it. Play the animation, then
+            // restore visuals and show Start button (do not auto-navigate).
+            if (btn.classList.contains('can-unlock')) {
+               ev.preventDefault();
+               // play unlock animation on card if available
+               if (card) {
+                  // temporarily update badge and visuals
+                  const lb = card.querySelector('.lock-badge'); if (lb) lb.innerHTML = '🔓 Unlocking...';
+                  card.classList.remove('can-unlock');
+                  card.classList.add('unlock-animate');
+                  // after animation, remove locked visuals, mark unlocked and show Start
+                  card.addEventListener('animationend', () => {
+                     card.classList.remove('unlock-animate');
+                     card.classList.remove('locked');
+                     const lb2 = card.querySelector('.lock-badge'); if (lb2) lb2.remove();
+                     btn.classList.remove('can-unlock');
+                     // persist unlocked state
+                     const cp2 = loadCourseProgress();
+                     cp2.lessonsUnlocked = cp2.lessonsUnlocked || {};
+                     cp2.lessonsUnlocked[lessonNum] = true;
+                     saveCourseProgress(cp2);
+                     // restore original label to be the Start button
+                     if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
+                     // do not auto-navigate; user must press Start to continue
+                  }, { once: true });
+               } else {
+                  // fallback: immediate unlock and show start label
+                  btn.classList.remove('can-unlock');
+                  const cp2 = loadCourseProgress();
+                  cp2.lessonsUnlocked = cp2.lessonsUnlocked || {};
+                  cp2.lessonsUnlocked[lessonNum] = true;
+                  saveCourseProgress(cp2);
+                  if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
+               }
+               return;
+            }
+
+            // If prerequisites are met and unlocked, allow navigation
+            const cpNow = loadCourseProgress();
+            const nowUnlocked = !!(cpNow.lessonsUnlocked && cpNow.lessonsUnlocked[lessonNum]);
+            if (isPrereqsMet(prereqArr) && nowUnlocked) {
+               if (href) window.location.href = href;
+               return;
+            }
+
+            // Still locked: guide the user to the missing prerequisite
+            ev.preventDefault();
+            const missing = prereqArr.find(n => !isPrereqsMet([n]));
+            if (missing) {
+               if (confirm(`You must complete Lesson ${missing} before starting this lesson. Go to Lesson ${missing} now?`)) {
+                  window.location.href = `src/html/lesson-${missing}/lesson-${missing}.html`;
+               }
+            } else {
+               alert('This lesson is locked. Complete the prerequisites first.');
+            }
+         });
       });
    }
+
+   // Initialize gates for index buttons
+   initLessonGates();
 });

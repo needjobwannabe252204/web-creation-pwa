@@ -42,7 +42,7 @@
             <p class="competency">Tools for Web Design</p>
             <p class="description">Before creating websites, web developers need the right tools.</p>
             <div class="actions-flex">
-                <button id="index-lesson1-btn" onclick="window.location.href='src\\html\\lesson-1\\lesson-1.html'">Start Lesson →</button>
+                <button id="index-lesson1-btn" data-lesson="1" data-href="src/html/lesson-1/lesson-1.html">Start Lesson →</button>
                 <button id="reset-lesson1-btn" style="display:none">Reset Progress</button>
             </div>
         </div>
@@ -52,7 +52,7 @@
             <h3>🏗️ Lesson 2</h3>
             <p class="competency">HTML Basics</p>
             <p class="description">Master HTML tags, elements, and semantic markup to structure web content.</p>
-            <button id="index-lesson2-btn">Start Lesson →</button>
+            <button id="index-lesson2-btn" data-lesson="2" data-prereq="1" data-href="src/html/lesson-2/lesson-2.html">Start Lesson →</button>
         </div>
 
         <!-- Lesson 3: CSS -->
@@ -60,7 +60,7 @@
             <h3>🎨 Lesson 3</h3>
             <p class="competency">CSS Styling & Layout</p>
             <p class="description">Learn styling, colors, fonts, flexbox, and responsive design techniques.</p>
-            <button onclick="window.location.href='src\\html\\lesson-3\\lesson-3.html'">Start Lesson →</button>
+            <button id="index-lesson3-btn" data-lesson="3" data-prereq="1,2" data-href="src/html/lesson-3/lesson-3.html">Start Lesson →</button>
         </div>
 
         <!-- Lesson 4: Final Project -->
@@ -68,7 +68,7 @@
             <h3>⭐ Lesson 4</h3>
             <p class="competency">Final Project</p>
             <p class="description">Build your own interactive webpage combining HTML and CSS skills.</p>
-            <button onclick="window.location.href='src\\html\\lesson-4\\lesson-4.html'" class="btn-primary">Start Project →</button>
+            <button id="index-lesson4-btn" data-lesson="4" data-prereq="1,2,3" data-href="src/html/lesson-4/lesson-4.html" class="btn-primary">Start Project →</button>
         </div>
 
     </main>

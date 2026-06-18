@@ -380,6 +380,70 @@ body {
     white-space: nowrap;
 }
 
+/* Visual treatment for buttons that are locked by prerequisites.
+   Keeps them readable but indicates they are not currently available. */
+.btn.locked {
+    opacity: 0.7;
+    filter: grayscale(0.25);
+    box-shadow: none;
+    border: 1px dashed rgba(255,255,255,0.08);
+}
+
+/* Locked card visual: dim the content and show a subtle overlay with padlock */
+.card.locked {
+    position: relative;
+    overflow: hidden;
+    filter: grayscale(0.15) brightness(0.9);
+}
+.card.locked::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.45));
+    pointer-events: none;
+}
+.card .lock-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Unlock animation: a short scale+glow effect when card unlocks */
+@keyframes unlockPulse {
+    0% { transform: scale(0.96); box-shadow: 0 0 0 rgba(0,0,0,0); }
+    40% { transform: scale(1.04); box-shadow: 0 18px 40px rgba(78, 201, 139, 0.18); }
+    100% { transform: scale(1); box-shadow: none; }
+}
+.card.unlock-animate {
+    animation: unlockPulse 700ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Button variant for unlocked state (subtle highlight) */
+.btn.unlocked {
+    transform-origin: center;
+    animation: none;
+}
+
+/* Visual treatment for buttons that can be explicitly unlocked */
+.btn.can-unlock {
+    background: linear-gradient(90deg, #ffe082, #ffd54f);
+    color: #000;
+    font-weight: 700;
+}
+.card.can-unlock {
+    outline: 2px dashed rgba(255,215,64,0.12);
+    box-shadow: 0 10px 30px rgba(255,193,7,0.06);
+}
+
 
 /*
 @media (max-width: 600px) {

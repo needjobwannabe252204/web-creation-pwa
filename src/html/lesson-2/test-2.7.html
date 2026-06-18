@@ -79,11 +79,115 @@
 
             &lt;input type="file"&gt;
 
-
-
-
             </pre>
          </div>
+            </div>
+         
+          <div class="card">
+            <div class="card">
+
+    <h2>💻 Try Your Own Code</h2>
+
+    <textarea id="editor" class="code-editor">
+<h1>Hello World</h1>
+
+<p>Write your HTML code here</p>
+
+<button onclick="alert('Welcome!')">
+Click Me
+</button>
+    </textarea>
+
+
+    <button class="run-btn" onclick="runCode()">
+        ▶ Run Code
+    </button>
+
+
+    <div id="output" class="output-box">
+        Your output will appear here...
+    </div>
+
+</div>
+
+
+<style>
+
+.code-editor {
+
+    width:100%;
+    height:300px;
+    background:#222;
+    color:#00ff00;
+    padding:15px;
+    border-radius:15px;
+    border:none;
+    font-size:16px;
+    resize:none;
+    box-sizing:border-box;
+
+}
+
+
+
+.run-btn {
+
+    margin-top:15px;
+    background:#008b00;
+    color:white;
+    padding:12px 25px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:18px;
+    width:100%;
+
+}
+
+
+
+.run-btn:hover {
+
+    background:#006400;
+
+}
+
+
+
+.output-box {
+
+    margin-top:20px;
+    min-height:250px;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    border:2px solid #ddd;
+    overflow:auto;
+
+}
+
+
+</style>
+
+
+
+<script>
+
+function runCode(){
+
+    let code = document.getElementById("editor").value;
+
+    let output = document.getElementById("output");
+
+    output.innerHTML = code;
+
+}
+
+
+</script>
+          </div>
+            
+
 
 
 
