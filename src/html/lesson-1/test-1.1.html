@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 1.1</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson-1.css">
+</head>
+
+<body>
+    
+    <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+    
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+
+        <div class="card" id="quiz-1">
+            <h2>📝 Quick Check</h2>
+                <p><strong>Directions:</strong> Choose the correct answer.</p>
+                <!-- Question 1 -->
+                <div class="question">
+                    <p>1. Which tool is commonly used to write HTML and CSS code?</p>
+                    <br>
+                    <label>
+                        <input type="radio" name="q1" value="a">
+                        a. Browser
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q1" value="b">
+                        b. Code Editor
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q1" value="c">
+                        c. Search Engine
+                    </label>
+                </div>
+                <br>
+                <hr>
+                <br>
+                <!-- Question 2 -->
+                <div class="question">
+                    <p>2. Which browser is commonly used to test websites?</p>
+                    <br>
+                    <label>
+                        <input type="radio" name="q2" value="a">
+                        a. Google Chrome
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q2" value="b">
+                        b. Microsoft Word
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q2" value="c">
+                        c. Paint
+                    </label>
+                </div>
+                <br>
+                <hr>
+                <br>
+                <!-- Question 3 -->
+                <div class="question">
+                    <p>3. Which design tool is used for creating website prototypes?</p>
+                    <br>
+                    <label>
+                        <input type="radio" name="q3" value="a">
+                        a. Figma
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q3" value="b">
+                        b. Calculator
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q3" value="c">
+                        c. File Explorer
+                    </label>
+                </div>
+                <br>
+                <hr>
+                <br>
+                <!-- Question 4 -->
+                <div class="question">
+                    <p>4. What is the main purpose of a web browser in web development?</p>
+                    <br>
+                    <label>
+                        <input type="radio" name="q4" value="a">
+                        a. To create website layouts
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q4" value="b">
+                        b. To test and preview websites
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q4" value="c">
+                        c. To store project files
+                    </label>
+                </div>
+                <br>
+                <hr>
+                <br>
+                <!-- Question 5 -->
+                <div class="question">
+                    <p>5. Why do developers use design tools before coding?</p>
+                    <br>
+                    <label>
+                        <input type="radio" name="q5" value="a">
+                        a. To plan and visualize website layouts
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q5" value="b">
+                        b. To connect websites to the internet
+                    </label><br>
+                    <label>
+                        <input type="radio" name="q5" value="c">
+                        c. To compile programming code
+                    </label>
+                </div>
+                <br>
+                <div class="actions-flex">
+                    <button id="submitQuiz" onclick="checkQuiz()">Submit Quiz</button>
+                    <button id="resetQuiz" style="display:none">Reset / Try Again</button>
+                    <div id="result" class="quiz-result"></div>
+                </div>
+        </div>
+
+    </main>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/lesson-1.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 1.1</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson-1.css">
+</head>
+
+<body>
+    
+    <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+    
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+
+        <div class="card">
+            <h3>💻 Topic 1: Code Editors</h3>
+            <p class="competency">What are Code Editors?</p>
+            <p>
+                Code editors are software applications used by web developers to write, edit, and organize website code such as HTML and CSS.
+                <br>
+                <br>
+                They make coding easier through features like:            
+            </p>
+            <ul class="list-indent">
+                <li>Syntax highlighting: Colors code elements for better readability.</li>
+                <li>Auto-completion: Suggests code snippets and tags as you type.</li>
+                <li>File management: Organizes project files and folders.</li>
+                <li>Debugging tools: Helps identify and fix errors in code.</li>
+            </ul>
+            <br>
+            <hr>
+            <br>
+            <h3>Examples of code editors</h3>
+            <div class="gallary" id="code-editor">
+                <img class="thumbnail"
+                    src="/assets/image/code-editor/vs-code.png"
+                    alt="Visual Studio Code logo"
+                    onclick="openImage(this)">
+                <img class="thumbnail"
+                    src="/assets/image/code-editor/sublime.png"
+                    alt="Sublime Text logo"
+                    onclick="openImage(this)">
+                <img class="thumbnail"
+                    src="/assets/image/code-editor/notepad++.png"
+                    alt="Notepad++ logo"
+                    onclick="openImage(this)">
+            </div>
+            <div id="imageModal" class="modal" onclick="closeImage()">
+                <span class="close" onclick="closeImage()">&times;</span>
+                <img id="modalImage" class="modal-content" onclick="event.stopPropagation()">
+            </div>
+            <br>
+            <ul class="list-indent">
+                <li>Visual Studio Code (VS Code) – One of the most popular editors used by developers.</li>
+                <li>Sublime Text – A lightweight and fast code editor.</li>
+                <li>Notepad++ – Beginner-friendly editor available on Windows.</li>
+            </ul>
+            <br>   
+            <hr>
+            <br>
+            <h3>Why are Code Editors Important?</h3>
+            <p>
+                Without code editors, creating websites would be difficult and inefficient. 
+                <br>
+                <br>
+                These tools help developers:
+            </p>
+            <ul class="list-indent">
+                <li>Write code faster</li>
+                <li>Find mistakes more easily</li>
+                <li>Organize project files</li>
+            </ul>
+            <br>
+            <video controls width="100%">
+                <source src="/assets/video/lesson-1/topic-1.1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <br>
+            <button id="topic1Btn" onclick="completeTopic(1)">Done!</button>
+        </div>
+
+    </main>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/lesson-1.js"></script>
+
+</body>
+</html>

@@ -26,68 +26,165 @@
 
     <main class="container">
         <div class="card">
-            <h2> Heading Challenges </h2>
-            <p class="competency"> scenario: </p>
-            <p class="description"> Robert is struggling to fix his code, help to identify and fix the code of robert</p>
+           
+<h2>HTML Heading Tags Quiz</h2>
+
+<p class="competency">
+    Test your knowledge about HTML heading tags.
+</p>
+
+<style>
+.quiz-container{
+    margin-top:20px;
+}
+
+.question{
+    margin-bottom:15px;
+    padding:15px;
+    background:#f8fafc;
+    border-radius:10px;
+    border:1px solid #e2e8f0;
+}
+
+.question p{
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.question label{
+    display:block;
+    margin:5px 0;
+    cursor:pointer;
+}
+
+.quiz-btn{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    width:100%;
+}
+
+.quiz-btn:hover{
+    background:#1d4ed8;
+}
+
+#result{
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    background:#f1f5f9;
+}
+.feedback{
+    margin-top:15px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+    color:rgb(0, 0, 0);
+}
+</style>
+
+<div class="quiz-container">
+
+    <form id="quizForm">
+
+        <div class="question">
+            <p  style="color:black;"> 1. Which tag creates the largest heading? </p>
+            <label style="color:black;"><input type="radio" name="q1" value="a"> &lt;h6&gt;</label>
+            <label style="color:black;"><input type="radio" name="q1" value="b"> &lt;h1&gt;</label>
+            <label style="color:black;"><input type="radio" name="q1" value="c"> &lt;title&gt;</label>
+            <label style="color:black;"><input type="radio" name="q1" value="d"> &lt;head&gt;</label>
         </div>
 
-       
-           
-<div class="activity-container">
+        <div class="question">
+            <p style="color:black;">2. Which heading tag is the smallest?</p>
+            <label  style="color:black;"><input type="radio" name="q2" value="a"> &lt;h1&gt;</label>
+            <label style="color:black;"><input type="radio" name="q2" value="b"> &lt;h3&gt;</label>
+            <label style="color:black;"><input type="radio" name="q2" value="c"> &lt;h6&gt;</label>
+            <label style="color:black;"><input type="radio" name="q2" value="d"> &lt;h2&gt;</label>
+        </div>
 
-    <div class="card">
-<textarea id="editor"
-style="width:100%;height:100px;padding:10px;font-family:Consolas;"
-placeholder='Type your HTML code here...'></textarea>
+        <div class="question">
+            <p style="color:black;">3. Which is the correct HTML code for a heading?</p>
+            <label style="color:black;"><input type="radio" name="q3" value="a"> &lt;heading&gt;Welcome&lt;/heading&gt;</label>
+            <label style="color:black;"><input type="radio" name="q3" value="b"> &lt;title&gt;Welcome&lt;/title&gt;</label>
+            <label style="color:black;"><input type="radio" name="q3" value="c"> &lt;h1&gt;Welcome&lt;/h1&gt;</label>
+            <label style="color:black;"><input type="radio" name="q3" value="d"> &lt;head&gt;Welcome&lt;/head&gt;</label>
+        </div>
 
-<br><br>
+        <div class="question">
+            <p style="color:black;">4. How many heading levels are available in HTML?</p>
+            <label style="color:black;"><input type="radio" name="q4" value="a"> 4</label>
+            <label style="color:black;"><input type="radio" name="q4" value="b"> 5</label>
+            <label style="color:black;"><input type="radio" name="q4" value="c"> 6</label>
+            <label style="color:black;"><input type="radio" name="q4" value="d"> 7</label>
+        </div>
 
-<button onclick="runCode()">▶ Run Code</button>
+        <div class="question">
+            <p style="color:black;">5. Which tag is invalid in HTML?</p>
+            <label style="color:black;"><input type="radio" name="q5" value="a"> &lt;h2&gt;</label>
+            <label style="color:black;"><input type="radio" name="q5" value="b"> &lt;h5&gt;</label>
+            <label style="color:black;"><input type="radio" name="q5" value="c"> &lt;h6&gt;</label>
+            <label style="color:black;"><input type="radio" name="q5" value="d"> &lt;h7&gt;</label>
+        </div>
 
-<div id="output"
-style="margin-top:15px;padding:15px;border:2px solid #ccc;border-radius:8px;min-height:50px;">
-</div>
+        <button type="button" class="quiz-btn" onclick="checkQuiz()">
+            Submit Quiz
+        </button>
 
-<br>
+    </form>
 
-
-<div id="message">
+    <div id="result"></div>
 
 </div>
 
 <script>
-function runCode() {
-    const code = document.getElementById("editor").value;
+function checkQuiz() {
 
-    // Display the student's code output
-    document.getElementById("output").innerHTML = code;
+    let score = 0;
 
-    // Show the completion button
-    document.getElementById("completeBtn").style.display = "inline-block";
-}
+    const answers = {
+        q1: "b",
+        q2: "c",
+        q3: "c",
+        q4: "c",
+        q5: "d"
+    };
 
-function completeActivity() {
+    for (let key in answers) {
+        const selected = document.querySelector(
+            `input[name="${key}"]:checked`
+        );
 
-    // Add congratulation message without removing output
-    document.getElementById("message").innerHTML = `
-        <div style="
-            margin-top:15px;
-            padding:15px;
-            background:#d4edda;
-            color:#155724;
-            border:1px solid #c3e6cb;
-            border-radius:8px;">
-            🎉 Congratulations! 🎉<br><br>
-           You successfully created and tested an HTML link!<br>
-            🌟 Excellent work! Keep up the good work
-    `;
+        if (selected && selected.value === answers[key]) {
+            score++;
+        }
+    }
 
-    // Hide the button after completion
-    document.getElementById("completeBtn").style.display = "none";
+    let message = "";
+
+    if (score === 5) {
+        message = "🎉 Excellent! You scored 5/5!";
+    } else if (score >= 3) {
+        message = "👍 Good Job! You scored " + score + "/5.";
+    } else {
+        message = "📚 Keep Practicing! You scored " + score + "/5.";
+    }
+
+    document.getElementById("result").innerHTML = message;
 }
 </script>
+</div>
 
-</script>
+    <div class="card">
+    <button class="btn" data-href="topic-2.2.html"> Done</button>
+    </div>
 
 
          </div>

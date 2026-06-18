@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 1.2</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson-1.css">
+</head>
+
+<body>
+    
+    <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+    
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+    
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+
+        <div class="card">
+
+            <h3>🌐 Topic 2: Web Browsers</h3>
+            <p class="competency">What are Web Browsers?</p>
+            <p>Developers use browsers to check whether their websites work correctly.</p>
+            <br>
+            <hr>
+            <br>
+            <h3>Examples of web browsers</h3>
+            <div class="gallary" id="web-browser">
+                <img class="thumbnail"
+                    src="/assets/image/browser/chrome.png"
+                    alt="Google Chrome logo"
+                    onclick="openImage(this)">
+                <img class="thumbnail"
+                    src="/assets/image/browser/firefox.png"
+                    alt="Mozilla Firefox logo"
+                    onclick="openImage(this)">
+                <img class="thumbnail"
+                    src="/assets/image/browser/edge.png"
+                    alt="Microsoft Edge logo"
+                    onclick="openImage(this)">
+            </div>
+            <br>
+            <ul class="list-indent">
+                <li>Google Chrome – The most widely used web browser.</li>
+                <li>Mozilla Firefox – Known for its privacy features.</li>
+                <li>Microsoft Edge – A modern browser built on Chromium.</li>
+            </ul>
+            <br>
+            <hr>
+            <br>
+            <h3>Why are Browsers Important?</h3>
+            <p>Browsers help developers:</p>
+            <ul class="list-indent">
+                <li>Preview their websites.</li>
+                <li>Test functionality.</li>
+                <li>Identify layout problems.</li>
+                <li>Ensure users have a good experience.</li>
+            </ul>
+            <br>
+            <button id="topic2Btn" onclick="completeTopic(2)">Done!</button>
+
+        </div>
+
+
+    </main>
+
+    <script src="../../js/script.js"></script>
+    <script src="../../js/lesson-1.js"></script>
+
+</body>
+</html>
