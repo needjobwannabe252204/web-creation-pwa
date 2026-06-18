@@ -1,111 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 4</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
-<body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
-
-    <div class="overlay" id="overlay"></div>
-
-    <main class="container">
-        <div class="card">
-            <h2> 🎮 Interactive Activity:</h2>
-            <p class="competency">Instructions:</p>
-            <p class="description"> chooose and Create a link that will leads to: </p>
-            <ul style="padding-left: 20px;">
-                <li> Google. </li>
-                <li> Facebook. </li>
-                <li> youtube. </li>
-            </ul>
-        </div>
-
-<div class="card">
-<textarea id="editor"
-style="width:100%;height:100px;padding:10px;font-family:Consolas;"
-placeholder='Type your HTML code here...'></textarea>
-
-<br><br>
-
-<button onclick="runCode()">▶ Run Code</button>
-
-<div id="output"
-style="margin-top:15px;padding:15px;border:2px solid #ccc;border-radius:8px;min-height:50px;">
-</div>
-
-<br>
-
-<button id="completeBtn"
-onclick="completeActivity()"
-style="display:none;">
-🎉 I Visited Google!
-</button>
-
-<div id="message"></div>
-
-<script>
-function runCode() {
-    const code = document.getElementById("editor").value;
-
-    // Display the student's code output
-    document.getElementById("output").innerHTML = code;
-
-    // Show the completion button
-    document.getElementById("completeBtn").style.display = "inline-block";
-}
-
-function completeActivity() {
-
-    // Add congratulation message without removing output
-    document.getElementById("message").innerHTML = `
-        <div style="
-            margin-top:15px;
-            padding:15px;
-            background:#d4edda;
-            color:#155724;
-            border:1px solid #c3e6cb;
-            border-radius:8px;">
-            🎉 Congratulations! 🎉<br><br>
-           You successfully created and tested an HTML link!<br>
-            🌟 Excellent work! Keep up the good work
-    `;
-
-    // Hide the button after completion
-    document.getElementById("completeBtn").style.display = "none";
-}
-</script>
-
-</script>
-        
-    </div>
-    
-             
-                
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Topic 2.3</title>
+        <link rel="stylesheet" href="../../css/style.css">
+        <link rel="stylesheet" href="../../css/lesson-2.css">  
+    </head>
 
 
+    <body>
+
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h2 class="title">Web Creation</h2>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
+
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
+
+        <main class="container">
+            
+            <div class="card">
+               <h3></h3> 
+               <p class=""></p>
+               <p></p>
+               <ul >
+
+               </ul>
             </div>
-         </div>
-    </main>
-    
 
-     
 
-    <script src="../../js/script.js"></script>
-</body>
+
+        </main>
+
+
+
+
+
+        <script src="../../js/script.js"></script>
+    </body>
+
 </html>
