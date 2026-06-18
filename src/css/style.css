@@ -357,6 +357,29 @@ body {
 .list-indent { padding-left: 20px; }
 .actions-flex { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
+/* Ensure inline action buttons (like the lesson card buttons) share the same height
+   and center their label. Prevent long text from wrapping and force consistent paddings. */
+.actions-flex button,
+.actions-flex .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    min-height: 44px; /* consistent tappable target */
+    padding: 0.6rem 1rem;
+    box-sizing: border-box;
+}
+
+/* If the text is slightly long, allow ellipsis to avoid wrapping while keeping height */
+.actions-flex button > span,
+.actions-flex .btn > span {
+    display: inline-block;
+    max-width: 18ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 
 /*
 @media (max-width: 600px) {

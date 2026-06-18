@@ -109,4 +109,72 @@ document.addEventListener('DOMContentLoaded', () => {
          if (target) window.location.href = target;
       });
    });
+
+   // Update index lesson card if lesson 1 was completed (activity finished)
+   try {
+      const raw = localStorage.getItem('lesson1State');
+      if (raw) {
+         const s = JSON.parse(raw);
+         if (s && s.lessonCompleted) {
+            const card = document.getElementById('index-lesson1-card');
+            if (card) card.style.borderLeft = '6px solid #4caf50';
+            const btn = document.getElementById('index-lesson1-btn');
+            if (btn) {
+               btn.textContent = '✅ Completed — Review';
+               btn.disabled = false; // allow review access
+               btn.style.opacity = '';
+            }
+         }
+      }
+   } catch (e) {
+      console.warn('Could not read lesson1State for index', e);
+   }
+   // Reset progress handler (clears lesson1State)
+   const resetBtn = document.getElementById('reset-lesson1-btn');
+   if (resetBtn) {
+      // Set initial visibility based on stored state
+      try {
+         const rawState = localStorage.getItem('lesson1State');
+         const s0 = rawState ? JSON.parse(rawState) : null;
+         if (s0 && s0.lessonCompleted) {
+            resetBtn.style.display = 'inline-flex';
+         } else {
+            resetBtn.style.display = 'none';
+         }
+      } catch (e) {
+         // If parsing fails, hide the button for safety
+         resetBtn.style.display = 'none';
+      }
+
+      resetBtn.addEventListener('click', () => {
+         if (!confirm('Clear Lesson 1 progress? This cannot be undone.')) return;
+         try {
+            localStorage.removeItem('lesson1State');
+         } catch (e) { console.warn('Could not clear lesson1State', e); }
+         location.reload();
+      });
+   }
+
+   // Prevent entering Lesson 2 unless Lesson 1 is completed
+   const lesson2Btn = document.getElementById('index-lesson2-btn');
+   if (lesson2Btn) {
+      lesson2Btn.addEventListener('click', (e) => {
+         e.preventDefault();
+         try {
+            const raw = localStorage.getItem('lesson1State');
+            const s = raw ? JSON.parse(raw) : null;
+            if (s && s.lessonCompleted) {
+               window.location.href = 'src/html/lesson-2/lesson-2.html';
+            } else {
+               if (confirm('You need to finish Lesson 1 before starting Lesson 2. Go to Lesson 1 now?')) {
+                  window.location.href = 'src/html/lesson-1/lesson-1.html';
+               }
+            }
+         } catch (err) {
+            console.warn('lesson2 navigation check failed', err);
+            // Fallback: allow navigation if something goes wrong with storage
+            window.location.href = 'src/html/lesson-2/lesson-2.html';
+         }
+      });
+   }
 });

@@ -60,6 +60,10 @@
                     alt="Canva logo"
                     onclick="openImage(this)">
             </div>
+            <div id="imageModal" class="modal" onclick="closeImage()">
+                <span class="close" onclick="closeImage()">&times;</span>
+                <img id="modalImage" class="modal-content" onclick="event.stopPropagation()">
+            </div>
             <br>
             <hr>
             <br>
@@ -71,7 +75,12 @@
                 <li>Save development time.</li>
             </ul>
             <br>
-            <button id="topic3Btn" onclick="completeTopic(3)">Done!</button>
+            <button class="btn" id="topic3Btn" onclick="completeTopic(3)">▶ Done</button>
+
+            <div class="nav-buttons">
+                <button class="btn" data-href="lesson-1.html" aria-label="Go Back">← Go Back</button>
+                <button class="btn btn-primary" data-href="lesson-1.html" aria-label="Next Topic">Next Topic →</button>
+            </div>
         </div>
 
     </main>

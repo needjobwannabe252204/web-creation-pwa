@@ -21,6 +21,41 @@ const completedTopics = {
 
 let quizPassed = false;      // true when user scores >= 3
 let quizAttempted = false;   // true when user submitted the quiz
+let lessonCompleted = false; // true when activity finished (Install VS Code)
+
+/* ---------- Persistence (localStorage) ---------- */
+function saveState() {
+    try {
+        const state = {
+            completedTopics: completedTopics,
+            quizPassed: !!quizPassed,
+            quizAttempted: !!quizAttempted,
+            lessonCompleted: !!lessonCompleted
+        };
+        localStorage.setItem('lesson1State', JSON.stringify(state));
+    } catch (e) {
+        console.warn('Could not save lesson state', e);
+    }
+}
+
+function loadState() {
+    try {
+        const raw = localStorage.getItem('lesson1State');
+        if (!raw) return;
+        const s = JSON.parse(raw);
+        if (s && s.completedTopics) {
+            // only copy known keys
+            Object.keys(completedTopics).forEach(k => {
+                if (s.completedTopics[k] !== undefined) completedTopics[k] = !!s.completedTopics[k];
+            });
+        }
+        if (s && typeof s.quizPassed === 'boolean') quizPassed = s.quizPassed;
+        if (s && typeof s.quizAttempted === 'boolean') quizAttempted = s.quizAttempted;
+        if (s && typeof s.lessonCompleted === 'boolean') lessonCompleted = s.lessonCompleted;
+    } catch (e) {
+        console.warn('Could not load lesson state', e);
+    }
+}
 
 
 /* ---------- Helpers ---------- */
@@ -37,6 +72,10 @@ function showResult(text, color) {
     resultBox.style.display = 'block';
     resultBox.style.background = color || '';
     resultBox.innerHTML = text;
+}
+
+function getQuizCard() {
+    return getEl('quiz-1') || getEl('quiz-card');
 }
 
 function swapSubmitReset(showReset = true) {
@@ -76,11 +115,13 @@ function completeTopic(topicNumber) {
     completedTopics[`topic${topicNumber}`] = true;
     const btn = getEl(`topic${topicNumber}Btn`);
     if (btn) {
-        btn.innerHTML = '✅ Completed';
-        btn.disabled = true;
+        btn.innerHTML = '✅ Completed — Review';
+        // keep the button enabled so the user can review the topic
+        btn.disabled = false;
         setCardBorder(btn.closest('.card'), '#4caf50');
     }
     updateProgress();
+    saveState();
 }
 
 
@@ -115,7 +156,7 @@ function checkQuiz() {
     quizAttempted = true;
 
     const score = _scoreQuiz();
-    const quizCard = getEl('quiz-1');
+    const quizCard = getQuizCard();
 
     if (score >= 3) {
         quizPassed = true;
@@ -132,6 +173,7 @@ function checkQuiz() {
 
     swapSubmitReset(true);
     updateProgress();
+    saveState();
 }
 
 function resetQuiz() {
@@ -149,9 +191,10 @@ function resetQuiz() {
     quizAttempted = false;
     completedTopics.quiz = false;
 
-    setCardBorder(getEl('quiz-1'), '');
+    setCardBorder(getQuizCard(), '');
     swapSubmitReset(false);
     updateProgress();
+    saveState();
 }
 
 
@@ -178,6 +221,12 @@ function closeImage() {
 
 /* ---------- Activity starter ---------- */
 function startActivity() {
+    // If lesson already completed, allow review access without re-checking
+    if (lessonCompleted) {
+        window.open('https://code.visualstudio.com/', '_blank');
+        return;
+    }
+
     if (!completedTopics.topic1 || !completedTopics.topic2 || !completedTopics.topic3) {
         alert('📚 Please finish Topics 1, 2, and 3 first.');
         return;
@@ -190,12 +239,31 @@ function startActivity() {
         alert('❌ You must score at least 3/5 to continue.');
         return;
     }
+
+    // mark lesson completed and persist state so index can reflect completion
+    lessonCompleted = true;
+    saveState();
+    // update UI immediately so activity card shows completed state
+    try {
+        const activityCard = getEl('activity-card');
+        if (activityCard) setCardBorder(activityCard, '#4caf50');
+        const activityBtnEl = getEl('activityBtn');
+        if (activityBtnEl) {
+            activityBtnEl.innerHTML = '✅ Completed — Review';
+            activityBtnEl.disabled = false;
+            activityBtnEl.style.opacity = '';
+        }
+    } catch (e) { console.warn(e); }
+
     window.open('https://code.visualstudio.com/', '_blank');
 }
 
 
 /* ---------- Init ---------- */
 document.addEventListener('DOMContentLoaded', () => {
+    // restore persisted state from previous page visits
+    loadState();
+
     const submitBtn = getEl('submitQuiz');
     const resetBtn = getEl('resetQuiz');
     if (submitBtn) submitBtn.style.display = 'inline-block';
@@ -217,6 +285,63 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextNavBtn) {
         const url2 = nextNavBtn.dataset?.href || nextNavBtn.getAttribute('data-href');
         nextNavBtn.addEventListener('click', () => { if (url2) window.location.href = url2; });
+    }
+
+    // quiz navigation gating: prevent entering quiz page until topics are done
+    const quizBtn = getEl('quizBtn');
+    if (quizBtn) {
+        const quizUrl = quizBtn.dataset?.href || quizBtn.getAttribute('data-href');
+        // set initial disabled state if topics incomplete
+        if (!completedTopics.topic1 || !completedTopics.topic2 || !completedTopics.topic3) {
+            quizBtn.disabled = true;
+            quizBtn.style.opacity = '0.6';
+            quizBtn.title = 'Complete Topics 1–3 to unlock the quiz';
+        } else {
+            quizBtn.disabled = false;
+            quizBtn.style.opacity = '';
+            quizBtn.title = '';
+        }
+
+        quizBtn.addEventListener('click', () => {
+            if (!completedTopics.topic1 || !completedTopics.topic2 || !completedTopics.topic3) {
+                alert('Please complete Topics 1, 2, and 3 before taking the quiz.');
+                return;
+            }
+            if (quizUrl) window.location.href = quizUrl;
+        });
+    }
+
+    // restore UI for completed topics (works across lesson pages)
+    [1,2,3].forEach(i => {
+        try {
+            if (completedTopics[`topic${i}`]) {
+                const btn = getEl(`topic${i}Btn`);
+                if (btn) {
+                    btn.innerHTML = '✅ Completed — Review';
+                    // keep button enabled for review access
+                    btn.disabled = false;
+                    setCardBorder(btn.closest('.card'), '#4caf50');
+                }
+            }
+        } catch (e) { /* ignore missing elements on some pages */ }
+    });
+
+    // if quiz already attempted, switch buttons to show reset
+    if (quizAttempted) swapSubmitReset(true);
+    if (quizAttempted && typeof quizPassed === 'boolean') {
+        const quizCard = getEl('quiz-1');
+        setCardBorder(quizCard, quizPassed ? '#4caf50' : '#c62828');
+    }
+
+    // Show activity completed state if lessonCompleted
+    if (lessonCompleted) {
+        const activityCard = getEl('activity-card');
+        if (activityCard) setCardBorder(activityCard, '#4caf50');
+        if (activityBtn) {
+            activityBtn.innerHTML = '✅ Completed — Review';
+            activityBtn.disabled = false; // allow review
+            activityBtn.style.opacity = '';
+        }
     }
 
     updateProgress();
