@@ -55,6 +55,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 50px; /* uniform card height */
+    min-width: 0;
 }
 
 .card h2, .card h3 {

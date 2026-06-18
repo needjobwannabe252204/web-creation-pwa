@@ -1,54 +1,54 @@
-/* Added per request: code-box, table wrapper and table rules */
+/* Code Block */
 .code-box {
-  width: 100%;
-  padding: 1rem;
-  background: #0d1117;
-  border-radius: 8px;
-  overflow-x: auto;
-  box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: #0d1117;
+    border-radius: 8px;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 .code-box pre {
-  margin: 0;
+    margin: 0;
+    white-space: pre;
+    color: #d4d4d4;
+    font-family: Consolas, monospace;
 }
 
 .code-box code {
-  font-family: Consolas, monospace;
-  color: #d4d4d4;
+    font-family: inherit;
+    color: inherit;
 }
 
+/* Tables */
 .table-wrapper {
-  overflow-x: auto;
+    width: 100%;
+    overflow-x: auto;
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.code-box pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin: 0;
-  font-family: Consolas, monospace;
-  font-size: 13px;
-}
-
-/* basic table visuals to replace deprecated bgcolor/font usage */
 table th {
-  background: #000;
-  color: #fff;
-  padding: 8px;
-  text-align: left;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    text-align: left;
 }
+
 table td {
-  padding: 8px;
-  border: 1px solid #ccc;
+    padding: 8px;
+    border: 1px solid #ccc;
 }
 
 .tag {
-  color: #569cd6;
+    color: #569cd6;
 }
+
 .text {
-  color: #ce9178;
+    color: #ce9178;
 }
