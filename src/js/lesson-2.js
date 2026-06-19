@@ -204,120 +204,121 @@ document.addEventListener('DOMContentLoaded', function () {
     loadLesson2State();
     applyLesson2StateToUI();
 
-    if (!tagBank || dropBoxes.length === 0) return; // nothing to do on pages without the activity
+    // If page contains the tag-bank activity, bind its handlers; otherwise skip activity setup
+    if (tagBank && dropBoxes.length > 0) {
+        const submitBtn = document.getElementById('quizSubmit');
+        const resetBtn = document.getElementById('quizReset');
+        const returnBtn = document.getElementById('quizReturn');
+        const nextBtn = document.getElementById('quizNext');
+        const resultEl = document.getElementById('quizResult');
 
-    const submitBtn = document.getElementById('quizSubmit');
-    const resetBtn = document.getElementById('quizReset');
-    const returnBtn = document.getElementById('quizReturn');
-    const nextBtn = document.getElementById('quizNext');
-    const resultEl = document.getElementById('quizResult');
+        // initial UI
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (resetBtn) resetBtn.style.display = 'none';
 
-    // initial UI
-    if (nextBtn) nextBtn.style.display = 'none';
-    if (resetBtn) resetBtn.style.display = 'none';
-
-    function allBoxesFilled() {
-        return Array.from(dropBoxes).every(b => b.firstChild);
-    }
-
-    function submitAnswers() {
-        if (!allBoxesFilled()) {
-            alert('Please place all tags into the boxes before submitting.');
-            return;
+        function allBoxesFilled() {
+            return Array.from(dropBoxes).every(b => b.firstChild);
         }
 
-        let score = 0;
-        dropBoxes.forEach(box => {
-            const tagEl = box.firstChild;
-            if (tagEl && tagEl.dataset && tagEl.dataset.tag === box.dataset.answer) score++;
-        });
+        function submitAnswers() {
+            if (!allBoxesFilled()) {
+                alert('Please place all tags into the boxes before submitting.');
+                return;
+            }
 
-        if (resultEl) {
-            resultEl.textContent = `🏆 Score: ${score}/${dropBoxes.length}`;
-            resultEl.style.display = 'block';
+            let score = 0;
+            dropBoxes.forEach(box => {
+                const tagEl = box.firstChild;
+                if (tagEl && tagEl.dataset && tagEl.dataset.tag === box.dataset.answer) score++;
+            });
+
+            if (resultEl) {
+                resultEl.textContent = `🏆 Score: ${score}/${dropBoxes.length}`;
+                resultEl.style.display = 'block';
+            }
+
+            // hide submit and show Reset button (match lesson-1 pattern)
+            // mark attempted and pass/fail in lesson-2 state
+            quizAttempted2 = true;
+            quizPassed2 = (score === dropBoxes.length);
+            // when quiz passed, mark topic1 completed
+            if (quizPassed2) {
+                completedTopics2.topic1 = true;
+            }
+            completedTopics2.quiz = true;
+            saveLesson2State();
+            applyLesson2StateToUI();
+
+
+            if (submitBtn) submitBtn.style.display = 'none';
+            if (resetBtn) {
+                resetBtn.style.display = 'inline-block';
+                // ensure single handler
+                resetBtn.removeEventListener('click', resetQuiz);
+                resetBtn.addEventListener('click', resetQuiz);
+            }
+
+            // show next button (proceed to next topic)
+            if (nextBtn) nextBtn.style.display = 'inline-block';
+
+            // return button should always be visible; wire it to go back to topic-2.1
+            if (returnBtn) {
+                returnBtn.addEventListener('click', () => { window.location.href = 'topic-2.1.html'; });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => { window.location.href = 'topic-2.2.html'; });
+            }
         }
 
-        // hide submit and show Reset button (match lesson-1 pattern)
-        // mark attempted and pass/fail in lesson-2 state
-        quizAttempted2 = true;
-        quizPassed2 = (score === dropBoxes.length);
-        // when quiz passed, mark topic1 completed
-        if (quizPassed2) {
-            completedTopics2.topic1 = true;
+        function resetQuiz() {
+            const tags = document.querySelectorAll('.tag');
+            tags.forEach(t => {
+                t.classList.remove('dragging');
+                t.style.left = '';
+                t.style.top = '';
+                tagBank.appendChild(t);
+            });
+
+            dropBoxes.forEach(b => b.innerHTML = '');
+            if (resultEl) {
+                resultEl.textContent = '';
+                resultEl.style.display = 'none';
+            }
+
+            // restore submit button behaviour and hide next/reset
+            if (resetBtn) {
+                resetBtn.removeEventListener('click', resetQuiz);
+                resetBtn.style.display = 'none';
+            }
+            if (submitBtn) {
+                submitBtn.style.display = 'inline-block';
+                // ensure only one submit handler
+                submitBtn.removeEventListener('click', resetQuiz);
+                submitBtn.removeEventListener('click', submitAnswers);
+                submitBtn.addEventListener('click', submitAnswers);
+            }
+            if (nextBtn) nextBtn.style.display = 'none';
+
+            // clear lesson-2 quiz attempt state so user can retry
+            quizAttempted2 = false;
+            quizPassed2 = false;
+            completedTopics2.quiz = false;
+            saveLesson2State();
+            applyLesson2StateToUI();
         }
-        completedTopics2.quiz = true;
-        saveLesson2State();
-        applyLesson2StateToUI();
 
-
-        if (submitBtn) submitBtn.style.display = 'none';
-        if (resetBtn) {
-            resetBtn.style.display = 'inline-block';
-            // ensure single handler
-            resetBtn.removeEventListener('click', resetQuiz);
-            resetBtn.addEventListener('click', resetQuiz);
-        }
-
-        // show next button (proceed to next topic)
-        if (nextBtn) nextBtn.style.display = 'inline-block';
-
-        // return button should always be visible; wire it to go back to topic-2.1
+        if (submitBtn) submitBtn.addEventListener('click', submitAnswers);
         if (returnBtn) {
+            // Return always navigates back to topic-2.1
             returnBtn.addEventListener('click', () => { window.location.href = 'topic-2.1.html'; });
         }
-
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => { window.location.href = 'topic-2.2.html'; });
-        }
-    }
-
-    function resetQuiz() {
-        const tags = document.querySelectorAll('.tag');
-        tags.forEach(t => {
-            t.classList.remove('dragging');
-            t.style.left = '';
-            t.style.top = '';
-            tagBank.appendChild(t);
-        });
-
-        dropBoxes.forEach(b => b.innerHTML = '');
-        if (resultEl) {
-            resultEl.textContent = '';
-            resultEl.style.display = 'none';
-        }
-
-        // restore submit button behaviour and hide next/reset
-        if (resetBtn) {
-            resetBtn.removeEventListener('click', resetQuiz);
-            resetBtn.style.display = 'none';
-        }
-        if (submitBtn) {
-            submitBtn.style.display = 'inline-block';
-            // ensure only one submit handler
-            submitBtn.removeEventListener('click', resetQuiz);
-            submitBtn.removeEventListener('click', submitAnswers);
-            submitBtn.addEventListener('click', submitAnswers);
-        }
-        if (nextBtn) nextBtn.style.display = 'none';
-
-        // clear lesson-2 quiz attempt state so user can retry
-        quizAttempted2 = false;
-        quizPassed2 = false;
-        completedTopics2.quiz = false;
-        saveLesson2State();
-        applyLesson2StateToUI();
-    }
-
-    if (submitBtn) submitBtn.addEventListener('click', submitAnswers);
-    if (returnBtn) {
-        // Return always navigates back to topic-2.1
-        returnBtn.addEventListener('click', () => { window.location.href = 'topic-2.1.html'; });
     }
 
     // === Heading quiz (test-2.2) logic binding ===
     const headingSubmit = document.getElementById('headingSubmit');
     const quizForm = document.getElementById('quizForm');
-    const headingResult = document.getElementById('result');
+    const headingResult = document.getElementById('headingResult');
     const headingReset = document.getElementById('headingReset');
     const headingReturn = document.getElementById('headingReturn');
     const headingNext = document.getElementById('headingNext');
@@ -363,10 +364,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const answers = { q1: 'b', q2: 'c', q3: 'c', q4: 'c', q5: 'd' };
         let score = 0;
+        // Debug: log selected values to console to trace grading issues
+        const debugSelections = {};
         for (let key of keys) {
             const selected = quizForm.querySelector(`input[name="${key}"]:checked`);
+            const val = selected ? selected.value : null;
+            debugSelections[key] = val;
             if (selected && selected.value === answers[key]) score++;
         }
+        if (window && window.console) console.log('gradeHeadingQuiz selections:', debugSelections, 'score:', score);
 
         let message = '';
         if (score === 5) message = '🎉 Excellent! You scored 5/5!';
@@ -391,25 +397,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (headingSubmit) headingSubmit.style.display = 'none';
         if (headingReset) {
             headingReset.style.display = 'inline-block';
-            headingReset.addEventListener('click', resetHeadingQuiz);
         }
 
-        // show next and wire navigation
-        if (headingNext) {
-            headingNext.style.display = 'inline-block';
-            headingNext.addEventListener('click', () => { window.location.href = 'topic-2.3.html'; });
-        }
-        if (headingReturn) {
-            headingReturn.addEventListener('click', () => { window.location.href = 'topic-2.2.html'; });
-        }
+        // show next (navigation handled globally via data-href/script.js)
+        if (headingNext) headingNext.style.display = 'inline-block';
     }
 
     if (headingSubmit && quizForm && headingResult) {
         headingSubmit.addEventListener('click', gradeHeadingQuiz);
     }
     if (headingResult) headingResult.style.display = 'none';
-    if (headingReturn) {
-        const url = headingReturn.dataset?.href || headingReturn.getAttribute('data-href');
-        headingReturn.addEventListener('click', () => { if (url) window.location.href = url; });
-    }
+    // register reset handler once
+    if (headingReset) headingReset.addEventListener('click', resetHeadingQuiz);
 });
