@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<!-- Header: site title and menu (hamburger) -->
+     <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+    </header>
+
+    <!-- Primary navigation / sidebar -->
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+        <div class="card">
+          <h2> Topic 1: What is CSS? </h2>
+            <p class="competency">CSS stands for Cascading Style Sheets.</p>
+            <br>
+            <p> While HTML provides the structure of a webpage, CSS controls how it looks.</p>
+            <br>
+            <p>Think of it this way: </p>
+            <br>
+            <p>🏠 HTML = House Structure</p>
+            <p>🎨 CSS = Paint, Decorations, Furniture</p>
+            <br>
+            <hr>
+            <br>
+            <p><b> Example: </b></p>
+            <br>
+            <style>
+.code-box{
+    background:#050505;
+    border:1px solid #222;
+    border-radius:16px;
+    padding:12px 16px;
+    max-width:450px;
+    color:white;
+    font-family:Consolas, monospace;
+}
+
+.code-title{
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+.code-box pre{
+    margin:0;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.selector{color:#58a6ff;}
+.value{color:#ffa657;}
+</style>
+
+<div class="code-box">
+    <div class="code-title">&lt;/&gt; CSS</div>
+
+<pre><code><span class="selector">h1</span> {
+    color: <span class="value">blue</span>;
+}</code></pre>
+</div>
+        <br>
+        <hr>
+        <br>
+
+        <p><b>Why CSS is Important</b></p>
+        <br>
+        <p> Without CSS, websites look plain and difficult to use. </p>
+        <br>
+        <p> CSS helps: </p>
+        
+        <ul style="padding: 20px;">
+            <li>Make websites attractive</li>
+            <li>Improve readability</li>
+            <li>Create professional layouts</li>
+            <li>Make websites work on phones and tablets</li>
+            <li>Improve user experience</li>
+        </ul>
+        <br>
+        <hr>
+        <br>
+        <p><b>Real World Examples</b></p>
+        <br>
+        <p>Popular websites that heavily use CSS:</p>
+         <ul style="padding: 20px;">
+            <li>facebook</li>
+            <li>youtube</li>
+            <li>netflix</li>
+         
+
+       
+
+
+
+
+
+
+        </div>
+
+    </main>
+
+    <script src="../../js/script.js"></script>
+</body>
+</html>

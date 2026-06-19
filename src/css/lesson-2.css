@@ -85,10 +85,100 @@ table td {
     background-color: rgba(74, 144, 217, 0.15);
 }
 
+/* Styles moved from test-2.4 inline CSS */
+.activity-container{
+    margin-top:20px;
+}
+.instructions{
+    background:#eef4ff;
+    border-left:5px solid #3b82f6;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+.image-link{
+    background:#f8fafc;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:15px;
+    word-break:break-all;
+}
+.code-editor {
+    width:100%;
+    min-height:140px;
+    background:#ffffff;
+    color:#111111;
+    border:2px solid #d1d5db;
+    border-radius:10px;
+    padding:12px;
+    font-family:Consolas, monospace;
+    font-size:15px;
+    resize:vertical;
+    box-sizing:border-box;
+}
+.code-box {
+    /* dark read-only code block */
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: #0d1117;
+    border-radius: 8px;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+.run-btn{
+    margin-top:15px;
+    padding:12px 20px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    width:100%;
+}
+.run-btn:hover{ background:#1d4ed8; }
+.output-box{
+    min-height:220px;
+    margin-top:15px;
+    border:2px dashed #cbd5e1;
+    border-radius:10px;
+    padding:15px;
+    text-align:center;
+    background:white;
+}
+/* Ensure rendered images in the output area stay responsive and don't overflow */
+.output-box img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.output-box iframe, .output-box video {
+    max-width: 100%;
+    height: auto;
+}
+.feedback{ margin-top:15px; font-size:18px; font-weight:bold; text-align:center; }
+
 .feedback{
     margin-top:15px;
     text-align:center;
     font-size:18px;
     font-weight:bold;
     color:rgb(0, 0, 0);
+}
+
+/* Quiz / activity result variants (base rules live in style.css) */
+.quiz-result.success {
+    /* Match Lesson‑1 strong success color and high contrast text */
+    background: #2e7d32; /* same as lesson-1 showResult success */
+    color: #ffffff;
+    border: none;
+}
+.quiz-result.error {
+    /* Match Lesson‑1 failure color for stronger visual feedback */
+    background: #c62828;
+    color: #ffffff;
+    border: none;
 }

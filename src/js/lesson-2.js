@@ -1,13 +1,43 @@
 const runBtn = document.getElementById("runBtn");
 
-if (runBtn) {
-    runBtn.addEventListener("click", function () {
+function handleRunClick() {
+    try {
         const editor = document.getElementById("editor");
         const output = document.getElementById("output");
-
+        if (!editor || !output) {
+            console.warn('runBtn clicked but editor/output not found');
+            return;
+        }
         output.innerHTML = editor.value;
-    });
+        // Ensure any links in the output open in a new tab and don't navigate away
+        try {
+            output.querySelectorAll('a').forEach(a => { a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); });
+        } catch (e) { /* ignore */ }
+        const completeBtn = document.getElementById('completeBtn');
+        if (completeBtn) completeBtn.style.display = 'inline-block';
+        // If the page provides a #result element, apply image-activity style grading
+        try {
+            const resultEl = document.getElementById('result');
+            if (resultEl) {
+                const val = (editor.value || '').toLowerCase();
+                if (val.includes('src=')) {
+                    resultEl.innerHTML = '✅ Correct! The missing attribute is <strong>src</strong>.';
+                    resultEl.classList.remove('error');
+                    resultEl.classList.add('success');
+                    resultEl.style.display = 'block';
+                } else {
+                    resultEl.innerHTML = '❌ Incorrect. The image cannot be displayed.';
+                    resultEl.classList.remove('success');
+                    resultEl.classList.add('error');
+                    resultEl.style.display = 'block';
+                }
+            }
+        } catch (e) { /* ignore */ }
+        console.log('lesson-2: run executed');
+    } catch (e) { console.error('runBtn handler error', e); }
 }
+
+if (runBtn) runBtn.addEventListener('click', handleRunClick);
 
 /* ==========================================================
    LESSON 2 — lesson-specific behaviors
@@ -54,6 +84,17 @@ function saveLesson2State() {
     } catch (e) { console.warn('Could not save lesson2 state', e); }
 }
 
+// Helper: set card border by finding a button with matching data-href
+function setCardBorderColorForButtonHref(href, color) {
+    try {
+        const btn = document.querySelector(`button[data-href="${href}"]`);
+        if (!btn) return;
+        const card = btn.closest('.card');
+        if (!card) return;
+        card.style.borderLeft = color ? `6px solid ${color}` : '';
+    } catch (e) { /* ignore */ }
+}
+
 function loadLesson2State() {
     try {
         const raw = localStorage.getItem('lesson2State');
@@ -68,16 +109,6 @@ function loadLesson2State() {
         if (s && typeof s.quizAttempted === 'boolean') quizAttempted2 = s.quizAttempted;
         if (s && typeof s.lessonCompleted === 'boolean') lessonCompleted2 = s.lessonCompleted;
     } catch (e) { console.warn('Could not load lesson2 state', e); }
-}
-
-function setCardBorderColorForButtonHref(href, color) {
-    try {
-        const btn = document.querySelector(`button[data-href="${href}"]`);
-        if (btn) {
-            const card = btn.closest('.card');
-            if (card) card.style.borderLeft = color ? `6px solid ${color}` : '';
-        }
-    } catch (e) { /* ignore */ }
 }
 
 function updateLesson2ProgressUI() {
@@ -352,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function () {
         saveLesson2State();
         applyLesson2StateToUI();
     }
-
     function gradeHeadingQuiz() {
         if (!quizForm || !headingResult) return;
 
@@ -409,4 +439,195 @@ document.addEventListener('DOMContentLoaded', function () {
     if (headingResult) headingResult.style.display = 'none';
     // register reset handler once
     if (headingReset) headingReset.addEventListener('click', resetHeadingQuiz);
+
+    // small activity handlers are below (linkSubmit/linkReset) —
+    // removed old completeBtn/messageEl block (legacy injection) so
+    // behavior is fully handled by linkSubmit/linkReset below.
+
+    // Link activity (test-2.3) submit/reset handling
+    const linkSubmit = document.getElementById('linkSubmit');
+    const linkReset = document.getElementById('linkReset');
+    // Prefer a page-specific result element, but fall back to the global
+    // lesson result `#result` used by lesson-1 pages. Ensure we have the
+    // same styling by adding the `quiz-result` class when needed.
+    let linkResult = document.getElementById('linkResult') || document.getElementById('result') || document.getElementById('link-result');
+    if (linkResult && !linkResult.classList.contains('quiz-result')) linkResult.classList.add('quiz-result');
+    const linkNext = document.getElementById('linkNext');
+    const linkReturn = document.getElementById('linkReturn');
+    const editorEl = document.getElementById('editor');
+    const outputEl = document.getElementById('output');
+
+    function checkLinks() {
+        if (!outputEl) return { ok: false, error: 'output missing' };
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(outputEl.innerHTML || '', 'text/html');
+        const anchors = Array.from(doc.querySelectorAll('a'));
+
+        // Require exactly one anchor
+        if (anchors.length === 0) return { ok: false, error: 'No anchor found. Add one <a> tag linking to Google, Facebook or YouTube.' };
+        if (anchors.length > 1) return { ok: false, error: 'Please include exactly one anchor. Remove extra <a> tags and try again.' };
+
+        const a = anchors[0];
+        const href = (a.getAttribute('href') || '').toLowerCase();
+        const allowed = ['google', 'facebook', 'youtube', 'youtu.be'];
+        const matches = allowed.find(k => href.includes(k));
+        if (!matches) return { ok: false, error: 'Anchor must link to Google, Facebook, or YouTube. Other targets are not accepted.' };
+
+        // success: return which target matched
+        return { ok: true, target: matches };
+    }
+
+    if (linkSubmit) {
+        linkSubmit.addEventListener('click', () => {
+            console.log('lesson-2: linkSubmit clicked');
+            const result = checkLinks();
+            console.log('lesson-2: checkLinks result', result);
+            if (!result.ok) {
+                alert(result.error || 'Invalid submission — please try again.');
+                return;
+            }
+            if (linkResult) {
+                linkResult.innerHTML = '✅ Activity complete — linked to ' + result.target + '.';
+                linkResult.classList.remove('error');
+                linkResult.classList.add('success');
+                linkResult.style.display = 'block';
+            }
+            if (linkSubmit) linkSubmit.style.display = 'none';
+            if (linkReset) linkReset.style.display = 'inline-block';
+            if (linkNext) linkNext.style.display = 'inline-block';
+
+            // mark topic 3 completed
+            completedTopics2.topic3 = true;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
+
+    if (linkReset) {
+        linkReset.addEventListener('click', () => {
+            if (editorEl) editorEl.value = '';
+            if (outputEl) outputEl.innerHTML = '';
+            if (linkResult) { linkResult.innerHTML = ''; linkResult.classList.remove('success','error'); linkResult.style.display = 'none'; }
+            if (linkReset) linkReset.style.display = 'none';
+            if (linkNext) linkNext.style.display = 'none';
+            if (linkSubmit) linkSubmit.style.display = 'inline-block';
+            if (linkResult) { linkResult.innerHTML = ''; linkResult.classList.remove('success','error'); linkResult.style.display = 'none'; }
+
+            completedTopics2.topic3 = false;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
+
+    // === Image activity (test-2.4) submit/reset handling ===
+    const imageSubmit = document.getElementById('imageSubmit');
+    const imageReset = document.getElementById('imageReset');
+    const imageNext = document.getElementById('imageNext');
+    const imageReturn = document.getElementById('imageReturn');
+    const imageResult = document.getElementById('result') || document.getElementById('imageResult');
+
+    function checkImage() {
+        if (!outputEl) return { ok: false, error: 'output missing' };
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(outputEl.innerHTML || '', 'text/html');
+        const imgs = Array.from(doc.querySelectorAll('img'));
+        if (imgs.length === 0) return { ok: false, error: 'No <img> tag found. Add one with a src attribute.' };
+        if (imgs.length > 1) return { ok: false, error: 'Please include exactly one <img> tag.' };
+        const src = imgs[0].getAttribute('src') || '';
+        if (!src) return { ok: false, error: 'Image tag missing src attribute.' };
+        return { ok: true, src };
+    }
+
+    if (imageSubmit) {
+        imageSubmit.addEventListener('click', () => {
+            console.log('lesson-2: imageSubmit clicked');
+            const result = checkImage();
+            console.log('lesson-2: checkImage result', result);
+            if (!result.ok) { alert(result.error || 'Invalid submission — please try again.'); return; }
+            if (imageResult) {
+                imageResult.innerHTML = '✅ Activity complete — image displayed.';
+                imageResult.classList.remove('error');
+                imageResult.classList.add('success');
+                imageResult.style.display = 'block';
+            }
+            if (imageSubmit) imageSubmit.style.display = 'none';
+            if (imageReset) imageReset.style.display = 'inline-block';
+            if (imageNext) imageNext.style.display = 'inline-block';
+
+            // mark topic 4 completed
+            completedTopics2.topic4 = true;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
+
+    if (imageReset) {
+        imageReset.addEventListener('click', () => {
+            if (editorEl) editorEl.value = '<img ____="https://picsum.photos/400/250" alt="Beautiful Image">';
+            if (outputEl) outputEl.innerHTML = '';
+            if (imageResult) { imageResult.innerHTML = ''; imageResult.classList.remove('success','error'); imageResult.style.display = 'none'; }
+            if (imageReset) imageReset.style.display = 'none';
+            if (imageNext) imageNext.style.display = 'none';
+            if (imageSubmit) imageSubmit.style.display = 'inline-block';
+
+            completedTopics2.topic4 = false;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
+
+    // === List activity (test-2.5) submit/reset handling ===
+    const listSubmit = document.getElementById('listSubmit');
+    const listReset = document.getElementById('listReset');
+    const listNext = document.getElementById('listNext');
+    const listReturn = document.getElementById('listReturn');
+    const listResult = document.getElementById('result') || document.getElementById('listResult');
+
+    function checkList() {
+        if (!outputEl) return { ok: false, error: 'output missing' };
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(outputEl.innerHTML || '', 'text/html');
+        const ols = Array.from(doc.querySelectorAll('ol'));
+        if (ols.length === 0) return { ok: false, error: 'No <ol> found. Use <ol> to create a numbered list.' };
+        if (ols.length > 1) return { ok: false, error: 'Please include exactly one <ol>.' };
+        return { ok: true };
+    }
+
+    if (listSubmit) {
+        listSubmit.addEventListener('click', () => {
+            console.log('lesson-2: listSubmit clicked');
+            const result = checkList();
+            console.log('lesson-2: checkList result', result);
+            if (!result.ok) { alert(result.error || 'Invalid submission — please try again.'); return; }
+            if (listResult) {
+                listResult.innerHTML = '✅ Activity complete — list looks good.';
+                listResult.classList.remove('error');
+                listResult.classList.add('success');
+                listResult.style.display = 'block';
+            }
+            if (listSubmit) listSubmit.style.display = 'none';
+            if (listReset) listReset.style.display = 'inline-block';
+            if (listNext) listNext.style.display = 'inline-block';
+
+            // mark topic 5 completed
+            completedTopics2.topic5 = true;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
+
+    if (listReset) {
+        listReset.addEventListener('click', () => {
+            if (editorEl) editorEl.value = '<____>\n    <li>Plan</li>\n    <li>Code</li>\n    <li>Test</li>\n</ol>';
+            if (outputEl) outputEl.innerHTML = '';
+            if (listResult) { listResult.innerHTML = ''; listResult.classList.remove('success','error'); listResult.style.display = 'none'; }
+            if (listReset) listReset.style.display = 'none';
+            if (listNext) listNext.style.display = 'none';
+            if (listSubmit) listSubmit.style.display = 'inline-block';
+
+            completedTopics2.topic5 = false;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
 });
