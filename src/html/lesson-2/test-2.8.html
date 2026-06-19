@@ -26,8 +26,280 @@
         <div class="overlay" id="overlay"></div>
 
         <main class="container">
+    
+            <div class="card">
+                <H2> 📝 Semantic HTML Activity</h2>
+        <p><b>Instructions:</b></p>
+        <p class="description">Create a webpage about yourself using the following semantic tags:</p>
+<div class="requirements">
 
-            <div class="card"></div>
+    <h3>Requirements:</h3>
+
+    <div class="requirement-grid">
+
+        <div class="req-box">
+            ✅ Header
+            <span class="hint">💡
+                <span class="tooltip">&lt;header&gt;</span>
+            </span>
+        </div>
+
+        <div class="req-box">
+            ✅ Navigation Menu
+            <span class="hint">💡
+                <span class="tooltip">&lt;nav&gt;</span>
+            </span>
+        </div>
+
+        <div class="req-box">
+            ✅ About Me Section
+            <span class="hint">💡
+                <span class="tooltip">&lt;section&gt;</span>
+            </span>
+        </div>
+
+        <div class="req-box">
+            ✅ Hobbies Section
+            <span class="hint">💡
+                <span class="tooltip">&lt;section&gt;</span>
+            </span>
+        </div>
+
+        <div class="req-box">
+            ✅ Goals Section
+            <span class="hint">💡
+                <span class="tooltip">&lt;section&gt;</span>
+            </span>
+        </div>
+
+        <div class="req-box">
+            ✅ Favorite Hobby
+            <span class="hint">💡
+                <span class="tooltip">&lt;article&gt;</span>
+            </span>
+        </div>
+
+        <div class="req-box">
+            ✅ Fun Facts
+            <span class="hint">💡
+                <span class="tooltip">&lt;aside&gt;</span>
+            </span>
+        </div>
+
+        <div class="req-box">
+            ✅ Footer
+            <span class="hint">💡
+                <span class="tooltip">&lt;footer&gt;</span>
+            </span>
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<textarea id="editor" class="code-editor">
+<header>
+
+</header>
+
+<nav>
+
+</nav>
+
+<main>
+
+    <section>
+
+    </section>
+
+    <article>
+
+    </article>
+
+    <aside>
+
+    </aside>
+
+</main>
+
+<footer>
+
+</footer>
+</textarea>
+
+<button class="run-btn" onclick="checkSemanticTags()">
+    ▶ Run Code
+</button>
+
+<div id="feedback" class="feedback"></div>
+
+<iframe id="output" class="output-box"></iframe>
+
+<style>
+
+.requirements h3{
+    color:white;
+}
+
+.requirement-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.req-box{
+    background:white;
+    color:black;
+    padding:10px;
+    border-radius:8px;
+    border-left:4px solid green;
+    position:relative;
+    font-size:14px;
+}
+
+.hint{
+    position:absolute;
+    right:10px;
+    top:8px;
+    cursor:pointer;
+}
+
+.tooltip{
+    visibility:hidden;
+    opacity:0;
+
+    position:absolute;
+    top:30px;
+    right:0;
+
+    background:#333;
+    color:white;
+    padding:6px 10px;
+
+    border-radius:6px;
+    border:1px solid #666;
+
+    white-space:nowrap;
+    z-index:9999;
+
+    transition:0.3s;
+}
+
+.hint:hover .tooltip{
+    visibility:visible;
+    opacity:1;
+}
+
+.code-editor{
+    width:100%;
+    height:300px;
+    padding:15px;
+    font-size:16px;
+    background:#222;
+    color:#00ff00;
+    border-radius:10px;
+    resize:none;
+    box-sizing:border-box;
+}
+
+.run-btn{
+    margin-top:10px;
+    padding:12px 20px;
+    background:#008000;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.feedback{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+.success{
+    color:#00ff88;
+}
+
+.error{
+    color:red;
+}
+
+.output-box{
+    width:100%;
+    min-height:300px;
+    margin-top:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    background:white;
+}
+
+</style>
+
+<script>
+
+function checkSemanticTags(){
+
+    let code = document.getElementById("editor").value;
+
+    const requiredTags = [
+        "header",
+        "nav",
+        "main",
+        "section",
+        "article",
+        "aside",
+        "footer"
+    ];
+
+    let missingTags = [];
+
+    requiredTags.forEach(tag => {
+
+        if(
+            !code.includes("<" + tag) ||
+            !code.includes("</" + tag + ">")
+        ){
+            missingTags.push(tag);
+        }
+
+    });
+
+    const feedback = document.getElementById("feedback");
+    const output = document.getElementById("output");
+
+    if(missingTags.length > 0){
+
+        feedback.className = "feedback error";
+
+        feedback.innerHTML =
+        "❌ Missing or incorrect tag(s): " +
+        missingTags.join(", ");
+
+        output.srcdoc = "";
+
+        return;
+    }
+
+    feedback.className = "feedback success";
+
+    feedback.innerHTML =
+    "✅ Great Job! All required semantic tags are present.";
+
+    output.srcdoc = code;
+
+}
+
+</script>
+
+
+</div>
+
+        <div class="card">
+        <button class="btn" data-href="topic-2.8.html"> Done </button>
+        </div>
 
 
 
