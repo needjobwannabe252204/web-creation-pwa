@@ -417,6 +417,17 @@ body {
     gap: 6px;
 }
 
+.quiz-result {
+  display: none;
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  animation: popIn 0.4s ease;
+}
+
 /* Unlock animation: a short scale+glow effect when card unlocks */
 @keyframes unlockPulse {
     0% { transform: scale(0.96); box-shadow: 0 0 0 rgba(0,0,0,0); }

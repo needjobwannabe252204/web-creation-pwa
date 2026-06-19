@@ -1,192 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test 2.1</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
 
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../css/style.css">
+        <link rel="stylesheet" href="../../css/lesson-2.css">
+        <title>Test 2.1</title>
+    </head>
 
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
+    <body>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
-
-    <div class="overlay" id="overlay"></div>
-
-
-
-
-
-
-
-    <main class="container">
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h2 class="title">Web Creation</h2>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
         
-        <div class="card">
-            <h2>🎯 HTML Structure Drag-and-Drop Challenge </h2>
+        <div class="overlay" id="overlay"></div>
 
-        <p class="competency">Instructions:</p>
-        <p class="description">🖱️ Drag each HTML tag from the Tag Bank and drop it into the correct description box. 
-        Click ✅ Check Answers when you are finished.</p>
-        </div>
-         <div class="card">
-        
-        <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
+        <main class="container">
 
-        h2 {
-            text-align: center;
-        }
+            <div class="card">
+                <h3>🎯 HTML Structure Drag-and-Drop Challenge </h3>
+                <p class="competency">Instructions:</p>
+                <p class="description">
+                    🖱️ Drag each HTML tag from the Tag Bank and drop it into the correct description box. 
+                    <br>
+                    <br>
+                    Click ✅ Check Answers when you are finished.
+                </p>
+            </div>
 
-        .tag-bank {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            justify-content: center;
-        }
+            <div class="card">
+                <h2>🎮 Drag and Drop: Match the HTML Tags</h2>
+                <p>Drag the correct HTML tag into each box.</p>
 
-        .tag {
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 5px;
-            cursor: grab;
-        }
+                <div class="tag-bank"  id="tagBank">
+                    <div class="tag" data-tag="html">&lt;html&gt;</div>
+                    <div class="tag" data-tag="head">&lt;head&gt;</div>
+                    <div class="tag" data-tag="title">&lt;title&gt;</div>
+                    <div class="tag" data-tag="body">&lt;body&gt;</div>
+                </div>
 
-        .question {
-            margin: 15px 0;
-            font-size: 18px;
-        }
+                <div class="question">Root element:
+                    <div class="drop-box" data-answer="html"></div>
+                </div>
+                <div class="question">Contains webpage information:
+                    <div class="drop-box" data-answer="head"></div>
+                </div>
+                <div class="question">Displays browser tab title:
+                    <div class="drop-box" data-answer="title"></div>
+                </div>
+                <div class="question">Contains visible webpage content:
+                    <div class="drop-box" data-answer="body"></div>
+                </div>
 
-        .drop-box {
-            display: inline-block;
-            width: 120px;
-            height: 35px;
-            border: 2px dashed #666;
-            vertical-align: middle;
-            text-align: center;
-            line-height: 35px;
-            margin-left: 10px;
-        }
+                <br>
+                <div class="actions-flex">
+                    <button id="quizSubmit" class="btn">✅ Check Answers</button>
+                    <button id="quizReset" class="btn" style="display:none;">Reset / Try Again</button>
+                    <div id="quizResult" class="quiz-result"></div>
+                </div>
 
-        #result {
-            margin-top: 20px;
-            font-weight: bold;
-            font-size: 20px;
-        }
+                <br>
+                <div class="nav-buttons">
+                    <button id="quizReturn" class="btn" data-href="topic-2.1.html">← Return</button>
+                    <button id="quizNext" class="btn btn-primary" style="display:none;">Next →</button>
+                </div>
 
-        button {
-            margin-top: 20px; 
-            padding: 10px 15px;
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
+            </div>
 
-<h2>🎮 Drag and Drop: Match the HTML Tags</h2>
-<p>Drag the correct HTML tag into each box.</p>
+        </main>
 
-<div class="tag-bank">
-    <div class="tag" draggable="true" id="html">&lt;html&gt;</div>
-    <div class="tag" draggable="true" id="head">&lt;head&gt;</div>
-    <div class="tag" draggable="true" id="title">&lt;title&gt;</div>
-    <div class="tag" draggable="true" id="body">&lt;body&gt;</div>
-</div>
+        <script src="../../js/script.js"></script>
+        <script src="../../js/lesson-2.js"></script>
 
-<div class="question">
-    Root element of the webpage:
-    <div class="drop-box" data-answer="html"></div>
-</div>
-<div class="question">
-    Contains webpage information:
-    <div class="drop-box" data-answer="head"></div>
-</div>
-<div class="question">
-    Displays browser tab title:
-    <div class="drop-box" data-answer="title"></div>
-</div>
-<div class="question">
-    Contains visible webpage content:
-    <div class="drop-box" data-answer="body"></div>
-</div>
-
-<button onclick="checkAnswers()">Check Answers</button>
-
-<div id="result"></div>
-
-<script>
-    const tags = document.querySelectorAll('.tag');
-    const dropBoxes = document.querySelectorAll('.drop-box');
-
-    tags.forEach(tag => {
-        tag.addEventListener('dragstart', dragStart);
-    });
-
-    function dragStart(e) {
-        e.dataTransfer.setData('text', e.target.id);
-    }
-
-    dropBoxes.forEach(box => {
-        box.addEventListener('dragover', dragOver);
-        box.addEventListener('drop', drop);
-    });
-
-    function dragOver(e) {
-        e.preventDefault();
-    }
-
-    function drop(e) {
-        e.preventDefault();
-        const id = e.dataTransfer.getData('text');
-        const draggedElement = document.getElementById(id);
-
-        if (e.target.innerHTML === '') {
-            e.target.appendChild(draggedElement);
-        }
-    }
-
-    function checkAnswers() {
-        let score = 0;
-
-        dropBoxes.forEach(box => {
-            if (box.firstChild &&
-                box.firstChild.id === box.dataset.answer) {
-                score++;
-            }
-        });
-
-        document.getElementById('result').innerHTML =
-            `🏆 Score: ${score}/4`;
-    }
-</script>
-</div>
-
- <div class="card">
-    <button class="btn" data-href="topic-2.1.html"> Done</button>
-    </div>
-
-         </div>
-    </main>
-    
-
-     
-
-    <script src="../../js/script.js"></script>
-</body>
+    </body>
 </html>
