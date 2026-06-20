@@ -42,11 +42,28 @@
 
         <p><strong>Instructions:</strong></p>
 
-        <p>Write a single HTML anchor (`&lt;a&gt;`) that links to <strong>one</strong> of the following destinations: <em>Google</em>, <em>Facebook</em>, or <em>YouTube</em>. The activity requires exactly one anchor; if you include more than one anchor or link to a different site, the submission will fail and you must retry.</p>
+        <p>
+            Write a single HTML anchor <strong>&lt;a&gt;</strong> 
+            that links to <strong>one</strong> of the following destinations: 
+            <strong><em>Google</em></strong>, 
+            <strong><em>Facebook</em></strong>, or 
+            <strong><em>YouTube</em></strong>. 
+            The activity requires exactly one anchor; 
+            if you include more than one anchor or link to a different site, 
+            the submission will fail and you must retry.
+        </p>
 
         <br>
 
-        <textarea id="editor" placeholder="Type your HTML code here..." style="width:100%;height:120px;padding:10px;font-family:Consolas;"></textarea>
+<textarea 
+id="editor" 
+placeholder="Type your HTML code here..." 
+style="width:100%;
+height:120px;
+padding:10px;
+font-family:Consolas;">
+<a href="____">____</a>
+</textarea>
 
         <br>
 
@@ -60,7 +77,12 @@
 
         <div
             id="output"
-            style="margin-top:15px;padding:15px;border:2px solid #ccc;border-radius:8px;min-height:50px;">
+            style="margin-top:15px;
+            padding:15px;
+            border:2px solid #ccc;
+            border-radius:8px;
+            min-height:50px;">
+            Output will appear here...
         </div>
 
         <br>
@@ -93,7 +115,7 @@
             <button
                 id="linkNext"
                 type="button"
-                class="btn"
+                class="btn btn-primary"
                 data-href="topic-2.4.html"
                 style="display:none">
                 Next →
@@ -104,8 +126,9 @@
 
 </main>
 
-<script src="../../js/script.js"></script>
-<script src="../../js/lesson-2.js"></script>
+<script src="../../js/utils.js"></script>
+        <script src="../../js/script.js"></script>
+        <script src="../../js/lesson-2.js"></script>
 
 </body>
 </html>

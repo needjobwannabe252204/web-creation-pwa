@@ -1,5 +1,5 @@
-/* Gallery container */
-.gallary {
+/* Gallery container — NOTE: HTML uses class="gallery" (fixed typo from "gallary") */
+.gallery {
   display: flex;
   flex-wrap: nowrap;
   justify-content: center;

@@ -1,886 +1,600 @@
-const runBtn = document.getElementById("runBtn");
-
-function handleRunClick() {
-    try {
-        const editor = document.getElementById("editor");
-        const output = document.getElementById("output");
-        if (!editor || !output) {
-            console.warn('runBtn clicked but editor/output not found');
-            return;
-        }
-        output.innerHTML = editor.value;
-        // Ensure any links in the output open in a new tab and don't navigate away
-        try {
-            output.querySelectorAll('a').forEach(a => { a.setAttribute('target','_blank'); a.setAttribute('rel','noopener'); });
-        } catch (e) { /* ignore */ }
-        const completeBtn = document.getElementById('completeBtn');
-        if (completeBtn) completeBtn.style.display = 'inline-block';
-        // Note: per-activity validators (submit buttons) perform grading.
-        // The Run button only renders the editor content to the `output` area
-        // so students can preview changes. Do not perform activity grading here.
-        console.log('lesson-2: run executed');
-    } catch (e) { console.error('runBtn handler error', e); }
-}
-
-if (runBtn) runBtn.addEventListener('click', handleRunClick);
-
 /* ==========================================================
-   LESSON 2 — lesson-specific behaviors
-   Purpose: small utilities for Lesson 2 pages (code runner,
-   activity helpers). Navigation buttons using `data-href` are
-   handled globally by `src/js/script.js` to avoid duplication.
+   lesson-2.js — Lesson 2 (HTML Basics) interactive logic
+   ----------------------------------------------------------
+   Responsibilities:
+     • Persist per-lesson topic/quiz completion state
+     • Render progress bar on the lesson-2.html overview page
+     • Drag-and-drop activity  (test-2.1)
+     • Multiple-choice quiz    (test-2.2)
+     • Code-editor activities  (test-2.3 through test-2.7)
+     • Semantic-tags activity  (test-2.8) — global helper exposed
+
+   Architecture:
+     • All state lives in one `L2` object (no scattered globals)
+     • One DOMContentLoaded handler calls small, focused init fns
+     • Page-specific logic is detected by filename, preventing the
+       "double handler on wrong page" bug that was in the old code
+     • `bindCodeActivity()` eliminates the repeated submit/reset/next
+       wiring that existed 5+ times in the original file
+
+   Dependencies:
+     utils.js must be loaded before this file.
    ========================================================== */
 
-// Attach click behavior to buttons that use data-href for navigation
-// (Navigation handled globally by src/js/script.js)
+"use strict";
 
-// test-2.1 dragging function
-const tags = document.querySelectorAll(".tag");
-const boxes = document.querySelectorAll(".drop-box");
+/* ----------------------------------------------------------
+   1) STATE
+   All mutable lesson state lives here in one place.
+   ---------------------------------------------------------- */
 
-let currentTag = null;
-
-// ---------- Lesson 2 state (per-lesson, persisted) ----------
-const completedTopics2 = {
-    topic1: false,
-    topic2: false,
-    topic3: false,
-    topic4: false,
-    topic5: false,
-    topic6: false,
-    topic7: false,
-    topic8: false,
-    quiz: false
+var L2 = {
+    completedTopics: {
+        topic1: false, topic2: false, topic3: false, topic4: false,
+        topic5: false, topic6: false, topic7: false, topic8: false,
+        quiz: false
+    },
+    quizPassed    : false,
+    quizAttempted : false,
+    lessonCompleted: false
 };
 
-let quizPassed2 = false;
-let quizAttempted2 = false;
-let lessonCompleted2 = false;
+/* ----------------------------------------------------------
+   2) PERSISTENCE
+   ---------------------------------------------------------- */
 
-function saveLesson2State() {
+var L2_KEY = 'lesson2State';
+
+function saveL2State() {
     try {
-        const s = {
-            completedTopics: completedTopics2,
-            quizPassed: !!quizPassed2,
-            quizAttempted: !!quizAttempted2,
-            lessonCompleted: !!lessonCompleted2
-        };
-        localStorage.setItem('lesson2State', JSON.stringify(s));
-    } catch (e) { console.warn('Could not save lesson2 state', e); }
+        localStorage.setItem(L2_KEY, JSON.stringify({
+            completedTopics: L2.completedTopics,
+            quizPassed     : !!L2.quizPassed,
+            quizAttempted  : !!L2.quizAttempted,
+            lessonCompleted: !!L2.lessonCompleted
+        }));
+    } catch (e) { console.warn('[lesson-2] save failed:', e); }
 }
 
-// Helper: set card border by finding a button with matching data-href
-function setCardBorderColorForButtonHref(href, color) {
+function loadL2State() {
     try {
-        const btn = document.querySelector(`button[data-href="${href}"]`);
-        if (!btn) return;
-        const card = btn.closest('.card');
-        if (!card) return;
-        card.style.borderLeft = color ? `6px solid ${color}` : '';
-    } catch (e) { /* ignore */ }
-}
-
-function loadLesson2State() {
-    try {
-        const raw = localStorage.getItem('lesson2State');
+        var raw = localStorage.getItem(L2_KEY);
         if (!raw) return;
-        const s = JSON.parse(raw);
-        if (s && s.completedTopics) {
-            Object.keys(completedTopics2).forEach(k => {
-                if (s.completedTopics[k] !== undefined) completedTopics2[k] = !!s.completedTopics[k];
+        var s = JSON.parse(raw);
+        if (!s) return;
+        if (s.completedTopics) {
+            Object.keys(L2.completedTopics).forEach(function (k) {
+                if (s.completedTopics[k] !== undefined)
+                    L2.completedTopics[k] = !!s.completedTopics[k];
             });
         }
-        if (s && typeof s.quizPassed === 'boolean') quizPassed2 = s.quizPassed;
-        if (s && typeof s.quizAttempted === 'boolean') quizAttempted2 = s.quizAttempted;
-        if (s && typeof s.lessonCompleted === 'boolean') lessonCompleted2 = s.lessonCompleted;
-    } catch (e) { console.warn('Could not load lesson2 state', e); }
+        if (typeof s.quizPassed    === 'boolean') L2.quizPassed    = s.quizPassed;
+        if (typeof s.quizAttempted === 'boolean') L2.quizAttempted = s.quizAttempted;
+        if (typeof s.lessonCompleted === 'boolean') L2.lessonCompleted = s.lessonCompleted;
+    } catch (e) { console.warn('[lesson-2] load failed:', e); }
 }
 
-function updateLesson2ProgressUI() {
-    const total = Object.keys(completedTopics2).length;
-    const completed = Object.values(completedTopics2).filter(Boolean).length;
-    const percentage = Math.round((completed / total) * 100);
+/* ----------------------------------------------------------
+   3) PROGRESS UI
+   ---------------------------------------------------------- */
 
-    const progressEl = document.getElementById('lessonProgress');
-    if (progressEl) progressEl.style.width = `${percentage}%`;
-    const progressText = document.getElementById('progressText');
-    if (progressText) progressText.textContent = `Progress: ${percentage}%`;
+function updateProgressUI() {
+    var keys      = Object.keys(L2.completedTopics);
+    var completed = keys.filter(function (k) { return L2.completedTopics[k]; }).length;
+    var pct       = Math.round((completed / keys.length) * 100);
+    var bar  = document.getElementById('lessonProgress');
+    var text = document.getElementById('progressText');
+    if (bar)  bar.style.width  = pct + '%';
+    if (text) text.textContent = 'Progress: ' + pct + '%';
 }
 
-function applyLesson2StateToUI() {
-    // map topic flags to lesson-2.html buttons (topic-2.1.html..topic-2.8.html)
-    for (let i = 1; i <= 8; i++) {
-        const key = `topic${i}`;
-        const href = `topic-2.${i}.html`;
-        // note file names are topic-2.1.html etc. If element exists, set color
-        if (completedTopics2[key]) {
-            setCardBorderColorForButtonHref(href, '#4caf50'); // green
+/* Apply persisted state to whatever page elements exist. */
+function applyL2StateToUI() {
+    for (var i = 1; i <= 8; i++) {
+        if (!L2.completedTopics['topic' + i]) continue;
+        var btn = document.querySelector('button[data-href="topic-2.' + i + '.html"]');
+        if (btn && btn.closest('.card')) {
+            btn.closest('.card').style.borderLeft = '6px solid #4caf50';
         }
     }
-
-    // quiz card on test page: set green/red based on quizPassed2/attempted
+    /* Green the first card when we are on a completed topic page */
     try {
-        const quizCard = document.querySelector('.card .tag-bank')?.closest('.card') || document.querySelector('#quiz-card');
-        if (quizCard) {
-            if (quizAttempted2) {
-                quizCard.style.borderLeft = quizPassed2 ? '6px solid #4caf50' : '6px solid #c62828';
-            }
-        }
-    } catch (e) {}
-
-    // If we're on a topic page, mark the topic card green when completed
-    try {
-        const path = window.location.pathname || window.location.href;
-        for (let i = 1; i <= 8; i++) {
-            const topicFile = `topic-2.${i}.html`;
-            if (path.endsWith(topicFile) && completedTopics2[`topic${i}`]) {
-                const firstCard = document.querySelector('.card');
+        var page = (typeof getCurrentPage === 'function') ? getCurrentPage() : '';
+        for (var j = 1; j <= 8; j++) {
+            if (page === ('topic-2.' + j + '.html') && L2.completedTopics['topic' + j]) {
+                var firstCard = document.querySelector('.card');
                 if (firstCard) firstCard.style.borderLeft = '6px solid #4caf50';
             }
         }
-    } catch (e) {}
-
-    updateLesson2ProgressUI();
+    } catch (_) {}
+    updateProgressUI();
 }
 
-/*
-    Helper: mark a topic completed programmatically.
-    Usage from pages: `markTopicCompleted(6)` will set topic6=true,
-    save state and update UI. This is safe to call multiple times.
-*/
+/**
+ * Mark a topic complete, save, and refresh the UI.
+ * Idempotent — safe to call multiple times.
+ * @param {number} n - topic number 1–8
+ */
 function markTopicCompleted(n) {
-        try {
-                const key = `topic${n}`;
-                if (completedTopics2[key]) return; // already done
-                completedTopics2[key] = true;
-                saveLesson2State();
-                applyLesson2StateToUI();
-        } catch (e) { console.warn('markTopicCompleted error', e); }
+    var key = 'topic' + n;
+    if (!L2.completedTopics.hasOwnProperty(key)) {
+        console.warn('[lesson-2] Unknown topic key:', key); return;
+    }
+    if (L2.completedTopics[key]) return; /* already done */
+    L2.completedTopics[key] = true;
+    saveL2State();
+    applyL2StateToUI();
+}
+window.markTopicCompleted = markTopicCompleted; /* expose for inline HTML handlers */
+
+/* ----------------------------------------------------------
+   4) CODE RUNNER
+   Any page with #editor + #output + #runBtn gets live preview.
+   Only one listener is attached, solving the triple-listener bug.
+   ---------------------------------------------------------- */
+
+function initCodeRunner() {
+    var editorEl = document.getElementById('editor');
+    var outputEl = document.getElementById('output');
+    var runBtn   = document.getElementById('runBtn');
+    if (!runBtn || !editorEl || !outputEl) return;
+
+    if (typeof autoResizeTextarea === 'function') autoResizeTextarea(editorEl);
+
+    runBtn.addEventListener('click', function () {
+        outputEl.innerHTML = editorEl.value;
+        /* Prevent preview links from navigating away from the lesson */
+        outputEl.querySelectorAll('a').forEach(function (a) {
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener');
+        });
+        /* Hide any leftover result badge when the student re-runs */
+        var resultIds = ['result','linkResult','imageResult','listResult','formResult','headingResult'];
+        resultIds.forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+    });
 }
 
-tags.forEach(tag => {
+/* ----------------------------------------------------------
+   5) DRAG-AND-DROP  (test-2.1)
+   Pointer-event based — works on desktop and touch.
+   All variables are scoped inside initDragAndDrop().
+   ---------------------------------------------------------- */
 
-    tag.addEventListener("pointerdown", startDrag);
+function initDragAndDrop() {
+    var tagBank   = document.getElementById('tagBank') || document.querySelector('.tag-bank');
+    var dropBoxes = document.querySelectorAll('.drop-box');
+    var tags      = document.querySelectorAll('.tag');
+    if (!tagBank || !dropBoxes.length || !tags.length) return;
 
-});
+    var currentTag = null; /* scoped — not a global */
 
-function startDrag(e) {
-
-    currentTag = e.target;
-
-    currentTag.classList.add("dragging");
-
-    moveTag(e);
-
-    document.addEventListener("pointermove", moveTag);
-    document.addEventListener("pointerup", stopDrag);
-}
-
-function moveTag(e) {
-
-    if (!currentTag) return;
-
-    currentTag.style.left = e.clientX - 40 + "px";
-    currentTag.style.top = e.clientY - 20 + "px";
-}
-
-function stopDrag(e) {
-
-    if (!currentTag) return;
-
-    document.removeEventListener("pointermove", moveTag);
-    document.removeEventListener("pointerup", stopDrag);
-
-    const elementBelow = document.elementFromPoint(
-        e.clientX,
-        e.clientY
-    );
-
-    const box = elementBelow?.closest(".drop-box");
-
-    if (box) {
-
-        const existingTag = box.querySelector(".tag");
-
-        if (existingTag) {
-
-            document
-                .getElementById("tagBank")
-                .appendChild(existingTag);
-        }
-
-        currentTag.classList.remove("dragging");
-
-        currentTag.style.left = "";
-        currentTag.style.top = "";
-
-        box.appendChild(currentTag);
-    } else {
-
-        currentTag.classList.remove("dragging");
-
-        currentTag.style.left = "";
-        currentTag.style.top = "";
+    function moveTo(x, y) {
+        currentTag.style.left = (x - 40) + 'px';
+        currentTag.style.top  = (y - 20) + 'px';
     }
 
-    currentTag = null;
+    function startDrag(e) {
+        currentTag = e.currentTarget;
+        currentTag.classList.add('dragging');
+        moveTo(e.clientX, e.clientY);
+        document.addEventListener('pointermove', onMove);
+        document.addEventListener('pointerup',   onStop);
+    }
+
+    function onMove(e) { if (currentTag) moveTo(e.clientX, e.clientY); }
+
+    function onStop(e) {
+        if (!currentTag) return;
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup',   onStop);
+
+        /* Temporarily hide the dragged tag for the hit test */
+        currentTag.style.visibility = 'hidden';
+        var below = document.elementFromPoint(e.clientX, e.clientY);
+        currentTag.style.visibility = '';
+
+        var box = below && below.closest('.drop-box');
+        currentTag.classList.remove('dragging');
+        currentTag.style.left = '';
+        currentTag.style.top  = '';
+
+        if (box) {
+            /* Displace any tag already in the target box back to the bank */
+            var existing = box.querySelector('.tag');
+            if (existing) tagBank.appendChild(existing);
+            box.appendChild(currentTag);
+        }
+        currentTag = null;
+    }
+
+    tags.forEach(function (tag) { tag.addEventListener('pointerdown', startDrag); });
+
+    /* ---- Submit / Reset ---- */
+    var submitBtn = document.getElementById('quizSubmit');
+    var resetBtn  = document.getElementById('quizReset');
+    var resultEl  = document.getElementById('quizResult');
+    var nextBtn   = document.getElementById('quizNext');
+    if (nextBtn)  nextBtn.style.display  = 'none';
+    if (resetBtn) resetBtn.style.display = 'none';
+
+    function allFilled() {
+        return Array.from(dropBoxes).every(function (b) { return b.firstElementChild; });
+    }
+
+    function submit() {
+        if (!allFilled()) {
+            showToast('Place all tags into the boxes first.', 'info'); return;
+        }
+        var score = 0;
+        dropBoxes.forEach(function (box) {
+            var t = box.firstElementChild;
+            if (t && t.dataset.tag === box.dataset.answer) score++;
+        });
+        var total  = dropBoxes.length;
+        var passed = score === total;
+        if (resultEl) {
+            resultEl.textContent = passed
+                ? '🎉 Perfect! ' + score + '/' + total
+                : '🏆 Score: ' + score + '/' + total + ' — try again!';
+            resultEl.classList.remove('error', 'success', 'quiz-result');
+            resultEl.classList.add('quiz-result', passed ? 'success' : 'error');
+            resultEl.style.display = 'block';
+        }
+        L2.quizAttempted = true;
+        L2.quizPassed    = passed;
+        L2.completedTopics.quiz = true;
+        if (passed) L2.completedTopics.topic1 = true;
+        saveL2State(); applyL2StateToUI();
+        if (submitBtn) submitBtn.style.display = 'none';
+        if (resetBtn)  resetBtn.style.display  = 'inline-block';
+        if (nextBtn)   nextBtn.style.display   = 'inline-block';
+    }
+
+    function reset() {
+        document.querySelectorAll('.tag').forEach(function (t) {
+            t.classList.remove('dragging');
+            t.style.left = ''; t.style.top = '';
+            tagBank.appendChild(t);
+        });
+        dropBoxes.forEach(function (b) { b.innerHTML = ''; });
+        if (resultEl) { resultEl.textContent = ''; resultEl.style.display = 'none'; }
+        if (resetBtn)  resetBtn.style.display  = 'none';
+        if (submitBtn) submitBtn.style.display = 'inline-block';
+        if (nextBtn)   nextBtn.style.display   = 'none';
+        L2.quizAttempted = false; L2.quizPassed = false;
+        L2.completedTopics.quiz = false;
+        saveL2State(); applyL2StateToUI();
+    }
+
+    if (submitBtn) submitBtn.addEventListener('click', submit);
+    if (resetBtn)  resetBtn.addEventListener('click',  reset);
 }
 
-// ===== Quiz controls (submit / validate / retry) — bind to existing HTML controls
-document.addEventListener('DOMContentLoaded', function () {
-    const tagBank = document.getElementById('tagBank') || document.querySelector('.tag-bank');
-    const dropBoxes = document.querySelectorAll('.drop-box');
+/* ----------------------------------------------------------
+   6) HEADING QUIZ  (test-2.2)
+   ---------------------------------------------------------- */
 
-    // load persisted lesson-2 state and apply UI before binding
-    loadLesson2State();
-    applyLesson2StateToUI();
+/* Update this map when quiz questions change */
+var HEADING_ANSWERS = { q1: 'b', q2: 'c', q3: 'c', q4: 'c', q5: 'd' };
 
-    /* Auto-resize textareas so they grow with content height.
-       Targets `.code-editor` textareas and falls back to any textarea.
-    */
-    (function setupAutoResizeTextareas(){
-        const areas = Array.from(document.querySelectorAll('textarea.code-editor, textarea'));
-        if (!areas.length) return;
-        areas.forEach(a => {
-            a.style.overflow = 'hidden';
-            const resize = () => {
-                a.style.height = 'auto';
-                // add 2px to avoid scrollbar flicker on some browsers
-                a.style.height = (a.scrollHeight + 2) + 'px';
-            };
-            // init
-            resize();
-            // update on input
-            a.addEventListener('input', resize, { passive: true });
-            // optional: also resize on window/font changes
-            window.addEventListener('resize', resize);
+function initHeadingQuiz() {
+    var form      = document.getElementById('quizForm');
+    var submitBtn = document.getElementById('headingSubmit');
+    if (!form || !submitBtn) return;
+
+    var resetBtn = document.getElementById('headingReset');
+    var resultEl = document.getElementById('headingResult');
+    var nextBtn  = document.getElementById('headingNext');
+    if (nextBtn)  nextBtn.style.display  = 'none';
+    if (resultEl) resultEl.style.display = 'none';
+
+    function allAnswered() {
+        return Object.keys(HEADING_ANSWERS).every(function (k) {
+            return form.querySelector('input[name="' + k + '"]:checked');
         });
-    })();
+    }
 
-    // If page contains the tag-bank activity, bind its handlers; otherwise skip activity setup
-    if (tagBank && dropBoxes.length > 0) {
-        const submitBtn = document.getElementById('quizSubmit');
-        const resetBtn = document.getElementById('quizReset');
-        const returnBtn = document.getElementById('quizReturn');
-        const nextBtn = document.getElementById('quizNext');
-        const resultEl = document.getElementById('quizResult');
+    function grade() {
+        if (!allAnswered()) {
+            showToast('Answer all questions before submitting.', 'info'); return;
+        }
+        var score = 0;
+        Object.keys(HEADING_ANSWERS).forEach(function (k) {
+            var chosen = form.querySelector('input[name="' + k + '"]:checked');
+            if (chosen && chosen.value === HEADING_ANSWERS[k]) score++;
+        });
+        var total  = Object.keys(HEADING_ANSWERS).length;
+        var passed = score >= 3;
+        if (resultEl) {
+            resultEl.innerHTML = score === total ? '🎉 Excellent! ' + score + '/' + total
+                               : score >= 3     ? '👍 Good Job! '  + score + '/' + total
+                               :                  '📚 Keep practising — ' + score + '/' + total;
+            resultEl.classList.remove('error', 'success', 'quiz-result');
+            resultEl.classList.add('quiz-result', passed ? 'success' : 'error');
+            resultEl.style.display = 'block';
+        }
+        L2.quizAttempted = true; L2.quizPassed = passed;
+        L2.completedTopics.quiz = true;
+        if (passed) L2.completedTopics.topic2 = true;
+        saveL2State(); applyL2StateToUI();
+        submitBtn.style.display = 'none';
+        if (resetBtn) resetBtn.style.display = 'inline-block';
+        if (nextBtn)  nextBtn.style.display  = 'inline-block';
+    }
 
-        // initial UI
+    function resetQ() {
+        form.querySelectorAll('input[type="radio"]').forEach(function (r) { r.checked = false; });
+        if (resultEl) { resultEl.innerHTML = ''; resultEl.style.display = 'none'; }
+        if (resetBtn)  resetBtn.style.display  = 'none';
+        submitBtn.style.display = 'inline-block';
         if (nextBtn) nextBtn.style.display = 'none';
-        if (resetBtn) resetBtn.style.display = 'none';
+        L2.quizAttempted = false; L2.quizPassed = false;
+        L2.completedTopics.quiz = false;
+        saveL2State(); applyL2StateToUI();
+    }
 
-        function allBoxesFilled() {
-            return Array.from(dropBoxes).every(b => b.firstChild);
-        }
+    submitBtn.addEventListener('click', grade);
+    if (resetBtn) resetBtn.addEventListener('click', resetQ);
+}
 
-        function submitAnswers() {
-            if (!allBoxesFilled()) {
-                alert('Please place all tags into the boxes before submitting.');
-                return;
-            }
+/* ----------------------------------------------------------
+   7) CODE-EDITOR ACTIVITY BINDER  (test-2.3 to test-2.7)
+   Instead of copy-pasting the same submit/reset/next pattern
+   five times, pass a config object to this one function.
+   ---------------------------------------------------------- */
 
-            let score = 0;
-            dropBoxes.forEach(box => {
-                const tagEl = box.firstChild;
-                if (tagEl && tagEl.dataset && tagEl.dataset.tag === box.dataset.answer) score++;
-            });
+function bindCodeActivity(cfg) {
+    var submitEl = document.getElementById(cfg.submitId);
+    if (!submitEl) return; /* Not present on this page */
 
-            if (resultEl) {
-                resultEl.textContent = `🏆 Score: ${score}/${dropBoxes.length}`;
-                resultEl.style.display = 'block';
-            }
-
-            // hide submit and show Reset button (match lesson-1 pattern)
-            // mark attempted and pass/fail in lesson-2 state
-            quizAttempted2 = true;
-            quizPassed2 = (score === dropBoxes.length);
-            // when quiz passed, mark topic1 completed
-            if (quizPassed2) {
-                completedTopics2.topic1 = true;
-            }
-            completedTopics2.quiz = true;
-            saveLesson2State();
-            applyLesson2StateToUI();
-
-
-            if (submitBtn) submitBtn.style.display = 'none';
-            if (resetBtn) {
-                resetBtn.style.display = 'inline-block';
-                // ensure single handler
-                resetBtn.removeEventListener('click', resetQuiz);
-                resetBtn.addEventListener('click', resetQuiz);
-            }
-
-            // show next button (proceed to next topic)
-            if (nextBtn) nextBtn.style.display = 'inline-block';
-
-            // return button should always be visible; wire it to go back to topic-2.1
-            if (returnBtn) {
-                returnBtn.addEventListener('click', () => { window.location.href = 'topic-2.1.html'; });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => { window.location.href = 'topic-2.2.html'; });
-            }
-        }
-
-        function resetQuiz() {
-            const tags = document.querySelectorAll('.tag');
-            tags.forEach(t => {
-                t.classList.remove('dragging');
-                t.style.left = '';
-                t.style.top = '';
-                tagBank.appendChild(t);
-            });
-
-            dropBoxes.forEach(b => b.innerHTML = '');
-            if (resultEl) {
-                resultEl.textContent = '';
-                resultEl.style.display = 'none';
-            }
-
-            // restore submit button behaviour and hide next/reset
-            if (resetBtn) {
-                resetBtn.removeEventListener('click', resetQuiz);
-                resetBtn.style.display = 'none';
-            }
-            if (submitBtn) {
-                submitBtn.style.display = 'inline-block';
-                // ensure only one submit handler
-                submitBtn.removeEventListener('click', resetQuiz);
-                submitBtn.removeEventListener('click', submitAnswers);
-                submitBtn.addEventListener('click', submitAnswers);
-            }
-            if (nextBtn) nextBtn.style.display = 'none';
-
-            // clear lesson-2 quiz attempt state so user can retry
-            quizAttempted2 = false;
-            quizPassed2 = false;
-            completedTopics2.quiz = false;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        }
-
-        if (submitBtn) submitBtn.addEventListener('click', submitAnswers);
-        if (returnBtn) {
-            // Return always navigates back to topic-2.1
-            returnBtn.addEventListener('click', () => { window.location.href = 'topic-2.1.html'; });
+    var resetEl  = cfg.resetId ? document.getElementById(cfg.resetId) : null;
+    var nextEl   = cfg.nextId  ? document.getElementById(cfg.nextId)  : null;
+    var resultEl = cfg.resultId ? document.getElementById(cfg.resultId) : null;
+    /* Fallback result element auto-detection */
+    if (!resultEl) {
+        var ids = ['result','linkResult','imageResult','listResult','formResult'];
+        for (var i = 0; i < ids.length; i++) {
+            var el = document.getElementById(ids[i]);
+            if (el) { resultEl = el; break; }
         }
     }
+    var editorEl = document.getElementById('editor');
+    var outputEl = document.getElementById('output');
 
-    // === Table activity (test-2.6) ===
-    const tableSubmit = document.getElementById('tableSubmit');
-    const tableReset = document.getElementById('tableReset');
-    const tableNext = document.getElementById('tableNext');
-    const tableReturn = document.getElementById('tableReturn');
-    const tableResult = document.getElementById('result');
-    const tableEditor = document.getElementById('editor');
-    const tableOutput = document.getElementById('output');
-    const tableRun = document.getElementById('runBtn');
-
-    function checkTable() {
-        if (!tableOutput) return { ok: false, error: 'output missing' };
-        // First check the raw editor text for an explicit <tr tag to avoid
-        // passing due to browser-implied table rows when HTML is malformed.
-        const raw = tableEditor ? (tableEditor.value || '') : '';
-        if (!raw.toLowerCase().includes('<tr')) {
-            return { ok: false, error: 'No <tr> tag found. Use <tr> to create rows.' };
+    function onSubmit() {
+        var res = cfg.validate(editorEl, outputEl);
+        if (!res.ok) {
+            showToast(res.error || 'Check your code and try again.', 'error', 4000); return;
         }
-        // Parse and confirm the browser produced at least one <tr> element.
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(tableOutput.innerHTML || '', 'text/html');
-        const trs = Array.from(doc.querySelectorAll('tr'));
-        if (trs.length === 0) {
-            if (window && window.console) console.log('lesson-2: tableOutput.innerHTML=', tableOutput.innerHTML);
-            return { ok: false, error: 'No table rows found after parsing.' };
+        if (resultEl) {
+            resultEl.innerHTML = cfg.successMsg || '✅ Activity complete!';
+            resultEl.classList.remove('error');
+            resultEl.classList.add('success', 'quiz-result');
+            resultEl.style.display = 'block';
         }
-        return { ok: true };
+        submitEl.style.display = 'none';
+        if (resetEl) resetEl.style.display = 'inline-block';
+        if (nextEl)  nextEl.style.display  = 'inline-block';
+        markTopicCompleted(cfg.topicNum);
     }
 
-    if (tableRun) {
-        tableRun.addEventListener('click', () => {
-            if (!tableEditor || !tableOutput) return;
-            tableOutput.innerHTML = tableEditor.value;
-            // run quick validation and show hint in tableResult if present
-            if (tableResult) tableResult.style.display = 'none';
-        });
-    }
-
-    if (tableSubmit) {
-        tableSubmit.addEventListener('click', () => {
-            const res = checkTable();
-            if (!res.ok) {
-                alert(res.error || 'Invalid submission — please try again.');
-                return;
-            }
-            if (tableResult) {
-                tableResult.innerHTML = '✅ Activity complete — table rows look good.';
-                tableResult.classList.remove('error');
-                tableResult.classList.add('success');
-                tableResult.style.display = 'block';
-            }
-            if (tableSubmit) tableSubmit.style.display = 'none';
-            if (tableReset) tableReset.style.display = 'inline-block';
-            if (tableNext) tableNext.style.display = 'inline-block';
-
-            // mark topic 6 completed
-            completedTopics2.topic6 = true;
-            saveLesson2State();
-            if (window && window.console) console.log('lesson-2: saved lesson2State', localStorage.getItem('lesson2State'));
-            applyLesson2StateToUI();
-        });
-    }
-
-    if (tableReset) {
-        tableReset.addEventListener('click', () => {
-            if (tableEditor) tableEditor.value = '<____>\n    <td>John</td>\n    <td>15</td>\n</tr>\n</table>';
-            if (tableOutput) tableOutput.innerHTML = '';
-            if (tableResult) { tableResult.innerHTML = ''; tableResult.classList.remove('success','error'); tableResult.style.display = 'none'; }
-            if (tableReset) tableReset.style.display = 'none';
-            if (tableNext) tableNext.style.display = 'none';
-            if (tableSubmit) tableSubmit.style.display = 'inline-block';
-
-            completedTopics2.topic6 = false;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
-
-    // If this page is test-2.7.html it re-uses the `tableSubmit` controls
-    // but the activity expects a form (username/email). Override
-    // behavior on that specific page to validate the form instead of tables.
-    const path = (window.location.pathname || window.location.href || '').toLowerCase();
-    const isTest27 = path.endsWith('test-2.7.html') || path.includes('test-2.7.html');
-    if (isTest27) {
-        function checkFormActivityFor27() {
-            if (!tableEditor) return { ok: false, error: 'Editor not found.' };
-            const code = (tableEditor.value || '').toLowerCase();
-
-            const hasUsernameLabel = code.includes('for="username"') || code.includes("for='username'");
-            const hasEmailLabel = code.includes('for="email"') || code.includes("for='email'");
-            const hasTextInput = code.includes('type="text"') || code.includes("type='text'");
-            const hasEmailInput = code.includes('type="email"') || code.includes("type='email'");
-
-            if (hasUsernameLabel && hasEmailLabel && hasTextInput && hasEmailInput) {
-                return { ok: true };
-            }
-
-            return { ok: false, error: 'Make sure both labels are completed correctly (username and email) and include text/email inputs.' };
+    function onReset() {
+        if (editorEl && cfg.getResetValue) editorEl.value = cfg.getResetValue();
+        if (outputEl) outputEl.innerHTML = '';
+        if (resultEl) {
+            resultEl.innerHTML = '';
+            resultEl.classList.remove('success', 'error');
+            resultEl.style.display = 'none';
         }
+        submitEl.style.display = 'inline-block';
+        if (resetEl) resetEl.style.display = 'none';
+        if (nextEl)  nextEl.style.display  = 'none';
+        /* Un-mark so student can redo */
+        L2.completedTopics['topic' + cfg.topicNum] = false;
+        saveL2State(); applyL2StateToUI();
+    }
 
-        if (tableRun) {
-            tableRun.addEventListener('click', () => {
-                if (!tableEditor || !tableOutput) return;
-                tableOutput.innerHTML = tableEditor.value;
-                if (tableResult) tableResult.style.display = 'none';
-            });
+    submitEl.addEventListener('click', onSubmit);
+    if (resetEl) resetEl.addEventListener('click', onReset);
+}
+
+/* ----------------------------------------------------------
+   7a) VALIDATORS — pure functions: (editorEl, outputEl) -> {ok, error?}
+   ---------------------------------------------------------- */
+
+function validateLinks(editorEl, outputEl) {
+    if (!outputEl) return { ok: false, error: 'Output area not found.' };
+    var doc     = new DOMParser().parseFromString(outputEl.innerHTML || '', 'text/html');
+    var anchors = Array.from(doc.querySelectorAll('a'));
+    if (!anchors.length)  return { ok: false, error: 'No <a> tag found. Add one linking to Google, Facebook, or YouTube.' };
+    if (anchors.length>1) return { ok: false, error: 'Include exactly one <a> tag.' };
+    var href    = (anchors[0].getAttribute('href') || '').toLowerCase();
+    var allowed = ['https://www.google.com','https://www.facebook.com','https://www.youtube.com'];
+    if (!allowed.some(function(k){return href.includes(k);}))
+        return { ok: false, error: 'Link must point to Google, Facebook, or YouTube.' };
+    return { ok: true };
+}
+
+function validateImage(editorEl, outputEl) {
+    if (!outputEl) return { ok: false, error: 'Output area not found.' };
+    var doc  = new DOMParser().parseFromString(outputEl.innerHTML || '', 'text/html');
+    var imgs = Array.from(doc.querySelectorAll('img'));
+    if (!imgs.length)   return { ok: false, error: 'No <img> tag found.' };
+    if (imgs.length > 1) return { ok: false, error: 'Include exactly one <img> tag.' };
+    if (!imgs[0].getAttribute('src')) return { ok: false, error: 'Image is missing a src attribute.' };
+    return { ok: true };
+}
+
+function validateList(editorEl, outputEl) {
+    if (!outputEl) return { ok: false, error: 'Output area not found.' };
+    var doc = new DOMParser().parseFromString(outputEl.innerHTML || '', 'text/html');
+    var ols = Array.from(doc.querySelectorAll('ol'));
+    if (!ols.length)    return { ok: false, error: 'No <ol> found. Use <ol> to create a numbered list.' };
+    if (ols.length > 1) return { ok: false, error: 'Include exactly one <ol>.' };
+    return { ok: true };
+}
+
+function validateTable(editorEl, outputEl) {
+    /* Check raw source to avoid false-positive from browser-implied rows */
+    var raw = editorEl ? (editorEl.value || '').toLowerCase() : '';
+    if (!raw.includes('<tr')) return { ok: false, error: 'No <tr> found. Use <tr> to create table rows.' };
+    if (!outputEl) return { ok: false, error: 'Output area not found.' };
+    var doc = new DOMParser().parseFromString(outputEl.innerHTML || '', 'text/html');
+    if (!doc.querySelectorAll('tr').length) return { ok: false, error: 'No table rows visible in preview.' };
+    return { ok: true };
+}
+
+function validateForm(editorEl) {
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase();
+    if (!code.includes('for="username"') && !code.includes("for='username'"))
+        return { ok: false, error: 'Fill the first blank with username (for="username").' };
+    if (!code.includes('for="email"') && !code.includes("for='email'"))
+        return { ok: false, error: 'Fill the second blank with email (for="email").' };
+    if (!code.includes('type="text"') && !code.includes("type='text'"))
+        return { ok: false, error: 'Add an <input type="text"> for the username field.' };
+    if (!code.includes('type="email"') && !code.includes("type='email'"))
+        return { ok: false, error: 'Add an <input type="email"> for the email field.' };
+    return { ok: true };
+}
+
+/* ----------------------------------------------------------
+   7b) SEMANTIC HTML VALIDATOR  (test-2.8)
+   Exposed globally so the inline onclick in the HTML still works.
+   ---------------------------------------------------------- */
+
+function checkSemanticTags() {
+    var editorEl   = document.getElementById('editor');
+    var feedbackEl = document.getElementById('feedback');
+    var outputEl   = document.getElementById('output');
+    if (!editorEl || !feedbackEl) return;
+
+    var code     = editorEl.value;
+    var required = ['header','nav','main','section','article','aside','footer'];
+    var missing  = required.filter(function (tag) {
+        return !code.includes('<' + tag) || !code.includes('</' + tag + '>');
+    });
+
+    if (missing.length) {
+        feedbackEl.className = 'feedback error';
+        feedbackEl.innerHTML = '❌ Missing or incorrect tag(s): ' + missing.join(', ');
+        if (outputEl) outputEl.srcdoc = '';
+        return;
+    }
+
+    feedbackEl.className = 'feedback success';
+    feedbackEl.innerHTML = '✅ Great job! All required semantic tags are present.';
+    if (outputEl) outputEl.srcdoc = code;
+    markTopicCompleted(8);
+}
+window.checkSemanticTags = checkSemanticTags;
+
+/* ----------------------------------------------------------
+   8) RESET DEFAULTS
+   Editor starter content for each activity.
+   Centralised here so they're easy to update.
+   ---------------------------------------------------------- */
+
+var RESET_VALS = {
+    '23': '',
+    '24': '<img ____="https://picsum.photos/400/250" alt="Beautiful Image">',
+    '25': '<____>\n    <li>Plan</li>\n    <li>Code</li>\n    <li>Test</li>\n</ol>',
+    '26': '<____>\n    <td>John</td>\n    <td>15</td>\n</tr>\n</table>',
+    '27': '<form>\n\n    <label for="____">\n        Username:\n    </label>\n    <input type="text">\n\n    <label for="____">\n        Email:\n    </label>\n    <input type="email">\n\n</form>'
+};
+
+/* ----------------------------------------------------------
+   Per-page configuration for code activities (test-2.3..2.7)
+   Makes it easy to change submit/reset/next/result ids and
+   validation logic without editing multiple files.
+   Keys are page filenames.
+   ---------------------------------------------------------- */
+var PAGE_CONFIG = {
+    'test-2.3.html': {
+        submitId: 'linkSubmit', resetId: 'linkReset', nextId: 'linkNext', resultId: 'linkResult',
+        validate: validateLinks, successMsg: '✅ Activity complete — link is correct.', topicNum: 3, resetKey: '23'
+    },
+    'test-2.4.html': {
+        submitId: 'imageSubmit', resetId: 'imageReset', nextId: 'imageNext', resultId: 'imageResult',
+        validate: validateImage, successMsg: '✅ Activity complete — image displayed correctly.', topicNum: 4, resetKey: '24'
+    },
+    'test-2.5.html': {
+        submitId: 'listSubmit', resetId: 'listReset', nextId: 'listNext', resultId: 'listResult',
+        validate: validateList, successMsg: '✅ Activity complete — list looks good.', topicNum: 5, resetKey: '25'
+    },
+    'test-2.6.html': {
+        submitId: 'tableSubmit', resetId: 'tableReset', nextId: 'tableNext', resultId: 'result',
+        validate: validateTable, successMsg: '✅ Activity complete — table rows look good.', topicNum: 6, resetKey: '26'
+    },
+    'test-2.7.html': {
+        submitId: 'formSubmit', resetId: 'formReset', nextId: 'tableNext', resultId: 'result',
+        validate: function(e){ return validateForm(e); }, successMsg: '✅ Activity complete — form labels are correct.', topicNum: 7, resetKey: '27'
+    }
+};
+
+function registerPageFromConfig(page) {
+    var cfg = PAGE_CONFIG[page];
+    if (!cfg) return;
+    var bindCfg = {
+        submitId: cfg.submitId,
+        resetId: cfg.resetId,
+        nextId: cfg.nextId,
+        resultId: cfg.resultId,
+        validate: cfg.validate,
+        successMsg: cfg.successMsg,
+        topicNum: cfg.topicNum,
+        getResetValue: function () { return RESET_VALS[cfg.resetKey] || ''; }
+    };
+    bindCodeActivity(bindCfg);
+}
+
+
+/* ----------------------------------------------------------
+   Helper: Enhance nav buttons
+   - Adds consistent classes to navigation buttons (Next/Return)
+   - Only affects buttons inside `.nav-buttons` containers so
+     run buttons and other controls are untouched.
+   ---------------------------------------------------------- */
+function enhanceNavButtons() {
+    var navBtns = document.querySelectorAll('.nav-buttons button');
+    if (!navBtns || !navBtns.length) return;
+    navBtns.forEach(function (btn) {
+        var txt = (btn.textContent || '').trim().toLowerCase();
+        // Add base btn class if missing so appearance is consistent
+        if (!btn.classList.contains('btn')) btn.classList.add('btn');
+        // Identify Next buttons by text or id and make them primary
+        if (txt.includes('next') || txt.indexOf('→') !== -1 || (btn.id && btn.id.toLowerCase().indexOf('next') !== -1)) {
+            if (!btn.classList.contains('btn-primary')) btn.classList.add('btn-primary');
         }
+    });
+}
 
-        if (tableSubmit) {
-            tableSubmit.addEventListener('click', () => {
-                const res = checkFormActivityFor27();
-                if (!res.ok) {
-                    alert(res.error || 'Invalid submission — please try again.');
-                    return;
-                }
-                if (tableResult) {
-                    tableResult.innerHTML = '✅ Activity complete — form looks good.';
-                    tableResult.classList.remove('error');
-                    tableResult.classList.add('success');
-                    tableResult.style.display = 'block';
-                }
-                if (tableSubmit) tableSubmit.style.display = 'none';
-                if (tableReset) tableReset.style.display = 'inline-block';
-                if (tableNext) tableNext.style.display = 'inline-block';
 
-                // mark topic 7 completed
-                completedTopics2.topic7 = true;
-                saveLesson2State();
-                applyLesson2StateToUI();
-            });
-        }
+/* ----------------------------------------------------------
+   9) INIT — detect the page and wire only what is needed
+   ---------------------------------------------------------- */
 
-        if (tableReset) {
-            tableReset.addEventListener('click', () => {
-                if (tableEditor) tableEditor.value = '<form>\n\n    <label for="____">\n        Username:\n    </label>\n    <input type="text">\n\n    <label for="____">\n        Email:\n    </label>\n    <input type="email">\n\n</form>';
-                if (tableOutput) tableOutput.innerHTML = '<p>Your form will appear here...</p>';
-                if (tableResult) { tableResult.innerHTML = ''; tableResult.classList.remove('success','error'); tableResult.style.display = 'none'; }
-                if (tableReset) tableReset.style.display = 'none';
-                if (tableNext) tableNext.style.display = 'none';
-                if (tableSubmit) tableSubmit.style.display = 'inline-block';
+document.addEventListener('DOMContentLoaded', function () {
 
-                completedTopics2.topic7 = false;
-                saveLesson2State();
-                applyLesson2StateToUI();
-            });
-        }
+    loadL2State();
+    applyL2StateToUI();
+    initCodeRunner(); /* safe on every page — no-ops if elements missing */
+    enhanceNavButtons(); /* ensure Next buttons look consistent across tests */
+
+    var page = (typeof getCurrentPage === 'function') ? getCurrentPage() : '';
+
+    if (page === 'test-2.1.html') {
+        initDragAndDrop();
+    } else if (page === 'test-2.2.html') {
+        initHeadingQuiz();
+    } else {
+        /* For test-2.3 .. test-2.7, use the centralized PAGE_CONFIG */
+        registerPageFromConfig(page);
     }
+    /* test-2.8 uses an inline onclick that calls checkSemanticTags() directly */
+    /* lesson-2.html and topic pages: applyL2StateToUI already handled UI updates */
 
-    // === Form activity (test-2.7) ===
-    const formSubmit = document.getElementById('formSubmit');
-    const formReset = document.getElementById('formReset');
-    const formResult = document.getElementById('formResult') || document.getElementById('result');
-    const formEditor = document.getElementById('editor');
-    const formOutput = document.getElementById('output');
-    const formRun = document.getElementById('runBtn');
-    const formNext = document.getElementById('tableNext');
-
-    // Strict form activity validator for test-2.7
-    function checkFormActivity() {
-        if (!formEditor) return { ok: false, error: 'Editor not found.' };
-
-        const code = (formEditor.value || '').toLowerCase();
-
-        const hasUsername = code.includes('for="username"') || code.includes("for='username'");
-        const hasEmail = code.includes('for="email"') || code.includes("for='email'");
-        const hasTextInput = code.includes('type="text"') || code.includes("type='text'");
-        const hasEmailInput = code.includes('type="email"') || code.includes("type='email'");
-
-        if (!hasUsername) return { ok: false, error: 'Fill the first blank with username (for="username").' };
-        if (!hasEmail) return { ok: false, error: 'Fill the second blank with email (for="email").' };
-        if (!hasTextInput) return { ok: false, error: 'Add a text input (type="text").' };
-        if (!hasEmailInput) return { ok: false, error: 'Add an email input (type="email").' };
-
-        return { ok: true };
-    }
-
-    if (formRun) {
-        formRun.addEventListener('click', () => {
-            if (!formEditor || !formOutput) return;
-            formOutput.innerHTML = formEditor.value;
-            if (formResult) formResult.style.display = 'none';
-        });
-    }
-
-    if (formSubmit) {
-        formSubmit.addEventListener('click', () => {
-            const res = checkFormActivity();
-            if (!res.ok) {
-                alert(res.error || 'Invalid submission — please try again.');
-                return;
-            }
-            if (formResult) {
-                formResult.innerHTML = '<h3>✅ Correct!</h3><p>You successfully completed the form activity.</p>';
-                formResult.classList.remove('error');
-                formResult.classList.add('success');
-                formResult.style.display = 'block';
-            }
-            if (formSubmit) formSubmit.style.display = 'none';
-            if (formReset) formReset.style.display = 'inline-block';
-            if (formNext) formNext.style.display = 'inline-block';
-
-            // mark topic 7 completed
-            try { markTopicCompleted(7); } catch (e) { completedTopics2.topic7 = true; saveLesson2State(); applyLesson2StateToUI(); }
-            if (window && window.console) console.log('lesson-2: saved lesson2State', localStorage.getItem('lesson2State'));
-        });
-    }
-
-    if (formReset) {
-        formReset.addEventListener('click', () => {
-            if (formEditor) formEditor.value = '<form>\n    <label for="username">Username:</label>\n    <input type="text" id="username" name="username">\n    <label for="email">Email:</label>\n    <input type="email" id="email" name="email">\n</form>';
-            if (formOutput) formOutput.innerHTML = '';
-            if (formResult) { formResult.innerHTML = ''; formResult.classList.remove('success','error'); formResult.style.display = 'none'; }
-            if (formReset) formReset.style.display = 'none';
-            if (formSubmit) formSubmit.style.display = 'inline-block';
-
-            completedTopics2.topic7 = false;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
-
-
-    // === Heading quiz (test-2.2) logic binding ===
-    const headingSubmit = document.getElementById('headingSubmit');
-    const quizForm = document.getElementById('quizForm');
-    const headingResult = document.getElementById('headingResult');
-    const headingReset = document.getElementById('headingReset');
-    const headingReturn = document.getElementById('headingReturn');
-    const headingNext = document.getElementById('headingNext');
-
-    if (headingNext) headingNext.style.display = 'none';
-
-    function allQuestionsAnswered(form, keys) {
-        return keys.every(k => form.querySelector(`input[name="${k}"]:checked`));
-    }
-
-    function resetHeadingQuiz() {
-        if (!quizForm) return;
-        quizForm.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
-        if (headingResult) {
-            headingResult.innerHTML = '';
-            headingResult.style.display = 'none';
-        }
-        // restore submit/reset UI
-        if (headingReset) {
-            headingReset.style.display = 'none';
-            headingReset.removeEventListener('click', resetHeadingQuiz);
-        }
-        if (headingSubmit) headingSubmit.style.display = 'inline-block';
-        if (headingNext) headingNext.style.display = 'none';
-
-        // clear lesson-2 quiz attempt state
-        quizAttempted2 = false;
-        quizPassed2 = false;
-        completedTopics2.quiz = false;
-        // do not clear topic completion here (user may have passed earlier)
-        saveLesson2State();
-        applyLesson2StateToUI();
-    }
-    function gradeHeadingQuiz() {
-        if (!quizForm || !headingResult) return;
-
-        const keys = ['q1','q2','q3','q4','q5'];
-        if (!allQuestionsAnswered(quizForm, keys)) {
-            alert('Please answer all questions before submitting.');
-            return;
-        }
-
-        const answers = { q1: 'b', q2: 'c', q3: 'c', q4: 'c', q5: 'd' };
-        let score = 0;
-        // Debug: log selected values to console to trace grading issues
-        const debugSelections = {};
-        for (let key of keys) {
-            const selected = quizForm.querySelector(`input[name="${key}"]:checked`);
-            const val = selected ? selected.value : null;
-            debugSelections[key] = val;
-            if (selected && selected.value === answers[key]) score++;
-        }
-        if (window && window.console) console.log('gradeHeadingQuiz selections:', debugSelections, 'score:', score);
-
-        let message = '';
-        if (score === 5) message = '🎉 Excellent! You scored 5/5!';
-        else if (score >= 3) message = '👍 Good Job! You scored ' + score + '/5.';
-        else message = '📚 Keep Practicing! You scored ' + score + '/5.';
-
-        headingResult.innerHTML = message;
-        if (headingResult) headingResult.style.display = 'block';
-
-        // update lesson-2 state: mark quiz attempted and pass/fail
-        quizAttempted2 = true;
-        quizPassed2 = (score >= 3);
-        completedTopics2.quiz = true;
-        if (quizPassed2) {
-            // mark topic2 as completed when this quiz passed
-            completedTopics2.topic2 = true;
-        }
-        saveLesson2State();
-        applyLesson2StateToUI();
-
-        // swap submit -> show reset
-        if (headingSubmit) headingSubmit.style.display = 'none';
-        if (headingReset) {
-            headingReset.style.display = 'inline-block';
-        }
-
-        // show next (navigation handled globally via data-href/script.js)
-        if (headingNext) headingNext.style.display = 'inline-block';
-    }
-
-    if (headingSubmit && quizForm && headingResult) {
-        headingSubmit.addEventListener('click', gradeHeadingQuiz);
-    }
-    if (headingResult) headingResult.style.display = 'none';
-    // register reset handler once
-    if (headingReset) headingReset.addEventListener('click', resetHeadingQuiz);
-
-    // small activity handlers are below (linkSubmit/linkReset) —
-    // removed old completeBtn/messageEl block (legacy injection) so
-    // behavior is fully handled by linkSubmit/linkReset below.
-
-    // Link activity (test-2.3) submit/reset handling
-    const linkSubmit = document.getElementById('linkSubmit');
-    const linkReset = document.getElementById('linkReset');
-    // Prefer a page-specific result element, but fall back to the global
-    // lesson result `#result` used by lesson-1 pages. Ensure we have the
-    // same styling by adding the `quiz-result` class when needed.
-    let linkResult = document.getElementById('linkResult') || document.getElementById('result') || document.getElementById('link-result');
-    if (linkResult && !linkResult.classList.contains('quiz-result')) linkResult.classList.add('quiz-result');
-    const linkNext = document.getElementById('linkNext');
-    const linkReturn = document.getElementById('linkReturn');
-    const editorEl = document.getElementById('editor');
-    const outputEl = document.getElementById('output');
-
-    if (editorEl) {
-    function autoResize() {
-        editorEl.style.height = "auto";
-        editorEl.style.height = editorEl.scrollHeight + "px";
-    }
-    editorEl.addEventListener("input", autoResize);
-    autoResize();
-    }
-
-    function checkLinks() {
-        if (!outputEl) return { ok: false, error: 'output missing' };
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(outputEl.innerHTML || '', 'text/html');
-        const anchors = Array.from(doc.querySelectorAll('a'));
-
-        // Require exactly one anchor
-        if (anchors.length === 0) return { ok: false, error: 'No anchor found. Add one <a> tag linking to Google, Facebook or YouTube.' };
-        if (anchors.length > 1) return { ok: false, error: 'Please include exactly one anchor. Remove extra <a> tags and try again.' };
-
-        const a = anchors[0];
-        const href = (a.getAttribute('href') || '').toLowerCase();
-        const allowed = ['google', 'facebook', 'youtube', 'youtu.be'];
-        const matches = allowed.find(k => href.includes(k));
-        if (!matches) return { ok: false, error: 'Anchor must link to Google, Facebook, or YouTube. Other targets are not accepted.' };
-
-        // success: return which target matched
-        return { ok: true, target: matches };
-    }
-
-    if (linkSubmit) {
-        linkSubmit.addEventListener('click', () => {
-            console.log('lesson-2: linkSubmit clicked');
-            const result = checkLinks();
-            console.log('lesson-2: checkLinks result', result);
-            if (!result.ok) {
-                alert(result.error || 'Invalid submission — please try again.');
-                return;
-            }
-            if (linkResult) {
-                linkResult.innerHTML = '✅ Activity complete — linked to ' + result.target + '.';
-                linkResult.classList.remove('error');
-                linkResult.classList.add('success');
-                linkResult.style.display = 'block';
-            }
-            if (linkSubmit) linkSubmit.style.display = 'none';
-            if (linkReset) linkReset.style.display = 'inline-block';
-            if (linkNext) linkNext.style.display = 'inline-block';
-
-            // mark topic 3 completed
-            completedTopics2.topic3 = true;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
-
-    if (linkReset) {
-        linkReset.addEventListener('click', () => {
-            if (editorEl) editorEl.value = '';
-            if (outputEl) outputEl.innerHTML = '';
-            if (linkResult) { linkResult.innerHTML = ''; linkResult.classList.remove('success','error'); linkResult.style.display = 'none'; }
-            if (linkReset) linkReset.style.display = 'none';
-            if (linkNext) linkNext.style.display = 'none';
-            if (linkSubmit) linkSubmit.style.display = 'inline-block';
-            if (linkResult) { linkResult.innerHTML = ''; linkResult.classList.remove('success','error'); linkResult.style.display = 'none'; }
-
-            completedTopics2.topic3 = false;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
-
-    // === Image activity (test-2.4) submit/reset handling ===
-    const imageSubmit = document.getElementById('imageSubmit');
-    const imageReset = document.getElementById('imageReset');
-    const imageNext = document.getElementById('imageNext');
-    const imageReturn = document.getElementById('imageReturn');
-    const imageResult = document.getElementById('result') || document.getElementById('imageResult');
-
-    function checkImage() {
-        if (!outputEl) return { ok: false, error: 'output missing' };
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(outputEl.innerHTML || '', 'text/html');
-        const imgs = Array.from(doc.querySelectorAll('img'));
-        if (imgs.length === 0) return { ok: false, error: 'No <img> tag found. Add one with a src attribute.' };
-        if (imgs.length > 1) return { ok: false, error: 'Please include exactly one <img> tag.' };
-        const src = imgs[0].getAttribute('src') || '';
-        if (!src) return { ok: false, error: 'Image tag missing src attribute.' };
-        return { ok: true, src };
-    }
-
-    if (imageSubmit) {
-        imageSubmit.addEventListener('click', () => {
-            console.log('lesson-2: imageSubmit clicked');
-            const result = checkImage();
-            console.log('lesson-2: checkImage result', result);
-            if (!result.ok) { alert(result.error || 'Invalid submission — please try again.'); return; }
-            if (imageResult) {
-                imageResult.innerHTML = '✅ Activity complete — image displayed.';
-                imageResult.classList.remove('error');
-                imageResult.classList.add('success');
-                imageResult.style.display = 'block';
-            }
-            if (imageSubmit) imageSubmit.style.display = 'none';
-            if (imageReset) imageReset.style.display = 'inline-block';
-            if (imageNext) imageNext.style.display = 'inline-block';
-
-            // mark topic 4 completed
-            completedTopics2.topic4 = true;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
-
-    if (imageReset) {
-        imageReset.addEventListener('click', () => {
-            if (editorEl) editorEl.value = '<img ____="https://picsum.photos/400/250" alt="Beautiful Image">';
-            if (outputEl) outputEl.innerHTML = '';
-            if (imageResult) { imageResult.innerHTML = ''; imageResult.classList.remove('success','error'); imageResult.style.display = 'none'; }
-            if (imageReset) imageReset.style.display = 'none';
-            if (imageNext) imageNext.style.display = 'none';
-            if (imageSubmit) imageSubmit.style.display = 'inline-block';
-
-            completedTopics2.topic4 = false;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
-
-    // === List activity (test-2.5) submit/reset handling ===
-    const listSubmit = document.getElementById('listSubmit');
-    const listReset = document.getElementById('listReset');
-    const listNext = document.getElementById('listNext');
-    const listReturn = document.getElementById('listReturn');
-    const listResult = document.getElementById('result') || document.getElementById('listResult');
-
-    function checkList() {
-        if (!outputEl) return { ok: false, error: 'output missing' };
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(outputEl.innerHTML || '', 'text/html');
-        const ols = Array.from(doc.querySelectorAll('ol'));
-        if (ols.length === 0) return { ok: false, error: 'No <ol> found. Use <ol> to create a numbered list.' };
-        if (ols.length > 1) return { ok: false, error: 'Please include exactly one <ol>.' };
-        return { ok: true };
-    }
-
-    if (listSubmit) {
-        listSubmit.addEventListener('click', () => {
-            console.log('lesson-2: listSubmit clicked');
-            const result = checkList();
-            console.log('lesson-2: checkList result', result);
-            if (!result.ok) { alert(result.error || 'Invalid submission — please try again.'); return; }
-            if (listResult) {
-                listResult.innerHTML = '✅ Activity complete — list looks good.';
-                listResult.classList.remove('error');
-                listResult.classList.add('success');
-                listResult.style.display = 'block';
-            }
-            if (listSubmit) listSubmit.style.display = 'none';
-            if (listReset) listReset.style.display = 'inline-block';
-            if (listNext) listNext.style.display = 'inline-block';
-
-            // mark topic 5 completed
-            completedTopics2.topic5 = true;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
-
-    if (listReset) {
-        listReset.addEventListener('click', () => {
-            if (editorEl) editorEl.value = '<____>\n    <li>Plan</li>\n    <li>Code</li>\n    <li>Test</li>\n</ol>';
-            if (outputEl) outputEl.innerHTML = '';
-            if (listResult) { listResult.innerHTML = ''; listResult.classList.remove('success','error'); listResult.style.display = 'none'; }
-            if (listReset) listReset.style.display = 'none';
-            if (listNext) listNext.style.display = 'none';
-            if (listSubmit) listSubmit.style.display = 'inline-block';
-
-            completedTopics2.topic5 = false;
-            saveLesson2State();
-            applyLesson2StateToUI();
-        });
-    }
 });

@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 3</title>
+    <title>Lesson 3 — CSS Styling & Layout</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/lesson-3.css">
 </head>
 <body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
+
+    <!-- Header: site title and menu (hamburger) -->
+    <header class="header">
         <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        <img src="/assets/image/logo/cdm-logo.jpeg" alt="CDM logo" class="logo">
     </header>
 
     <!-- Primary navigation / sidebar -->
@@ -22,94 +24,102 @@
         <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
     </nav>
 
-   <div class="overlay" id="overlay"></div>
+    <div class="overlay" id="overlay"></div>
 
-        <main class="container">
-            <div class="card">
-                <h2>📚 Lesson 3</h2>
-                <h3>CSS Fundamental and responsive design </h3>                
-                <p class="competency"> Lesson Description </p>
-                <p class="description"> CSS (Cascading Style Sheets) is used to control the appearance and layout of web pages. In this lesson, learners will explore CSS syntax, 
-                    colors, fonts, and the box model. They will also learn how to create flexible layouts using Flexbox and build responsive webpages that adapt to different screen sizes.
-                   
-                </p>
-            </div>
-            
-            <div class="card">
-                <h2>🎯 Learning Objectives</h2>
-                <p class="competency">By the end of this lesson, learners will be able to:</p>
-                <ul class="list-indent">
-                    <li>Explain the purpose of CSS in web development.</li>
-                    <li>Apply CSS styles to HTML elements.</li>
-                    <li>Use colors and fonts to improve webpage design.</li>
-                    <li>Understand and apply the CSS Box Model.</li>
-                    <li>Create layouts using Flexbox.</li>
-                    <li>Design responsive webpages for different devices.</li>
-                </ul>
-            </div>
+    <main class="container">
 
-            <div class="card">
-                <div class="progress-container">
-                    <div id="lessonProgress" class="progress-bar"></div>
-                </div>
-                <p id="progressText">Progress: 0%</p>
-            </div>
-            
-            <div class="card">
-                <h3>📖 Topic 1: What is CSS?</h3>
-                <p class="description">Style and enhance the appearance of a webpage.</p>
-                <button class="btn" data-href="topic-3.1.html">Learn →</button>
-            </div>
-            
-            <div class="card">
-                <h3>🧩 Topic 2: CSS Syntax</h3>
-                <p class="description">Create CSS rules using selectors, properties, and values.</p>
-                <button class="btn" data-href="topic-3.2.html">Learn →</button>
-            </div>
-            
-            <div class="card">
-                <h3>🌈 Topic 3: Colors</h3>
-                <p class="description">Apply colors to improve webpage design and readability.</p>
-                <button class="btn" data-href="topic-3.3.html">Learn →</button>
-            </div>
-            
-            <div class="card">
-                <h3>🔤 Topic 4: Fonts</h3>
-                <p class="description">Fonts determine how text appears on a webpage.</p>
-                <button class="btn" data-href="topic-3.4.html">Learn →</button>
-            </div>
-            
-            <div class="card">
-                <h3>📦 Topic 5: The CSS Box Model</h3>
-                <p class="description"> Explains how spacing and sizing work around every HTML element.</p>
-                <button class="btn" data-href="topic-3.5.html">Learn →</button>
-            </div>
-            
-            <div class="card">
-                <h3>📐 Topic 6: Flexbox</h3>
-                <p class="description">Flexbox allows elements to be placed side by side and aligned efficiently.</p>
-                <button class="btn" data-href="topic-3.6.html">Learn →</button>
-            </div>
-            
-            <div class="card">
-                <h3>📱 Topic 7: Responsive Design</h3>
-                <p class="description">web design technique that makes websites look and work well on all devices and screen sizes.</p>
-                <button class="btn" data-href="topic-3.7.html">Learn →</button>
-            </div>
-            
+        <!-- Lesson description card -->
+        <div class="card">
+            <h2>📚 Lesson 3</h2>
+            <h3>CSS Fundamentals and Responsive Design</h3>
+            <p class="competency">Lesson Description</p>
+            <p class="description">
+                CSS (Cascading Style Sheets) controls the appearance and layout of web pages.
+                In this lesson you will explore CSS syntax, colours, fonts, and the box model.
+                You will also build flexible layouts with Flexbox and create responsive pages
+                that look great on any screen size.
+            </p>
+        </div>
 
-            <div class="card">
-                <h3>📝 Practice Activity</h3>
-                
-                <br>
-                <button class="btn" data-href="test-activity.html">Learn →</button>
-            </div>
+        <!-- Learning objectives -->
+        <div class="card">
+            <h2>🎯 Learning Objectives</h2>
+            <p class="competency">By the end of this lesson, learners will be able to:</p>
+            <ul class="list-indent">
+                <li>Explain the purpose of CSS in web development.</li>
+                <li>Apply CSS styles to HTML elements.</li>
+                <li>Use colours and fonts to improve webpage design.</li>
+                <li>Understand and apply the CSS Box Model.</li>
+                <li>Create layouts using Flexbox.</li>
+                <li>Design responsive webpages for different devices.</li>
+            </ul>
+        </div>
 
-            <div class="card">
-            <button class="btn" data-href="../lesson-3/lesson-3.html">Learn →</button>
+        <!-- Progress bar — updated by lesson-3.js -->
+        <div class="card">
+            <div class="progress-container">
+                <div id="lessonProgress" class="progress-bar"></div>
             </div>
-        </main>
+            <p id="progressText">Progress: 0%</p>
+        </div>
 
+        <!-- Topic cards — buttons use data-href for navigation (handled by script.js) -->
+        <div class="card">
+            <h3>📖 Topic 1: What is CSS?</h3>
+            <p class="description">Style and enhance the appearance of a webpage.</p>
+            <button class="btn" data-href="topic-3.1.html">Learn →</button>
+        </div>
+
+        <div class="card">
+            <h3>🧩 Topic 2: CSS Syntax</h3>
+            <p class="description">Create CSS rules using selectors, properties, and values.</p>
+            <button class="btn" data-href="topic-3.2.html">Learn →</button>
+        </div>
+
+        <div class="card">
+            <h3>🌈 Topic 3: Colors</h3>
+            <p class="description">Apply colours to improve webpage design and readability.</p>
+            <button class="btn" data-href="topic-3.3.html">Learn →</button>
+        </div>
+
+        <div class="card">
+            <h3>🔤 Topic 4: Fonts</h3>
+            <p class="description">Fonts determine how text appears on a webpage.</p>
+            <button class="btn" data-href="topic-3.4.html">Learn →</button>
+        </div>
+
+        <div class="card">
+            <h3>📦 Topic 5: The CSS Box Model</h3>
+            <p class="description">Understand how spacing and sizing work around every HTML element.</p>
+            <button class="btn" data-href="topic-3.5.html">Learn →</button>
+        </div>
+
+        <div class="card">
+            <h3>📐 Topic 6: Flexbox</h3>
+            <p class="description">Place elements side-by-side and align them efficiently.</p>
+            <button class="btn" data-href="topic-3.6.html">Learn →</button>
+        </div>
+
+        <div class="card">
+            <h3>📱 Topic 7: Responsive Design</h3>
+            <p class="description">Make websites look great on all devices and screen sizes.</p>
+            <button class="btn" data-href="topic-3.7.html">Learn →</button>
+        </div>
+
+        <!-- Navigation footer -->
+        <div class="card">
+            <div class="nav-buttons">
+                <!-- BUG FIX: was linking back to lesson-3.html (self-loop). Now goes home. -->
+                <button class="btn" data-href="/index.html">← Return Home</button>
+                <button class="btn btn-primary" data-href="../lesson-4/lesson-4.html">Next: Lesson 4 →</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Load utils.js first so helpers are available to script.js and lesson-3.js -->
     <script src="../../js/script.js"></script>
+    <script src="../../js/lesson-3.js"></script>
+
 </body>
 </html>

@@ -137,7 +137,9 @@ body {
     text-align:center;
 }
 
-.card hyper-btn {
+/* BUG FIX: was `.card hyper-btn` (invalid element selector).
+   Changed to a class so it works as intended. */
+.card .hyper-btn {
     display: block;
     margin-top: auto;
     width: 100%;
@@ -460,3 +462,56 @@ body {
     "responsive overrides go here"
 
 
+
+/* ==========================================================
+   8) Responsive — mobile overrides
+   ----------------------------------------------------------
+   These rules were missing (the old file had an unclosed
+   @media block). Place all mobile overrides here.
+   ========================================================== */
+
+@media (max-width: 600px) {
+    /* Stack header tighter on small screens */
+    .header {
+        padding: 0.75rem;
+        grid-template-columns: 44px 1fr 44px;
+    }
+    .title {
+        font-size: 1rem;
+    }
+
+    /* Let cards breathe on narrow screens */
+    .container {
+        padding: 12px 10px;
+    }
+    .card {
+        padding: 1rem;
+    }
+
+    /* Make action buttons full-width on mobile for easy tapping */
+    .actions-flex {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .actions-flex button,
+    .actions-flex .btn {
+        width: 100%;
+    }
+
+    /* Sidebar takes less width on very small screens */
+    .sidebar {
+        width: 85vw;
+        max-width: 280px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+    /* Tablet: two-column card grid */
+    .container {
+        grid-template-columns: 1fr 1fr;
+    }
+    /* Let the first welcome card (h2) span both columns */
+    .container > .card:first-child {
+        grid-column: 1 / -1;
+    }
+}
