@@ -1,7 +1,35 @@
-/* all contents style sheet */
 /* ==========================================================
-   1) Universal
-   - Universal selectors and box-sizing for predictable layout
+   style.css — Global stylesheet for Web Creation PWA
+   ----------------------------------------------------------
+   Merged from style.css + lesson-1.css + lesson-2.css so the
+   whole site shares one stylesheet. Sections below are grouped
+   by purpose, not by which lesson first introduced them — most
+   of these rules (code box, output box, quiz result, etc.) are
+   used across multiple lessons, not just the one that added them.
+
+   Every HTML page should now only need ONE link tag:
+     <link rel="stylesheet" href="path/to/css/style.css">
+
+   TABLE OF CONTENTS
+     1)  Reset & Theme Variables
+     2)  Base / Typography
+     3)  Layout: Header
+     4)  Layout: Sidebar
+     5)  Components: Overlay
+     6)  Cards & Buttons (global)
+     7)  Progress Bar
+     8)  Quiz / Activity Result Badge
+     9)  Lock / Unlock States
+     10) Code Editor, Output Preview & Run Button  (reusable)
+     11) Image Gallery & Lightbox Modal            (reusable)
+     12) Drag & Drop Tags                          (lesson-2, reusable pattern)
+     13) Misc small components
+     14) Responsive — mobile & tablet overrides
+   ========================================================== */
+
+
+/* ==========================================================
+   1) Reset & Theme Variables
    ========================================================== */
 
 * {
@@ -9,7 +37,6 @@
     margin: 0;
     padding: 0;
 }
-
 
 /* Theme variables: school green + ICT light blue palette */
 :root {
@@ -28,7 +55,6 @@
 
 /* ==========================================================
    2) Base / Typography
-   - Global font and basic text defaults
    ========================================================== */
 
 body {
@@ -36,6 +62,7 @@ body {
     color: var(--color-text);
     background-color: var(--color-bg);
 }
+
 .container {
     max-width: 1000px;
     margin: 0 auto;
@@ -43,6 +70,152 @@ body {
     display: grid;
     gap: 1rem;
 }
+
+.main-content { padding: 1rem; }
+.main-content h2 { margin-bottom: 1rem; }
+.main-content p  { margin-bottom: 1rem; }
+
+.list-indent { padding-left: 20px; }
+
+
+/* ==========================================================
+   3) Layout: Header
+   ========================================================== */
+
+.header {
+    display: grid;
+    grid-template-columns: 50px 1fr 50px;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #23a727 0%, #1b5e20 100%);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffd700, #ff8c00, #ffd700);
+}
+
+.menu-btn {
+    justify-self: start;
+    color: white;
+    background: rgba(57,169,255,0.08); /* subtle ICT-blue tint */
+    font-size: 1.6rem;
+    border-radius: 12px;
+    padding: 0.6rem 0.8rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.08s ease;
+}
+.menu-btn:hover { background: rgba(57,169,255,0.14); transform: translateY(-1px); }
+
+.title {
+    text-align: center;
+    font-size: 1.25rem;
+    color: white;
+    font-style: italic;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    justify-self: end;
+}
+
+
+/* ==========================================================
+   4) Layout: Sidebar
+   ========================================================== */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0; /* kept for a11y; transform handles the hidden state */
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(180deg, #05600b 0%, #d7e207 100%);
+    color: #e6eef8;
+    padding: 1.25rem;
+    box-shadow: 2px 0 20px rgba(2, 6, 23, 0.7);
+    transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.25s ease;
+    transform: translateX(-100%); /* hidden by default */
+    z-index: 1000;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.sidebar.open { transform: translateX(0); }
+
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.4rem;
+    color: rgba(255,255,255,0.85);
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-bottom: 1rem;
+    padding: 0.25rem;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 0.5rem;
+    text-decoration: none;
+    color: rgba(255,255,255,0.85);
+    border-radius: 6px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+.sidebar a:hover,
+.sidebar a:focus {
+    background: rgba(57,169,255,0.08);
+    color: rgb(255, 242, 0);
+    border-bottom: 2px solid var(--color-ict-blue);
+    outline: none;
+}
+
+/* Thin custom scrollbar for the sidebar */
+.sidebar::-webkit-scrollbar { width: 8px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 8px; }
+
+
+/* ==========================================================
+   5) Components: Overlay
+   ========================================================== */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+.overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* ==========================================================
+   6) Cards & Buttons (global)
+   ========================================================== */
+
 .card {
     /* Darker card surface for better contrast with text */
     background: linear-gradient(140deg,  #23a727 0%,  #05174d 100%);
@@ -95,50 +268,7 @@ body {
     transform: translateY(-1px);
 }
 
-/* ==========================================================
-     Button utilities (global)
-     - Shared button styles used across pages. Keep lightweight
-         so lesson-specific variants can override in their files.
-     ========================================================== */
-.btn {
-        display: inline-block;
-        padding: 0.6rem 1rem;
-        background-color: #4a90d9;
-        color: #ffffff;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        text-decoration: none;
-        text-align: center;
-        transition: background-color 0.18s ease, transform 0.06s ease;
-}
-.btn:hover { background-color: var(--color-ict-blue-dark); transform: translateY(-1px); }
-
-.nav-buttons { display:flex; gap:8px; align-items:center; margin-top:12px; }
-
-
-.progress-container{
-    width:100%;
-    height:20px;
-    background:#ddd;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    width:0%;
-    height:100%;
-    background:#4caf50;
-    transition:width .3s ease;
-}
-
-#progressText{
-    margin-top:10px;
-    text-align:center;
-}
-
-/* BUG FIX: was `.card hyper-btn` (invalid element selector).
-   Changed to a class so it works as intended. */
+/* Class-based variant (was previously an invalid `.card hyper-btn` element selector) */
 .card .hyper-btn {
     display: block;
     margin-top: auto;
@@ -151,11 +281,9 @@ body {
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.18s ease,
-                transform 0.06s ease;
+    transition: background-color 0.18s ease, transform 0.06s ease;
     box-sizing: border-box;
 }
-
 .card a:hover {
     background-color: var(--color-ict-blue-dark);
     transform: translateY(-1px);
@@ -167,200 +295,40 @@ body {
     border-left: 6px solid var(--color-yellow);
     box-shadow: 0 12px 40px rgba(57, 169, 255, 0.25);
 }
-.card-highlight .competency {
-    color: #ffeb3b;
-}
-.card-highlight h3 {
-    color: #ffffff;
-}
+.card-highlight .competency { color: #ffeb3b; }
+.card-highlight h3 { color: #ffffff; }
 
-/* Primary button variant for final project */
+/* Shared button utility — keep lightweight so variants below can override */
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1rem;
+    background-color: #4a90d9;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.18s ease, transform 0.06s ease;
+}
+.btn:hover { background-color: var(--color-ict-blue-dark); transform: translateY(-1px); }
+
+/* Primary button variant (Next / final project CTAs) */
 .btn-primary {
     background: linear-gradient(90deg, var(--color-yellow), #ffb300) !important;
     color: #000000 !important;
     font-weight: 600;
 }
-
 .btn-primary:hover {
     background: linear-gradient(90deg, #ffb300, var(--color-yellow)) !important;
     box-shadow: 0 4px 12px rgba(255, 202, 40, 0.3);
 }
 
-/* ==========================================================
-   3) Layout: Header
-   - Rules related to the top header bar and its children
-   ========================================================== */
+.nav-buttons { display:flex; gap:8px; align-items:center; margin-top:12px; }
 
-.header {
-    display: grid;
-    grid-template-columns: 50px 1fr 50px;
-    align-items: center;
-    padding: 1rem;
-    background: linear-gradient(135deg, #23a727 0%, #1b5e20 100%);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-.header::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #ffd700, #ff8c00, #ffd700);
-}
-.menu-btn {
-    justify-self: start;
-
-    color: white;
-    background: rgba(57,169,255,0.08); /* subtle ICT-blue tint */
-    font-size: 1.6rem;
-    border-radius: 12px;
-    padding: 0.6rem 0.8rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.18s ease, transform 0.08s ease;
-}
-
-.menu-btn:hover { background: rgba(57,169,255,0.14); transform: translateY(-1px); }
-
-.title {
-    text-align: center;
-    font-size: 1.25rem;
-    color: white;
-    font-style: italic;
-}
-
-.logo {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 50%;
-    justify-self: end;
-}
-
-
-/* ==========================================================
-   4) Layout: Sidebar
-   - Sidebar panel, open state, and internal links
-   ========================================================== */
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0; /* kept for a11y; transform handles the hidden state */
-    width: 280px;
-    height: 100vh;
-    background: linear-gradient(180deg, #05600b 0%, #d7e207 100%);
-    color: #e6eef8;
-    padding: 1.25rem;
-    box-shadow: 2px 0 20px rgba(2, 6, 23, 0.7);
-    transition: transform 0.35s cubic-bezier(.2,.8,.2,1), opacity 0.25s ease;
-    transform: translateX(-100%); /* hidden by default */
-    z-index: 1000;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.sidebar.open {
-    transform: translateX(0);
-}
-
-.close-btn {
-    background: transparent;
-    border: none;
-    font-size: 1.4rem;
-    color: rgba(255,255,255,0.85);
-    cursor: pointer;
-    display: block;
-    margin-left: auto;
-    margin-bottom: 1rem;
-    padding: 0.25rem;
-}
-
-.sidebar a {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.75rem 0.5rem;
-    text-decoration: none;
-    color: rgba(255,255,255,0.85);
-    border-radius: 6px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    transition: all 0.2s ease;
-    border-bottom: 2px solid transparent;
-}
-
-.sidebar a:hover,
-.sidebar a:focus {
-    background: rgba(57,169,255,0.08);
-    color: rgb(255, 242, 0);
-    border-bottom: 2px solid var(--color-ict-blue);
-    outline: none;
-}
-
-/* Thin custom scrollbar for the sidebar */
-.sidebar::-webkit-scrollbar { width: 8px; }
-.sidebar::-webkit-scrollbar-track { background: transparent; }
-.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 8px; }
-
-
-/* ==========================================================
-   5) Components: Overlay / Modals / Small UI pieces
-   - Overlays and component-level show/hide states
-   ========================================================== */
-
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
-    z-index: 999;
-}
-
-.overlay.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-
-/* ==========================================================
-   6) Content / Sections
-   - Page content area and typographic spacing inside it
-   ========================================================== */
-
-.main-content {
-    padding: 1rem;
-}
-
-.main-content h2 {
-    margin-bottom: 1rem;
-}
-
-.main-content p {
-    margin-bottom: 1rem;
-}
-
-/* ==========================================================
-   7) Utilities & Responsive (placeholder)
-   - Small helper classes and media query area for future rules
-   ========================================================== */
-
-/* Example utility (uncomment when needed)
-.u-hidden { display: none !important; }
-*/
-
-/* Small reusable utilities */
-.list-indent { padding-left: 20px; }
 .actions-flex { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
-/* Ensure inline action buttons (like the lesson card buttons) share the same height
-   and center their label. Prevent long text from wrapping and force consistent paddings. */
+/* Ensure inline action buttons share height and stay legible */
 .actions-flex button,
 .actions-flex .btn {
     display: inline-flex;
@@ -371,8 +339,6 @@ body {
     padding: 0.6rem 1rem;
     box-sizing: border-box;
 }
-
-/* If the text is slightly long, allow ellipsis to avoid wrapping while keeping height */
 .actions-flex button > span,
 .actions-flex .btn > span {
     display: inline-block;
@@ -382,8 +348,73 @@ body {
     white-space: nowrap;
 }
 
-/* Visual treatment for buttons that are locked by prerequisites.
-   Keeps them readable but indicates they are not currently available. */
+
+/* ==========================================================
+   7) Progress Bar
+   ========================================================== */
+
+.progress-container {
+    width: 100%;
+    height: 20px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #4caf50;
+    transition: width .3s ease;
+}
+#progressText {
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+/* ==========================================================
+   8) Quiz / Activity Result Badge
+   Base shape lives here; success/error color variants are
+   shared across every lesson's quizzes and code activities.
+   ========================================================== */
+
+.quiz-result {
+    display: none;
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    animation: popIn 0.4s ease;
+}
+.quiz-result.success {
+    background: #2e7d32;
+    color: #ffffff;
+    border: none;
+}
+.quiz-result.error {
+    background: #c62828;
+    color: #ffffff;
+    border: none;
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* Green left-border marker for any completed card (topics, activities, etc.) */
+.completed-card {
+    border-left: 6px solid #4caf50;
+}
+
+
+/* ==========================================================
+   9) Lock / Unlock States
+   Used by the index-page lesson gate system (script.js).
+   ========================================================== */
+
 .btn.locked {
     opacity: 0.7;
     filter: grayscale(0.25);
@@ -391,7 +422,6 @@ body {
     border: 1px dashed rgba(255,255,255,0.08);
 }
 
-/* Locked card visual: dim the content and show a subtle overlay with padlock */
 .card.locked {
     position: relative;
     overflow: hidden;
@@ -419,34 +449,20 @@ body {
     gap: 6px;
 }
 
-.quiz-result {
-  display: none;
-  width: 100%;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  animation: popIn 0.4s ease;
-}
-
-/* Unlock animation: a short scale+glow effect when card unlocks */
 @keyframes unlockPulse {
-    0% { transform: scale(0.96); box-shadow: 0 0 0 rgba(0,0,0,0); }
-    40% { transform: scale(1.04); box-shadow: 0 18px 40px rgba(78, 201, 139, 0.18); }
+    0%   { transform: scale(0.96); box-shadow: 0 0 0 rgba(0,0,0,0); }
+    40%  { transform: scale(1.04); box-shadow: 0 18px 40px rgba(78, 201, 139, 0.18); }
     100% { transform: scale(1); box-shadow: none; }
 }
 .card.unlock-animate {
     animation: unlockPulse 700ms cubic-bezier(.2,.8,.2,1);
 }
 
-/* Button variant for unlocked state (subtle highlight) */
 .btn.unlocked {
     transform-origin: center;
     animation: none;
 }
 
-/* Visual treatment for buttons that can be explicitly unlocked */
 .btn.can-unlock {
     background: linear-gradient(90deg, #ffe082, #ffd54f);
     color: #000;
@@ -457,17 +473,321 @@ body {
     box-shadow: 0 10px 30px rgba(255,193,7,0.06);
 }
 
-/*
-@media (max-width: 600px) {
-    "responsive overrides go here"
 
+/* ==========================================================
+   10) Code Editor, Output Preview & Run Button
+   ----------------------------------------------------------
+   Reusable across every code-activity page (test-2.3..2.8 and
+   any future lesson activities). Originally lesson-2-only, but
+   nothing here is specific to lesson 2 — kept together as one
+   "code activity" component group.
+   ========================================================== */
+
+.code-box {
+    /* dark read-only code block */
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: #0d1117;
+    border-radius: 8px;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+.code-box pre {
+    margin: 0;
+    white-space: pre;
+    color: #d4d4d4;
+    font-family: Consolas, monospace;
+}
+.code-box code {
+    font-family: inherit;
+    color: inherit;
+}
+
+.code-editor {
+    width: 100%;
+    min-height: 120px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background: #ffffff;
+    color: #111111;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px;
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    resize: none;
+    box-sizing: border-box;
+}
+
+/* Same look as .code-editor but resizable — used by table/list activities
+   where students may want to drag the box taller manually. */
+.white-box {
+    width: 100%;
+    min-height: 120px;
+    background: #ffffff;
+    color: #111111;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px;
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.black-box {
+    width: 100%;
+    min-height: 120px;
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #f6ff00;
+    border-radius: 10px;
+    padding: 12px;
+    font-family: Consolas, monospace;
+    font-size: 15px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.run-btn {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+.run-btn:hover { background: #1d4ed8; }
+
+.output-box {
+    min-height: 150px;
+    margin-top: 15px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: left;
+    color: #111111;
+    background: white;
+}
+/* Make rendered lists inside the live preview look like normal page lists */
+.output-box ol,
+.output-box ul {
+    text-align: left;
+    padding-left: 40px;
+    margin: 10px 0;
+}
+/* When students omit the surrounding <ol>/<ul>, still indent top-level <li>.
+   Child selector avoids double-indenting <li> already inside a list. */
+.output-box > li {
+    display: list-item;
+    margin-left: 40px;
+}
+/* Keep rendered images/media responsive inside the preview */
+.output-box img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.output-box iframe,
+.output-box video {
+    max-width: 100%;
+    height: auto;
+}
+.output-box p {
+    margin: 0;
+    font-size: 16px;
+    color: #111111;
+}
+
+/* Tables rendered inside output previews and any plain page table */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+table th {
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    text-align: left;
+}
+table td {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+/* Basic inline color token, used for highlighted text/markers */
+.text {
+    color: #ce9178;
+}
+
+.instructions {
+    background: #eef4ff;
+    border-left: 5px solid #3b82f6;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.image-link {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    word-break: break-all;
+}
+.activity-container {
+    margin-top: 20px;
+}
+.feedback {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+}
 
 
 /* ==========================================================
-   8) Responsive — mobile overrides
+   11) Image Gallery & Lightbox Modal
    ----------------------------------------------------------
-   These rules were missing (the old file had an unclosed
-   @media block). Place all mobile overrides here.
+   Reusable for any page that shows a row of clickable thumbnail
+   images with a fullscreen lightbox (openImage/closeImage in
+   lesson-1.js). Originally lesson-1-only, but the pattern works
+   anywhere thumbnails + a modal are needed.
+
+   NOTE: the HTML pages use class="gallary" (not "gallery") on
+   the thumbnail container — kept as-is here so existing markup
+   keeps working without edits. Fix the HTML to use "gallery"
+   whenever convenient and you can rename this selector too.
+   ========================================================== */
+
+.gallary {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.thumbnail {
+    width: 100%;
+    max-width: 90px;
+    height: auto;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mobile-code-editor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.editor-info {
+    flex: 1;
+}
+.editor-image img {
+    width: 90px;
+    height: auto;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+
+/* ==========================================================
+   12) Drag & Drop Tags
+   ----------------------------------------------------------
+   `.tag` / `.drop-box` used by the lesson-2 drag-and-drop
+   activity (test-2.1) but written generically enough to reuse
+   for any future matching/sorting activity.
+   ========================================================== */
+
+.tag {
+    display: inline-block;
+    padding: 10px;
+    margin: 5px;
+    background: #4a90d9;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+}
+
+.drop-box {
+    min-height: 50px;
+    border: 2px dashed gray;
+    margin-top: 8px;
+    padding: 8px;
+}
+
+.dragging {
+    opacity: 0.7;
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.drop-box.hover {
+    border-color: #4a90d9;
+    background-color: rgba(74, 144, 217, 0.15);
+}
+
+
+/* ==========================================================
+   13) Misc small components / utilities
+   ========================================================== */
+
+/* Example utility (uncomment when needed)
+.u-hidden { display: none !important; }
+*/
+
+
+/* ==========================================================
+   14) Responsive — mobile & tablet overrides
    ========================================================== */
 
 @media (max-width: 600px) {
@@ -513,5 +833,13 @@ body {
     /* Let the first welcome card (h2) span both columns */
     .container > .card:first-child {
         grid-column: 1 / -1;
+    }
+
+    /* Gallery thumbnails get more room on tablet/desktop */
+    .gallary {
+        flex-wrap: nowrap;
+    }
+    .thumbnail {
+        width: 200px;
     }
 }

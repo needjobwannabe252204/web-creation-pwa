@@ -3,37 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 4</title>
+    <title>Topic 3.5</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
-<body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
+    <body>
+    <!-- Header: site title and menu (hamburger) -->
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h1 class="title">Web Creation</h1>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
+        <!-- Primary navigation / sidebar -->
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
 
-    <div class="overlay" id="overlay"></div>
+        <div class="overlay" id="overlay"></div>
 
-    <main class="container">
-        <div class="card">
-            <h2>🚀 Lesson 4</h2>
-           
-        </div>
+        <main class="container">
 
-    </main>
+            <div class="card">
+                <h3>🚀 Topic 5: The CSS Box Model</h3>
+                <p class="competency">
+                    What is the CSS Box Model?
+                </p>
+                <p>
+                    The CSS Box Model is a fundamental concept in CSS 
+                    that describes the rectangular boxes that are 
+                    generated for elements in the document tree and 
+                    how they interact with each other.
+                </p>
+                
+                <br>
+                <hr>
+                <br>
 
-    <script src="../../js/utils.js"></script>
-    <script src="../../js/script.js"></script>
-    <script src="../../js/lesson-3.js"></script>
-</body>
+                <h3>Every HTML Element is a Box</h3>
+                
+                <p>
+                    In the CSS Box Model, every HTML element is considered a rectangular box. 
+                </p>
+
+                <br>
+
+                <p></p>This box consists of several components:</p>
+
+                <ul class="list-indent">
+                    <li><strong>Content:</strong> The actual content of the element (text, images, etc.).</li>
+                    <li><strong>Padding:</strong> The space around the content.</li>
+                    <li><strong>Border:</strong> The line that surrounds the padding and content.</li>
+                    <li><strong>Margin:</strong> The space around the border.</li>
+                </ul>
+
+                <br>
+
+<div class="black-box">
+<pre>
+    +------------------+
+    |     Margin       |
+    | +--------------+ |
+    | |    Border    | |
+    | | +----------+ | |
+    | | | Padding  | | |
+    | | | Content  | | |
+    | | +----------+ | |
+    | +--------------+ |
+    +------------------+
+ </pre>
+ </div>
+
+                <br>
+                <hr>
+                <br>
+
+                <h3>Example</h3>
+
+<div class="black-box">
+<pre>
+div {
+    padding: 10px;
+    border: 2px solid black;
+    margin: 15px;
+}
+</pre>
+</div>
+
+                    <div class="nav-buttons">
+                        <button class="btn" data-href="lesson-3.4.html" aria-label="Go Back">← Go Back</button>
+                        <button class="btn btn-primary" data-href="topic-3.6.html" aria-label="Next Topic">Next Topic →</button>
+                    </div>
+                    
+            </div>
+
+        </main>
+
+        <script src="../../js/utils.js"></script>
+        <script src="../../js/script.js"></script>
+        <script src="../../js/lesson-3.js"></script>
+    </body>
 </html>
