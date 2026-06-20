@@ -28,58 +28,62 @@
         <main class="container">
 
             <div class="card">
+                
+                <h2>📋 HTML Lists Activity</h2>
+                <p class="competency">Help Maria fix her HTML code.</p>               
+                <div class="white-box">
+                    <strong>Directions:</strong>
+                    Maria wants to create a numbered list.
+                    Replace the blank (<strong>____</strong>) with the correct HTML tag.
+                </div>
 
-<div class="activity-container">
+                <h3>Example:</h3>
+                <div class="white-box">
+                    <ol style="padding-left:20px;">
+                        <li>Plan</li>
+                        <li>Code</li>
+                        <li>Test</li>
+                    </ol>
+                </div>
 
-    <div class="activity-header">
-        <h2>📋 HTML Lists Activity</h2>
-        <p>Help Maria fix her HTML code.</p>
-    </div>
+                <br>
 
-    <div class="instructions">
-        <strong>Directions:</strong>
-        Maria wants to create a numbered list. Replace the blank (<strong>____</strong>) with the correct HTML tag.
-    </div>
+<textarea id="editor" class="code-editor">
+<____>
+    <li>Plan</li>
+    <li>Code</li>
+    <li>Test</li>
+</ol></textarea>
 
-    <div class="example-box">
-        <strong>Expected Output:</strong>
-        <ol style="padding-left:30px;">
-            <li>Plan</li>
-            <li>Code</li>
-            <li>Test</li>
-        </ol>
-    </div>
+                <br>
 
-    <textarea id="editor" class="code-editor"></textarea>
+                <button id="runBtn" class="run-btn" type="button">▶ Run Code</button>
 
-    <button id="runBtn" class="run-btn" type="button">▶ Run Code</button>
+                <div id="output" class="output-box">
+                    <p>Your list will appear here...</p>    
+                </div>
 
-    <div id="output" class="output-box">Your list will appear here...</div>
+                <br>
 
-    <div id="result" class="quiz-result"></div>
+                <div id="result" class="quiz-result"></div>
 
-    <div class="actions-flex">
-        <button id="listSubmit" type="button">Submit Activity</button>
-        <button id="listReset" type="button" style="display:none">Reset / Try Again</button>
-    </div>
+                <br>
 
-    <div class="nav-buttons">
-        <button id="listReturn" type="button" class="btn" data-href="topic-2.5.html">← Go Back</button>
-        <button id="listNext" type="button" class="btn" data-href="topic-2.6.html" style="display:none">Next →</button>
-    </div>
+                <div class="actions-flex">
+                    <button id="listSubmit" type="button">Submit Activity</button>
+                    <button id="listReset" type="button" style="display:none">Reset / Try Again</button>
+                </div>
 
-</div>
-
-
+                <div class="nav-buttons">
+                    <button id="listReturn" type="button" class="btn" data-href="topic-2.5.html">← Go Back</button>
+                    <button id="listNext" type="button" class="btn" data-href="topic-2.6.html" style="display:none">Next →</button>
+                </div>
 
             </div>
-             <div class="card">
-             <button class="btn" data-href="topic-2.5.html"> Done </button>
-
-
 
         </main>
 
+        <script src="../../js/lesson-2.js"></script>
         <script src="../../js/script.js"></script>
 
     </body>

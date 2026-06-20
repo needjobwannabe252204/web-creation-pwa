@@ -119,8 +119,7 @@ table td {
 }
 .code-editor {
     width:100%;
-    min-height:120px;
-    overflow-y: hidden;
+    min-height:140px;
     background:#ffffff;
     color:#111111;
     border:2px solid #d1d5db;
@@ -128,7 +127,7 @@ table td {
     padding:12px;
     font-family:Consolas, monospace;
     font-size:15px;
-    resize:none;
+    resize:vertical;
     box-sizing:border-box;
 }
 .run-btn{
@@ -142,46 +141,15 @@ table td {
     font-size:16px;
     width:100%;
 }
-
 .run-btn:hover{ background:#1d4ed8; }
-
-.white-box {
-    width:100%;
-    min-height:120px;
-    background:#ffffff;
-    color:#111111;
-    border:2px solid #d1d5db;
-    border-radius:10px;
-    padding:12px;
-    font-family:Consolas, monospace;
-    font-size:15px;
-    resize:vertical;
-    box-sizing:border-box;
-}
-
 .output-box{
-    min-height:150px;
+    min-height:220px;
     margin-top:15px;
     border:2px dashed #cbd5e1;
     border-radius:10px;
     padding:15px;
-    text-align:left;
-    color: #111111;
+    text-align:center;
     background:white;
-}
-/* Ensure lists rendered inside the output preview look like normal page lists */
-.output-box ol,
-.output-box ul {
-    text-align: left;
-    padding-left: 40px;
-    margin: 10px 0;
-}
-/* When students omit the surrounding <ol>/<ul>, ensure top-level <li>
-   inside the preview are indented. Use the child selector so <li>
-   already inside an <ol>/<ul> don't get double-indented. */
-.output-box > li {
-    display: list-item;
-    margin-left: 40px;
 }
 /* Ensure rendered images / media in the output area stay responsive and don't overflow */
 .output-box img {
@@ -194,13 +162,6 @@ table td {
     max-width: 100%;
     height: auto;
 }
-
-.output-box p {
-    margin: 0;
-    font-size: 16px;
-    color: #111111;
-}
-
 .feedback{
     margin-top:15px;
     text-align:center;
@@ -226,3 +187,15 @@ table td {
     border: none;
 }
 
+.code-editor{
+    width:100%;
+    height:100px;
+    padding:12px;
+    border:2px solid #d1d5db;
+    border-radius:10px;
+    background:#ffffff;
+    color:#000000;
+    font-family:Consolas, monospace;
+    font-size:15px;
+    box-sizing:border-box;
+}

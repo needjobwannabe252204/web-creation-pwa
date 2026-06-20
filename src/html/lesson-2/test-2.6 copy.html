@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Test 2.5</title>
+        <title>Test 2.6</title>
         <link rel="stylesheet" href="../../css/style.css">
         <link rel="stylesheet" href="../../css/lesson-2.css">      
     </head>
@@ -28,7 +28,13 @@
         <main class="container">
 
             <div class="card">
-                
+               
+<h2>📊 HTML Table Row Activity</h2>
+
+<p class="competency">
+    Learn how to use the HTML <code>&lt;tr&gt;</code> tag by fixing John's table code.
+</p>
+
 <style>
 .activity-container{
     margin-top:20px;
@@ -61,19 +67,32 @@
     background:#f8fafc;
     border:1px solid #cbd5e1;
     border-radius:10px;
-    padding:15px;
+    padding:20px;
     margin-bottom:15px;
     color:black;
 }
 
+.example-box table{
+    border-collapse:collapse;
+    width:100%;
+    margin-top:10px;
+}
+
+.example-box th,
+.example-box td{
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:center;
+}
+
 .code-editor{
     width:100%;
-    height:140px;
+    height:150px;
     padding:12px;
     border:2px solid #d1d5db;
     border-radius:10px;
-    background:#ffffff;
-    color:#000000;
+    background:white;
+    color:black;
     font-family:Consolas, monospace;
     font-size:15px;
     box-sizing:border-box;
@@ -87,8 +106,8 @@
     color:white;
     border:none;
     border-radius:10px;
-    font-size:16px;
     cursor:pointer;
+    font-size:16px;
 }
 
 .run-btn:hover{
@@ -116,32 +135,35 @@
 
 <div class="activity-container">
 
-    <div class="activity-header">
-        <h2>📋 HTML Lists Activity</h2>
-        <p style="color:black;">Help Maria fix her HTML code.</p>
-    </div>
 
     <div class="instructions">
         <strong>Directions:</strong>
-        Maria wants to create a numbered list.
-        Replace the blank (<strong>____</strong>) with the correct HTML tag.
+        John wants to create a table row. Replace the blank
+        (<strong>____</strong>) with the correct HTML tag.
     </div>
 
     <div class="example-box">
         <strong>Expected Output:</strong>
-        <ol style="padding-left:30px;">
-            <li>Plan</li>
-            <li>Code</li>
-            <li>Test</li>
-        </ol>
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+            <tr>
+                <td>John</td>
+                <td>15</td>
+            </tr>
+        </table>
     </div>
 
 <textarea id="editor" class="code-editor">
-<____>
-    <li>Plan</li>
-    <li>Code</li>
-    <li>Test</li>
-</ol>
+<table border="1">
+    <____>
+        <td>John</td>
+        <td>15</td>
+    </tr>
+</table>
 </textarea>
 
     <button class="run-btn" onclick="runCode()">
@@ -149,7 +171,7 @@
     </button>
 
     <div id="output" class="output-box">
-        Your list will appear here...
+        Your table will appear here...
     </div>
 
     <div id="feedback" class="feedback"></div>
@@ -164,21 +186,23 @@ function runCode(){
 
     document.getElementById("output").innerHTML = code;
 
-    if(code.includes("<ol>")){
+    if(code.includes("<tr>")){
         document.getElementById("feedback").innerHTML =
-        "✅ Correct! The missing tag is &lt;ol&gt;.";
-    }else{
+        "✅ Correct! The missing tag is &lt;tr&gt;.";
+    }
+    else{
         document.getElementById("feedback").innerHTML =
-        "❌ Incorrect. Maria wants a numbered list.";
+        "❌ Incorrect. A table row uses the &lt;tr&gt; tag.";
     }
 }
 </script>
 
 
             </div>
-             <div class="card">
-             <button class="btn" data-href="topic-2.5.html"> Done </button>
 
+             </div>
+             <div class="card">
+             <button class="btn" data-href="topic-2.6.html"> Done </button>
 
 
         </main>

@@ -15,24 +15,9 @@ function handleRunClick() {
         } catch (e) { /* ignore */ }
         const completeBtn = document.getElementById('completeBtn');
         if (completeBtn) completeBtn.style.display = 'inline-block';
-        // If the page provides a #result element, apply image-activity style grading
-        try {
-            const resultEl = document.getElementById('result');
-            if (resultEl) {
-                const val = (editor.value || '').toLowerCase();
-                if (val.includes('src=')) {
-                    resultEl.innerHTML = '✅ Correct! The missing attribute is <strong>src</strong>.';
-                    resultEl.classList.remove('error');
-                    resultEl.classList.add('success');
-                    resultEl.style.display = 'block';
-                } else {
-                    resultEl.innerHTML = '❌ Incorrect. The image cannot be displayed.';
-                    resultEl.classList.remove('success');
-                    resultEl.classList.add('error');
-                    resultEl.style.display = 'block';
-                }
-            }
-        } catch (e) { /* ignore */ }
+        // Note: per-activity validators (submit buttons) perform grading.
+        // The Run button only renders the editor content to the `output` area
+        // so students can preview changes. Do not perform activity grading here.
         console.log('lesson-2: run executed');
     } catch (e) { console.error('runBtn handler error', e); }
 }
@@ -158,6 +143,21 @@ function applyLesson2StateToUI() {
     updateLesson2ProgressUI();
 }
 
+/*
+    Helper: mark a topic completed programmatically.
+    Usage from pages: `markTopicCompleted(6)` will set topic6=true,
+    save state and update UI. This is safe to call multiple times.
+*/
+function markTopicCompleted(n) {
+        try {
+                const key = `topic${n}`;
+                if (completedTopics2[key]) return; // already done
+                completedTopics2[key] = true;
+                saveLesson2State();
+                applyLesson2StateToUI();
+        } catch (e) { console.warn('markTopicCompleted error', e); }
+}
+
 tags.forEach(tag => {
 
     tag.addEventListener("pointerdown", startDrag);
@@ -234,6 +234,28 @@ document.addEventListener('DOMContentLoaded', function () {
     // load persisted lesson-2 state and apply UI before binding
     loadLesson2State();
     applyLesson2StateToUI();
+
+    /* Auto-resize textareas so they grow with content height.
+       Targets `.code-editor` textareas and falls back to any textarea.
+    */
+    (function setupAutoResizeTextareas(){
+        const areas = Array.from(document.querySelectorAll('textarea.code-editor, textarea'));
+        if (!areas.length) return;
+        areas.forEach(a => {
+            a.style.overflow = 'hidden';
+            const resize = () => {
+                a.style.height = 'auto';
+                // add 2px to avoid scrollbar flicker on some browsers
+                a.style.height = (a.scrollHeight + 2) + 'px';
+            };
+            // init
+            resize();
+            // update on input
+            a.addEventListener('input', resize, { passive: true });
+            // optional: also resize on window/font changes
+            window.addEventListener('resize', resize);
+        });
+    })();
 
     // If page contains the tag-bank activity, bind its handlers; otherwise skip activity setup
     if (tagBank && dropBoxes.length > 0) {
@@ -346,6 +368,85 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // === Table activity (test-2.6) ===
+    const tableSubmit = document.getElementById('tableSubmit');
+    const tableReset = document.getElementById('tableReset');
+    const tableNext = document.getElementById('tableNext');
+    const tableReturn = document.getElementById('tableReturn');
+    const tableResult = document.getElementById('result');
+    const tableEditor = document.getElementById('editor');
+    const tableOutput = document.getElementById('output');
+    const tableRun = document.getElementById('runBtn');
+
+    function checkTable() {
+        if (!tableOutput) return { ok: false, error: 'output missing' };
+        // First check the raw editor text for an explicit <tr tag to avoid
+        // passing due to browser-implied table rows when HTML is malformed.
+        const raw = tableEditor ? (tableEditor.value || '') : '';
+        if (!raw.toLowerCase().includes('<tr')) {
+            return { ok: false, error: 'No <tr> tag found. Use <tr> to create rows.' };
+        }
+        // Parse and confirm the browser produced at least one <tr> element.
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(tableOutput.innerHTML || '', 'text/html');
+        const trs = Array.from(doc.querySelectorAll('tr'));
+        if (trs.length === 0) {
+            if (window && window.console) console.log('lesson-2: tableOutput.innerHTML=', tableOutput.innerHTML);
+            return { ok: false, error: 'No table rows found after parsing.' };
+        }
+        return { ok: true };
+    }
+
+    if (tableRun) {
+        tableRun.addEventListener('click', () => {
+            if (!tableEditor || !tableOutput) return;
+            tableOutput.innerHTML = tableEditor.value;
+            // run quick validation and show hint in tableResult if present
+            if (tableResult) tableResult.style.display = 'none';
+        });
+    }
+
+    if (tableSubmit) {
+        tableSubmit.addEventListener('click', () => {
+            const res = checkTable();
+            if (!res.ok) {
+                alert(res.error || 'Invalid submission — please try again.');
+                return;
+            }
+            if (tableResult) {
+                tableResult.innerHTML = '✅ Activity complete — table rows look good.';
+                tableResult.classList.remove('error');
+                tableResult.classList.add('success');
+                tableResult.style.display = 'block';
+            }
+            if (tableSubmit) tableSubmit.style.display = 'none';
+            if (tableReset) tableReset.style.display = 'inline-block';
+            if (tableNext) tableNext.style.display = 'inline-block';
+
+            // mark topic 6 completed
+            completedTopics2.topic6 = true;
+            saveLesson2State();
+            if (window && window.console) console.log('lesson-2: saved lesson2State', localStorage.getItem('lesson2State'));
+            applyLesson2StateToUI();
+        });
+    }
+
+    if (tableReset) {
+        tableReset.addEventListener('click', () => {
+            if (tableEditor) tableEditor.value = '<____>\n    <td>John</td>\n    <td>15</td>\n</tr>\n</table>';
+            if (tableOutput) tableOutput.innerHTML = '';
+            if (tableResult) { tableResult.innerHTML = ''; tableResult.classList.remove('success','error'); tableResult.style.display = 'none'; }
+            if (tableReset) tableReset.style.display = 'none';
+            if (tableNext) tableNext.style.display = 'none';
+            if (tableSubmit) tableSubmit.style.display = 'inline-block';
+
+            completedTopics2.topic6 = false;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
+
+
     // === Heading quiz (test-2.2) logic binding ===
     const headingSubmit = document.getElementById('headingSubmit');
     const quizForm = document.getElementById('quizForm');
@@ -456,6 +557,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const linkReturn = document.getElementById('linkReturn');
     const editorEl = document.getElementById('editor');
     const outputEl = document.getElementById('output');
+
+    if (editorEl) {
+    function autoResize() {
+        editorEl.style.height = "auto";
+        editorEl.style.height = editorEl.scrollHeight + "px";
+    }
+    editorEl.addEventListener("input", autoResize);
+    autoResize();
+    }
 
     function checkLinks() {
         if (!outputEl) return { ok: false, error: 'output missing' };
