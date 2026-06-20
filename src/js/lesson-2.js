@@ -446,6 +446,149 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // If this page is test-2.7.html it re-uses the `tableSubmit` controls
+    // but the activity expects a form (username/email). Override
+    // behavior on that specific page to validate the form instead of tables.
+    const path = (window.location.pathname || window.location.href || '').toLowerCase();
+    const isTest27 = path.endsWith('test-2.7.html') || path.includes('test-2.7.html');
+    if (isTest27) {
+        function checkFormActivityFor27() {
+            if (!tableEditor) return { ok: false, error: 'Editor not found.' };
+            const code = (tableEditor.value || '').toLowerCase();
+
+            const hasUsernameLabel = code.includes('for="username"') || code.includes("for='username'");
+            const hasEmailLabel = code.includes('for="email"') || code.includes("for='email'");
+            const hasTextInput = code.includes('type="text"') || code.includes("type='text'");
+            const hasEmailInput = code.includes('type="email"') || code.includes("type='email'");
+
+            if (hasUsernameLabel && hasEmailLabel && hasTextInput && hasEmailInput) {
+                return { ok: true };
+            }
+
+            return { ok: false, error: 'Make sure both labels are completed correctly (username and email) and include text/email inputs.' };
+        }
+
+        if (tableRun) {
+            tableRun.addEventListener('click', () => {
+                if (!tableEditor || !tableOutput) return;
+                tableOutput.innerHTML = tableEditor.value;
+                if (tableResult) tableResult.style.display = 'none';
+            });
+        }
+
+        if (tableSubmit) {
+            tableSubmit.addEventListener('click', () => {
+                const res = checkFormActivityFor27();
+                if (!res.ok) {
+                    alert(res.error || 'Invalid submission — please try again.');
+                    return;
+                }
+                if (tableResult) {
+                    tableResult.innerHTML = '✅ Activity complete — form looks good.';
+                    tableResult.classList.remove('error');
+                    tableResult.classList.add('success');
+                    tableResult.style.display = 'block';
+                }
+                if (tableSubmit) tableSubmit.style.display = 'none';
+                if (tableReset) tableReset.style.display = 'inline-block';
+                if (tableNext) tableNext.style.display = 'inline-block';
+
+                // mark topic 7 completed
+                completedTopics2.topic7 = true;
+                saveLesson2State();
+                applyLesson2StateToUI();
+            });
+        }
+
+        if (tableReset) {
+            tableReset.addEventListener('click', () => {
+                if (tableEditor) tableEditor.value = '<form>\n\n    <label for="____">\n        Username:\n    </label>\n    <input type="text">\n\n    <label for="____">\n        Email:\n    </label>\n    <input type="email">\n\n</form>';
+                if (tableOutput) tableOutput.innerHTML = '<p>Your form will appear here...</p>';
+                if (tableResult) { tableResult.innerHTML = ''; tableResult.classList.remove('success','error'); tableResult.style.display = 'none'; }
+                if (tableReset) tableReset.style.display = 'none';
+                if (tableNext) tableNext.style.display = 'none';
+                if (tableSubmit) tableSubmit.style.display = 'inline-block';
+
+                completedTopics2.topic7 = false;
+                saveLesson2State();
+                applyLesson2StateToUI();
+            });
+        }
+    }
+
+    // === Form activity (test-2.7) ===
+    const formSubmit = document.getElementById('formSubmit');
+    const formReset = document.getElementById('formReset');
+    const formResult = document.getElementById('formResult') || document.getElementById('result');
+    const formEditor = document.getElementById('editor');
+    const formOutput = document.getElementById('output');
+    const formRun = document.getElementById('runBtn');
+    const formNext = document.getElementById('tableNext');
+
+    // Strict form activity validator for test-2.7
+    function checkFormActivity() {
+        if (!formEditor) return { ok: false, error: 'Editor not found.' };
+
+        const code = (formEditor.value || '').toLowerCase();
+
+        const hasUsername = code.includes('for="username"') || code.includes("for='username'");
+        const hasEmail = code.includes('for="email"') || code.includes("for='email'");
+        const hasTextInput = code.includes('type="text"') || code.includes("type='text'");
+        const hasEmailInput = code.includes('type="email"') || code.includes("type='email'");
+
+        if (!hasUsername) return { ok: false, error: 'Fill the first blank with username (for="username").' };
+        if (!hasEmail) return { ok: false, error: 'Fill the second blank with email (for="email").' };
+        if (!hasTextInput) return { ok: false, error: 'Add a text input (type="text").' };
+        if (!hasEmailInput) return { ok: false, error: 'Add an email input (type="email").' };
+
+        return { ok: true };
+    }
+
+    if (formRun) {
+        formRun.addEventListener('click', () => {
+            if (!formEditor || !formOutput) return;
+            formOutput.innerHTML = formEditor.value;
+            if (formResult) formResult.style.display = 'none';
+        });
+    }
+
+    if (formSubmit) {
+        formSubmit.addEventListener('click', () => {
+            const res = checkFormActivity();
+            if (!res.ok) {
+                alert(res.error || 'Invalid submission — please try again.');
+                return;
+            }
+            if (formResult) {
+                formResult.innerHTML = '<h3>✅ Correct!</h3><p>You successfully completed the form activity.</p>';
+                formResult.classList.remove('error');
+                formResult.classList.add('success');
+                formResult.style.display = 'block';
+            }
+            if (formSubmit) formSubmit.style.display = 'none';
+            if (formReset) formReset.style.display = 'inline-block';
+            if (formNext) formNext.style.display = 'inline-block';
+
+            // mark topic 7 completed
+            try { markTopicCompleted(7); } catch (e) { completedTopics2.topic7 = true; saveLesson2State(); applyLesson2StateToUI(); }
+            if (window && window.console) console.log('lesson-2: saved lesson2State', localStorage.getItem('lesson2State'));
+        });
+    }
+
+    if (formReset) {
+        formReset.addEventListener('click', () => {
+            if (formEditor) formEditor.value = '<form>\n    <label for="username">Username:</label>\n    <input type="text" id="username" name="username">\n    <label for="email">Email:</label>\n    <input type="email" id="email" name="email">\n</form>';
+            if (formOutput) formOutput.innerHTML = '';
+            if (formResult) { formResult.innerHTML = ''; formResult.classList.remove('success','error'); formResult.style.display = 'none'; }
+            if (formReset) formReset.style.display = 'none';
+            if (formSubmit) formSubmit.style.display = 'inline-block';
+
+            completedTopics2.topic7 = false;
+            saveLesson2State();
+            applyLesson2StateToUI();
+        });
+    }
+
 
     // === Heading quiz (test-2.2) logic binding ===
     const headingSubmit = document.getElementById('headingSubmit');

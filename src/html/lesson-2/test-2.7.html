@@ -28,170 +28,87 @@
         <main class="container">
 
             <div class="card">
-                <h2> 🗋 Create Your Form </h2>
-                <Br>
-                <h3> form examples </h3>
-            <br>
-            <div class="code-box">
-            <pre>
-            <h3 style="color:rgb(0, 139, 0);"> Name </h3>
-            &lt;label&gt;Name:&lt;/label&gt;
-            &lt;input type="text" placeholder="Enter Name"&gt;
-            <hr>
-             <h3 style="color:rgb(0, 139, 0);"> username </h3>
-            &lt;label&gt;Username:&lt;/label&gt;
-            &lt;input type="text" placeholder="Enter Username"&gt;
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> password </h3>
-            &lt;label&gt;Password:&lt;/label&gt;
-            &lt;input type="password" placeholder="Enter Password"&gt;
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> Email </h3>
-            &lt;label&gt;Email:&lt;/label&gt;
-            &lt;input type="email" placeholder="Enter Email"&gt;
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> phone number</h3>
-            &lt;label&gt;Phone:&lt;/label&gt;
-            &lt;input type="tel" placeholder="Enter Phone Number"&gt;
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> date</h3>
-            &lt;label&gt;Birth Date:&lt;/label&gt;
-            &lt;input type="date"&gt;
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> age </h3>
-            &lt;label&gt;Age:&lt;/label&gt;
-            &lt;input type="number" placeholder="Enter Age"&gt;
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> Gender</h3>
-            &lt;label&gt;Gender:&lt;/label&gt;
 
-            &lt;input type="radio" name="gender"&gt; Male
+                <H3> 📝 Create your form</H2>
+                <p class="competency">
+                    Creating a basic form
+                </p>
 
-            &lt;input type="radio" name="gender"&gt; Female
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> color </h3>
-            &lt;label&gt;Favorite Color:&lt;/label&gt;
+                <p>
+                    <Strong>Instructions: </Strong>
+                    Create a simple form that collects the user's name and email address. The form should include:
+                </p>
 
-            &lt;input type="color"&gt;
-            <hr>
-            <h3 style="color:rgb(0, 139, 0);"> color </h3>
-            &lt;label&gt;Picture Upload:&lt;/label&gt;
+                <br>
 
-            &lt;input type="file"&gt;
+                <ul class="list-indent">
+                    <li>An accessible <code>&lt;label&gt;</code> for each input</li>
+                    <li>An <code>&lt;input type="text" name="username"&gt;</code> for the username</li>
+                    <li>An <code>&lt;input type="email" name="email"&gt;</code> for the email address</li>
+                </ul>
 
-            </pre>
-         </div>
-            </div>
-         
-          <div class="card">
+                <br>
+                <h3>Example Form</h3>
 
-    <h2>💻 Try Your Own Code</h2>
 
-    <textarea id="editor" class="code-editor">
+                <div class="code-editor">
+                    <!-- Live example: this is a working form students can reference -->
+                    <form action="#" method="post">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                        <br>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </form>
+                </div>
+
+                <br>
+
+<textarea class="code-editor" placeholder="Enter your code here..." id="editor">
 <form>
 
-<input type="submit">
+    <label for="____">
+        Username:
+    </label>
+    <input type="text">
+
+    <label for="____">
+        Email:
+    </label>
+    <input type="email">
+
 </form>
+</textarea>
 
-    </textarea>
+                <br>
 
+                <button id="runBtn" class="run-btn" type="button">▶ Run Code</button>
 
-    <button class="run-btn" onclick="runCode()">
-        ▶ Run Code
-    </button>
+                <div id="output" class="output-box">
+                    <p>Your form will appear here...</p>    
+                </div>
 
+                <br>
 
-    <div style="color:black;" id="output" class="output-box">
-        Your output will appear here...
-    </div>
+                <div id="result" class="quiz-result"></div>
 
-</div>
+                <br>
 
+                <div class="actions-flex">
+                    <button id="formSubmit" type="button">Submit Activity</button>
+                    <button id="formReset" type="button" style="display:none">Reset / Try Again</button>
+                </div>
 
-<style>
+                <div class="nav-buttons">
+                    <button id="tableReturn" type="button" class="btn" data-href="topic-2.5.html">← Go Back</button>
+                    <button id="tableNext" type="button" class="btn" data-href="topic-2.6.html" style="display:none">Next →</button>
+                </div>
 
-.code-editor {
-
-    width:100%;
-    height:300px;
-    background:#222;
-    color:#00ff00;
-    padding:15px;
-    border-radius:15px;
-    border:none;
-    font-size:16px;
-    resize:none;
-    box-sizing:border-box;
-
-}
-
-
-
-.run-btn {
-
-    margin-top:15px;
-    background:#008b00;
-    color:white;
-    padding:12px 25px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:18px;
-    width:100%;
-
-}
-
-
-
-.run-btn:hover {
-
-    background:#006400;
-
-}
-
-
-
-.output-box {
-
-    margin-top:20px;
-    min-height:250px;
-    background:white;
-    border-radius:15px;
-    padding:20px;
-    border:2px solid #ddd;
-    overflow:auto;
-
-}
-
-
-</style>
-
-
-
-<script>
-
-function runCode(){
-
-    let code = document.getElementById("editor").value;
-
-    let output = document.getElementById("output");
-
-    output.innerHTML = code;
-
-}
-
-
-</script>
-          </div>
-            
- <div class="card">
- <button class="btn" data-href="topic-2.7.html"> Done </button>
-</div>
-
-
+            </div>
 
         </main>
 
+        <script src="../../js/lesson-2.js"></script>
         <script src="../../js/script.js"></script>
 
     </body>

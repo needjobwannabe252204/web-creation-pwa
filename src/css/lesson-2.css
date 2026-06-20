@@ -118,8 +118,9 @@ table td {
     word-break:break-all;
 }
 .code-editor {
-    width:100%;
+    max-width:100%;
     min-height:120px;
+    overflow-x: auto;
     overflow-y: hidden;
     background:#ffffff;
     color:#111111;
