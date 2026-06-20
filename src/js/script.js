@@ -114,6 +114,12 @@ document.addEventListener('DOMContentLoaded', function () {
         _initResetButton(resetBtn);
     }
 
+    /* Reset-progress button for Lesson 2 */
+    var reset2 = document.getElementById('reset-lesson2-btn');
+    if (reset2) {
+        _initResetLesson2Button(reset2);
+    }
+
     /* -------------------------------------------------------
        4) Index-page: lesson gate initialisation
        ------------------------------------------------------- */
@@ -147,6 +153,35 @@ function _refreshLesson1Badge() {
     } catch (e) {
         console.warn('[script.js] Could not refresh lesson-1 badge:', e);
     }
+}
+
+/**
+ * Set up reset button for Lesson 2.
+ * Clears `lesson2State` and updates `courseProgress` to mark
+ * lesson 2 as not completed and locks lesson 3 again.
+ */
+function _initResetLesson2Button(resetBtn) {
+    try {
+        var cp = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
+        var show = !!(cp.lessonsCompleted && cp.lessonsCompleted[2]);
+        resetBtn.style.display = show ? 'inline-flex' : 'none';
+    } catch (_) {
+        resetBtn.style.display = 'none';
+    }
+
+    resetBtn.addEventListener('click', function () {
+        if (!confirm('Clear Lesson 2 progress? This will lock Lesson 3 again.')) return;
+        try {
+            localStorage.removeItem('lesson2State');
+            var cp2 = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
+            if (cp2.lessonsCompleted) cp2.lessonsCompleted[2] = false;
+            if (cp2.lessonsUnlocked) cp2.lessonsUnlocked[3] = false;
+            saveCourseProgress(cp2);
+        } catch (e) {
+            console.warn('[script.js] Could not clear lesson-2 progress:', e);
+        }
+        location.reload();
+    });
 }
 
 /**
@@ -228,6 +263,18 @@ function initLessonGates() {
             /* ---- NO PREREQS — open by default ---- */
             _applyOpenState(btn, card);
         }
+
+        /* If this lesson was completed in the central courseProgress store,
+           show a completed state (green) on the index card and update label. */
+        try {
+            if (cp && cp.lessonsCompleted && cp.lessonsCompleted[lessonNum]) {
+                if (card) setCardBorder(card, '#4caf50');
+                if (btn) {
+                    btn.textContent = '✅ Completed — Review';
+                    btn.disabled = false;
+                }
+            }
+        } catch (_) {}
 
         /* Attach the click handler that governs all state transitions */
         btn.addEventListener('click', function (ev) {

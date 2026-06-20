@@ -26,7 +26,245 @@
 
     <main class="container">
         <div class="card">
-            <h2></h2>
+            <h2>Topic 3: Colors</h2>
+            <br>
+             <p class="competency">Why Colors Matter.</p>
+             <p> Colors influence emotions and user behavior.</p>
+             <br>
+             <style>
+    table {
+        width: 80%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+
+<table>
+    <tr>
+        <th style="color: rgb(0, 0, 0);">Color</th>
+        <th style="color: rgb(0, 0, 0);">Common Meaning</th>
+    </tr>
+    <tr>
+        <td>Red</td>
+        <td>Energy, urgency</td>
+    </tr>
+    <tr>
+        <td>Blue</td>
+        <td>Trust, professionalism</td>
+    </tr>
+    <tr>
+        <td>Green</td>
+        <td>Success, growth</td>
+    </tr>
+    <tr>
+        <td>Yellow</td>
+        <td>Attention, happiness</td>
+    </tr>
+    <tr>
+        <td>Black</td>
+        <td>Luxury, elegance</td>
+    </tr>
+</table>
+<br>
+<hr>
+<br>
+<p><b> Visual Example: </b></p>
+<div class="message-list">
+
+    <div class="message">
+        <span class="dot red"></span>
+        <span>Error Message</span>
+    </div>
+
+    <div class="message">
+        <span class="dot green"></span>
+        <span>Success Message</span>
+    </div>
+
+    <div class="message">
+        <span class="dot blue"></span>
+        <span>Information Message</span>
+    </div>
+
+</div>
+
+<style>
+.message{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:15px 0;
+    color:white;
+    font-family:Consolas, monospace;
+    
+}
+
+.dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+}
+
+.red{
+    background:red;
+}
+
+.green{
+    background:limegreen;
+}
+
+.blue{
+    background:dodgerblue;
+}
+</style>
+<br>
+<hr>
+<br>
+<p><b> text color example </b></p>
+<br>
+ <style>
+            .code-box{
+                background:#050505;
+                border:1px solid #222;
+                border-radius:16px;
+                padding:12px 16px;
+                max-width:450px;
+                color:white;
+                font-family:Consolas, monospace;
+                
+            }
+
+                .code-title{
+                    font-size:14px;
+                    font-weight:600;
+                    margin-bottom:10px;
+                }
+
+                .code-box pre{
+                    margin:0;
+                    font-size:14px;
+                    line-height:1.6;
+                    text-align: left;
+                }
+
+                .selector{color:#58a6ff;}
+                .value{color:#ffa657;}
+                .value{color: #ffa657;}
+                </style>
+
+                 <div class="code-box">
+                    <div class="code-title">&lt;/&gt; CSS</div>
+
+        <pre><code><span class="selector">p</span> {
+    color: <span class="value">blue;</span>
+    font-size: <span class="value"> 24px; </span> 
+        }</code></pre>
+                </div>
+        <br>
+        <p><b> background color example </b></p>
+        <br>
+         <style>
+
+            .code-box{
+                background:#050505;
+                border:1px solid #222;
+                border-radius:16px;
+                padding:12px 16px;
+                max-width:450px;
+                color:white;
+                font-family:Consolas, monospace;
+                
+            }
+
+                .code-title{
+                    font-size:14px;
+                    font-weight:600;
+                    margin-bottom:10px;
+                }
+
+                .code-box pre{
+                    margin:0;
+                    font-size:14px;
+                    line-height:1.6;
+                    text-align: left;
+                }
+
+                .selector{color:#58a6ff;}
+                
+                
+                </style>
+
+                 <div class="code-box">
+                    <div class="code-title">&lt;/&gt; CSS</div>
+
+                <pre><code><span class="selector">body</span> {
+    background-color: <span class="">#f5f5f5;</span>                   
+        }</code></pre>
+         </div>
+         <br>
+         <p><b> Gradient Example </b></p>
+         <br>
+            <style>
+.code-box{
+    background:#050505;
+    border:1px solid #222;
+    border-radius:20px;
+    padding:20px;
+    width:350px;
+    color:white;
+    font-family:Consolas, monospace;
+}
+
+.code-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.selector{
+    color:#58a6ff;
+}
+
+.property{
+    color:white;
+}
+
+.value{
+    color:#ffa657;
+}
+
+pre{
+    margin:0;
+    line-height:1.8;
+}
+</style> pre wait lng andyan kapa?
+<div class="code-box">
+    <div class="code-title">&lt;/&gt; CSS</div>
+
+<pre><code><span class="selector">body</span> {
+    <span class="property">background:</span>
+        <span class="value">linear-gradient</span>(
+        to right,
+        blue,
+        purple
+    );
+}</code></pre>
+</div>
+
+
+
           
         </div>
 

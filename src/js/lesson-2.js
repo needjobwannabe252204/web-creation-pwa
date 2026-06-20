@@ -79,9 +79,9 @@ function loadL2State() {
    ---------------------------------------------------------- */
 
 function updateProgressUI() {
-    var keys      = Object.keys(L2.completedTopics);
+    var keys      = Object.keys(L2.completedTopics).filter(function(k){ return k.indexOf('topic')===0; });
     var completed = keys.filter(function (k) { return L2.completedTopics[k]; }).length;
-    var pct       = Math.round((completed / keys.length) * 100);
+    var pct       = keys.length ? Math.round((completed / keys.length) * 100) : 0;
     var bar  = document.getElementById('lessonProgress');
     var text = document.getElementById('progressText');
     if (bar)  bar.style.width  = pct + '%';
@@ -91,10 +91,23 @@ function updateProgressUI() {
 /* Apply persisted state to whatever page elements exist. */
 function applyL2StateToUI() {
     for (var i = 1; i <= 8; i++) {
-        if (!L2.completedTopics['topic' + i]) continue;
-        var btn = document.querySelector('button[data-href="topic-2.' + i + '.html"]');
-        if (btn && btn.closest('.card')) {
-            btn.closest('.card').style.borderLeft = '6px solid #4caf50';
+        var key = 'topic' + i;
+        var btn = document.getElementById('topic' + i + 'Btn') || document.querySelector('button[data-href="topic-2.' + i + '.html"]');
+        var card = btn && btn.closest('.card');
+        if (L2.completedTopics[key]) {
+            if (card) card.style.borderLeft = '6px solid #4caf50';
+            if (btn) {
+                btn.innerHTML = '✅ Completed — Review';
+                btn.disabled  = false;
+            }
+        } else {
+            if (card) card.style.borderLeft = '';
+            if (btn) {
+                if (btn.dataset && btn.dataset.origLabel) {
+                    btn.innerHTML = btn.dataset.origLabel;
+                }
+                btn.disabled = false;
+            }
         }
     }
     /* Green the first card when we are on a completed topic page */
@@ -108,6 +121,60 @@ function applyL2StateToUI() {
         }
     } catch (_) {}
     updateProgressUI();
+    /* Update overview buttons if present */
+    try { updateOverviewButtons(); } catch (_) {}
+}
+
+/* ----------------------------------------------------------
+   Overview button logic: lock/unlock Done and Next controls
+   Mirrors the lesson-1 behaviour: Next hidden until 100%, Done
+   locked until all topics complete. Also handles Done action.
+   ---------------------------------------------------------- */
+function updateOverviewButtons() {
+    var doneBtn = document.getElementById('doneBtn');
+    var nextBtn = document.getElementById('nextLessonBtn');
+    if (!doneBtn && !nextBtn) return;
+
+    var topicsComplete = true;
+    for (var i = 1; i <= 8; i++) {
+        if (!L2.completedTopics['topic' + i]) { topicsComplete = false; break; }
+    }
+
+    var keys      = Object.keys(L2.completedTopics).filter(function(k){ return k.indexOf('topic')===0; });
+    var completed = keys.filter(function (k) { return L2.completedTopics[k]; }).length;
+    var pct       = Math.round((completed / keys.length) * 100);
+
+    if (doneBtn) {
+        doneBtn.innerHTML = topicsComplete ? '✅ Done — Activity' : '🔒 Complete Topics First';
+        doneBtn.disabled = !topicsComplete;
+        if (!topicsComplete) doneBtn.classList.add('locked'); else doneBtn.classList.remove('locked');
+    }
+
+    if (nextBtn) {
+        nextBtn.style.display = (pct === 100) ? 'inline-block' : 'none';
+    }
+}
+
+function startLessonActivity() {
+    /* If already completed, this is just a review click — nothing to do. */
+    if (L2.lessonCompleted) return;
+    /* Ensure all topics done */
+    for (var i = 1; i <= 8; i++) {
+        if (!L2.completedTopics['topic' + i]) {
+            showToast('Complete all 8 topics before marking this lesson done.', 'info');
+            return;
+        }
+    }
+    L2.lessonCompleted = true;
+    saveL2State();
+    /* Persist to global courseProgress so index page can unlock next lesson */
+    if (typeof markLessonComplete === 'function') markLessonComplete(2);
+    /* Visual update */
+    var card = document.getElementById('activity-card');
+    if (card) setCardBorder(card, '#4caf50');
+    var doneBtn = document.getElementById('doneBtn');
+    if (doneBtn) { doneBtn.innerHTML = '✅ Completed — Review'; doneBtn.disabled = false; }
+    updateOverviewButtons();
 }
 
 /**
@@ -463,34 +530,24 @@ function validateForm(editorEl) {
 
 /* ----------------------------------------------------------
    7b) SEMANTIC HTML VALIDATOR  (test-2.8)
-   Exposed globally so the inline onclick in the HTML still works.
+   Exposed via PAGE_CONFIG validator for centralized handling.
    ---------------------------------------------------------- */
 
-function checkSemanticTags() {
-    var editorEl   = document.getElementById('editor');
-    var feedbackEl = document.getElementById('feedback');
-    var outputEl   = document.getElementById('output');
-    if (!editorEl || !feedbackEl) return;
-
-    var code     = editorEl.value;
-    var required = ['header','nav','main','section','article','aside','footer'];
-    var missing  = required.filter(function (tag) {
-        return !code.includes('<' + tag) || !code.includes('</' + tag + '>');
+function validateSemanticSimple(editorEl, outputEl) {
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase();
+    var required = ['header','nav','main','footer'];
+    var missing = required.filter(function (tag) {
+        return !(code.indexOf('<' + tag) !== -1 && code.indexOf('</' + tag + '>') !== -1);
     });
-
-    if (missing.length) {
-        feedbackEl.className = 'feedback error';
-        feedbackEl.innerHTML = '❌ Missing or incorrect tag(s): ' + missing.join(', ');
-        if (outputEl) outputEl.srcdoc = '';
-        return;
-    }
-
-    feedbackEl.className = 'feedback success';
-    feedbackEl.innerHTML = '✅ Great job! All required semantic tags are present.';
-    if (outputEl) outputEl.srcdoc = code;
-    markTopicCompleted(8);
+    if (missing.length) return { ok: false, error: 'Missing tags: ' + missing.join(', ') };
+    var navHasLink = code.indexOf('<nav') !== -1 && code.indexOf('<a') !== -1;
+    if (!navHasLink) return { ok: false, error: 'Navigation menu must contain at least one link.' };
+    return { ok: true };
 }
-window.checkSemanticTags = checkSemanticTags;
+
+/* Note: autoResizeTextarea lives in utils.js — not redefined here,
+   to keep a single source of truth across all lesson files. */
 
 /* ----------------------------------------------------------
    8) RESET DEFAULTS
@@ -518,11 +575,11 @@ var PAGE_CONFIG = {
         validate: validateLinks, successMsg: '✅ Activity complete — link is correct.', topicNum: 3, resetKey: '23'
     },
     'test-2.4.html': {
-        submitId: 'imageSubmit', resetId: 'imageReset', nextId: 'imageNext', resultId: 'imageResult',
+        submitId: 'imageSubmit', resetId: 'imageReset', nextId: 'imageNext', resultId: 'result',
         validate: validateImage, successMsg: '✅ Activity complete — image displayed correctly.', topicNum: 4, resetKey: '24'
     },
     'test-2.5.html': {
-        submitId: 'listSubmit', resetId: 'listReset', nextId: 'listNext', resultId: 'listResult',
+        submitId: 'listSubmit', resetId: 'listReset', nextId: 'listNext', resultId: 'result',
         validate: validateList, successMsg: '✅ Activity complete — list looks good.', topicNum: 5, resetKey: '25'
     },
     'test-2.6.html': {
@@ -532,6 +589,10 @@ var PAGE_CONFIG = {
     'test-2.7.html': {
         submitId: 'formSubmit', resetId: 'formReset', nextId: 'tableNext', resultId: 'result',
         validate: function(e){ return validateForm(e); }, successMsg: '✅ Activity complete — form labels are correct.', topicNum: 7, resetKey: '27'
+    }
+    , 'test-2.8.html': {
+        submitId: 'semanticSubmit', resetId: 'semanticReset', nextId: 'testNext', resultId: 'result',
+        validate: validateSemanticSimple, successMsg: '✅ Activity complete — semantic structure is correct.', topicNum: 8, resetKey: null
     }
 };
 
@@ -594,7 +655,16 @@ document.addEventListener('DOMContentLoaded', function () {
         /* For test-2.3 .. test-2.7, use the centralized PAGE_CONFIG */
         registerPageFromConfig(page);
     }
-    /* test-2.8 uses an inline onclick that calls checkSemanticTags() directly */
+    /* Lesson overview wiring: Done / Next buttons */
+    if (page === 'lesson-2.html') {
+        var doneBtn = document.getElementById('doneBtn');
+        var activityCard = document.getElementById('activity-card');
+        if (doneBtn) {
+            doneBtn.addEventListener('click', function () { startLessonActivity(); });
+        }
+        /* ensure initial button states reflect saved progress */
+        updateOverviewButtons();
+    }
     /* lesson-2.html and topic pages: applyL2StateToUI already handled UI updates */
 
 });

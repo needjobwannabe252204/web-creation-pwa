@@ -58,70 +58,90 @@
             <div class="card">
                 <h3>🧩 Topic 1: HTML Structure</h3>
                 <p class="description">Build the skeleton of a webpage using semantic tags.</p>
-                <button class="btn" data-href="topic-2.1.html">Learn →</button>
+                <button id="topic1Btn" class="btn" data-href="topic-2.1.html">Learn →</button>
             </div>
             
             <div class="card">
                 <h3>📝 Topic 2: Headings & Paragraphs</h3>
                 <p class="description">Use headings and paragraphs to structure readable content.</p>
-                <button class="btn" data-href="topic-2.2.html">Learn →</button>
+                <button id="topic2Btn" class="btn" data-href="topic-2.2.html">Learn →</button>
             </div>
             
             <div class="card">
                 <h3>🔗 Topic 3: Links</h3>
                 <p class="description">Create hyperlinks to connect pages and resources.</p>
-                <button class="btn" data-href="topic-2.3.html">Learn →</button>
+                <button id="topic3Btn" class="btn" data-href="topic-2.3.html">Learn →</button>
             </div>
             
             <div class="card">
                 <h3>🖼️ Topic 4: Images</h3>
                 <p class="description">Add and describe images using the &lt;img&gt; tag and alt text.</p>
-                <button class="btn" data-href="topic-2.4.html">Learn →</button>
+                <button id="topic4Btn" class="btn" data-href="topic-2.4.html">Learn →</button>
             </div>
             
             <div class="card">
                 <h3>📋 Topic 5: Lists</h3>
                 <p class="description">Organize items with ordered and unordered lists.</p>
-                <button class="btn" data-href="topic-2.5.html">Learn →</button>
+                <button id="topic5Btn" class="btn" data-href="topic-2.5.html">Learn →</button>
             </div>
             
             <div class="card">
                 <h3>📊 Topic 6: Tables</h3>
                 <p class="description">Display tabular data clearly using table elements.</p>
-                <button class="btn" data-href="topic-2.6.html">Learn →</button>
+                <button id="topic6Btn" class="btn" data-href="topic-2.6.html">Learn →</button>
             </div>
             
             <div class="card">
                 <h3>✉️ Topic 7: Forms</h3>
                 <p class="description">Collect user input with form controls like inputs and selects.</p>
-                <button class="btn" data-href="topic-2.7.html">Learn →</button>
+                <button id="topic7Btn" class="btn" data-href="topic-2.7.html">Learn →</button>
             </div>
             
             <div class="card">
                 <h3>🏷️ Topic 8: Semantic HTML</h3>
                 <p class="description">Use meaningful tags to improve accessibility and structure.</p>
-                <button class="btn" data-href="topic-2.8.html">Learn →</button>
+                <button id="topic8Btn" class="btn" data-href="topic-2.8.html">Learn →</button>
             </div>
 
-            <div class="card">
-                <h3>📝 Practice Activity</h3>
-                <p class="description">
-                    Directions: Create an HTML webpage that includes the following:
+            <div id="activity-card" class="card">
+                <h3>⭐ Activity 2</h3>
+                <p class="competency">
+                    Final Activity: My Personal Webpage
+                </p>
+                <p>
+                    Create a simple webpage about yourself using the HTML concepts learned in Lesson 2.
+                </p>
+                    <br>
+                <p>
+                    Your webpage should include:
                 </p>
                 <ul class="list-indent">
-                    <li> One heading </li>
-                    <li> Two paragraphs </li>
-                    <li> One image </li>
-                    <li> One hyperlink </li>
-                    <li> One ordered or unordered list </li>
+                    <li> Headings </li>
+                    <li> Paragraphs </li>
+                    <li> Links </li>
+                    <li> Images </li>
+                    <li> Lists </li>
+                    <li> A table </li>
+                    <li> A form </li>
+                    <li> Semantic HTML elements </li>
                 </ul>
+
                 <br>
-                <button class="btn" data-href="test-activity.html">Learn →</button>
+
+
+                <h3>Goodluck!</h3>
+
+                <br>
+
+                <button id="doneBtn" type="button" class="btn">🔒 Complete Lesson</button>
+
+                <div class="nav-buttons" style="display:flex;gap:8px;margin-top:12px">
+                    <button class="btn" id="returnHomeBtn" data-href="../../../index.html" aria-label="Return Home">← Return Home</button>
+                    <button id="nextLessonBtn" class="btn btn-primary" data-href="../lesson-3/lesson-3.html" aria-label="Next Lesson" style="display:none">Next: Lesson 3 →</button>
+                </div>
+
             </div>
 
-            <div class="card">
-            <button class="btn btn-primary" data-href="../lesson-3/lesson-3.html">Next: Lesson 3 →</button>
-            </div>
         </main>
 
         <script src="../../js/utils.js"></script>

@@ -6,6 +6,17 @@
         <title>Test 2.8</title>
         <link rel="stylesheet" href="../../css/style.css">
         <link rel="stylesheet" href="../../css/lesson-2.css">      
+        <style>
+            /* Auto-resize textarea styling */
+            .auto-resize {
+                min-height: 100px;
+                max-height: 60vh;
+                overflow-y: hidden;
+                resize: none; /* prevent manual resize so JS controls height */
+                font-family: monospace;
+                white-space: pre-wrap;
+            }
+        </style>
     </head>
 
     <body>
@@ -26,87 +37,65 @@
         <div class="overlay" id="overlay"></div>
 
         <main class="container">
-    
-            <article class="card">
-                <h2> 📝 Semantic HTML Activity</h2>
-                <p><strong>Instructions:</strong></p>
-                <p class="description">Create a webpage about yourself using the following semantic tags:</p>
-                <div class="requirements">
 
-                    <h3>Requirements:</h3>
+            <div class="card">
 
-                    <div class="requirement-grid">
+                <h3> 📝 Semantic HTML Activity</h3>
+                <p class="competency">
+                    Instruction
+                </p>
+                <p class="description">
+                    Wrap the provided content using the correct semantic HTML tags. Then replace the sample text with information about yourself.
+                </p>
+                <h3>Requirements:</h3>
 
-                        <div class="req-box">
-                            ✅ Header
-                            <span class="hint">💡
-                                <span class="tooltip">&lt;header&gt;</span>
-                            </span>
-                        </div>
-
-                        <div class="req-box">
-                            ✅ Navigation Menu
-                            <span class="hint">💡
-                                <span class="tooltip">&lt;nav&gt;</span>
-                            </span>
-                        </div>
-
-                        <div class="req-box">
-                            ✅ Main Content
-                            <span class="hint">💡
-                                <span class="tooltip">&lt;main&gt;</span>
-                            </span>
-                        </div>
-
-                        <div class="req-box">
-                            ✅ Footer
-                            <span class="hint">💡
-                                <span class="tooltip">&lt;footer&gt;</span>
-                            </span>
-                        </div>
-
-                    </div>
-
-                </div>
+                <ul style="padding-left: 20px;">
+                    <li>&lt;header&gt;</li>
+                    <li>&lt;nav&gt;</li>
+                    <li>&lt;main&gt;</li>
+                    <li>&lt;footer&gt;</li>
+                </ul>
 
                 <br>
 
-                <div class="text-editor">
-                    <textarea id="editor" class="code-editor">
-<header>
-    <h1>Your Name</h1>
-</header>
+<textarea id="editor" class="code-editor auto-resize" rows="6">
+<h1>My Name</h1>
 
-<nav>
-    <a href="#">Home</a>
-</nav>
+<a href="#">Home</a>
 
-<main>
-    <p>Write about yourself here.</p>
-</main>
+<p>Write about yourself here.</p>
 
-<footer>
-    <p>Created by Your Name</p>
-</footer>
-                    </textarea>
-                </div>
+<p>myEmail@email.com</p>
+</textarea>
+
+                <br>
 
                 <button id="runBtn" class="run-btn">▶ Run Code</button>
 
-                <div id="feedback" class="feedback"></div>
+                <div id="output" class="output-box" title="Activity Output"></div>
 
-                <iframe id="output" class="output-box" title="Activity Output"></iframe>
+                <br>
 
-            </article>
+                <div id="result" class="quiz-result"></div>
 
-            <article class="card">
-                <button class="btn" data-href="topic-2.8.html"> Done </button>
-            </article>
+                <br>
 
+                <div class="actions-flex">
+                    <button id="semanticSubmit" type="button" class="btn">✅ Submit Activity</button>
+                    <button id="semanticReset" type="button" class="btn" style="display:none">Reset / Try Again</button>
+                </div>
+
+                <div class="nav-buttons">
+                    <button id="testReturn" type="button" class="btn" data-href="topic-2.8.html">← Return</button>
+                    <button id="testNext" type="button" class="btn btn-primary" data-href="lesson-2.html" style="display:none">Next →</button>
+                </div>
+
+            </div>
 
         </main>
-
-        <script src="../../js/test-2.8.js"></script>
+        
+        <script src="../../js/utils.js"></script>
+        <script src="../../js/lesson-2.js"></script>
         <script src="../../js/script.js"></script>
         
     </body>
