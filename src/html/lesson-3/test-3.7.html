@@ -58,11 +58,15 @@ style="height:160px;">
         <br>
 
         <h3>Preview:</h3>
-        <div id="previewBox" style="margin-top:15px; padding:15px; border:2px solid #ccc; border-radius:8px; min-height:60px; background:#fff; color:#111;">
-            <p style="text-align:center; color:#555; font-style:italic;">
-                📱 Resize your browser to a narrow window to see the media query take effect on the real page background.
-            </p>
-        </div>
+        <p style="margin-top:8px; margin-bottom:6px; font-size:0.82rem; opacity:0.75;">
+            The preview below is rendered at <strong>400px wide</strong> — narrow enough to trigger your <code>max-width: 600px</code> media query.
+        </p>
+        <iframe
+            id="previewBox"
+            style="width:400px; max-width:100%; height:100px; border:2px solid #ccc; border-radius:8px; background:#fff; display:block;"
+            sandbox="allow-same-origin"
+            title="Media Query Preview"
+        ></iframe>
 
         <br>
 

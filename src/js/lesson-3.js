@@ -146,8 +146,79 @@ window.markL3TopicVisited = markL3TopicVisited;
 /* ----------------------------------------------------------
    5) CSS EDITOR LIVE PREVIEW (Run button)
    Applied to test-3.2 through test-3.7 which all use the
-   same #editor → #previewStyle → #previewBox pattern.
+   same #editor -> #previewStyle -> #previewBox pattern.
+
+   SCOPING: Student CSS is injected ONLY inside #previewBox so
+   it cannot bleed into the instructions, card text, header, or
+   any other page element. Every selector the student writes gets
+   prefixed with "#previewBox" automatically.
    ---------------------------------------------------------- */
+
+/**
+ * Prefix every CSS selector in a raw CSS string with a given scope.
+ * Handles: regular rules, @media blocks (recursed), @keyframes (passed through).
+ */
+function _scopeCSS(css, scope) {
+    css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+    var out = '';
+    var i = 0;
+    var len = css.length;
+
+    while (i < len) {
+        var ws = css.slice(i).match(/^\s+/);
+        if (ws) { out += ws[0]; i += ws[0].length; continue; }
+
+        if (css[i] === '@') {
+            var atEnd  = css.indexOf('{', i);
+            var atSemi = css.indexOf(';', i);
+            if (atSemi !== -1 && (atEnd === -1 || atSemi < atEnd)) {
+                out += css.slice(i, atSemi + 1);
+                i = atSemi + 1;
+                continue;
+            }
+            if (atEnd !== -1) {
+                out += css.slice(i, atEnd + 1);
+                i = atEnd + 1;
+                var depth = 1, inner = '';
+                while (i < len && depth > 0) {
+                    if (css[i] === '{') depth++;
+                    else if (css[i] === '}') { depth--; if (depth === 0) break; }
+                    inner += css[i++];
+                }
+                out += _scopeCSS(inner, scope);
+                out += '}';
+                i++;
+                continue;
+            }
+        }
+
+        var braceOpen = css.indexOf('{', i);
+        if (braceOpen === -1) { out += css.slice(i); break; }
+
+        var selectorStr = css.slice(i, braceOpen);
+        var prefixed = selectorStr.split(',').map(function(sel) {
+            sel = sel.trim();
+            if (!sel) return '';
+            if (/^(html|body)(\s|$|:|\[)/i.test(sel)) {
+                var rest = sel.replace(/^(html|body)/i, '').trim();
+                return rest ? scope + ' ' + rest : scope;
+            }
+            return scope + ' ' + sel;
+        }).filter(Boolean).join(', ');
+
+        out += prefixed;
+        i = braceOpen;
+
+        var d = 1;
+        out += css[i++];
+        while (i < len && d > 0) {
+            if (css[i] === '{') d++;
+            else if (css[i] === '}') d--;
+            out += css[i++];
+        }
+    }
+    return out;
+}
 
 function initCSSRunner() {
     var runBtn   = document.getElementById('runBtn');
@@ -156,7 +227,45 @@ function initCSSRunner() {
     if (!runBtn || !editor || !styleTag) return;
 
     runBtn.addEventListener('click', function () {
-        styleTag.textContent = editor.value || '';
+        var raw    = editor.value || '';
+        var scoped = _scopeCSS(raw, '#previewBox');
+        styleTag.textContent = scoped;
+        showToast('Preview updated!', 'info', 1500);
+    });
+
+    if (typeof autoResizeTextarea === 'function') {
+        autoResizeTextarea(editor);
+    }
+}
+
+/* Special runner for test-3.7: renders student CSS inside a narrow iframe
+   so @media (max-width: 600px) actually fires against a 400px viewport. */
+function initMediaQueryRunner() {
+    var runBtn = document.getElementById('runBtn');
+    var editor = document.getElementById('editor');
+    var frame  = document.getElementById('previewBox');
+    if (!runBtn || !editor || !frame) return;
+
+    function renderFrame() {
+        var css = editor.value || '';
+        var doc = frame.contentDocument || frame.contentWindow.document;
+        doc.open();
+        doc.write(
+            '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+            '<style>' +
+            '  body { margin: 0; padding: 16px; font-family: sans-serif; color: #111; background: #fff; transition: background-color 0.3s; }' +
+            '  p { margin: 0; }' +
+            '</style>' +
+            '<style>' + css + '</style>' +
+            '</head><body>' +
+            '<p>This box is 400px wide — your media query fires here! ✅</p>' +
+            '</body></html>'
+        );
+        doc.close();
+    }
+
+    runBtn.addEventListener('click', function () {
+        renderFrame();
         showToast('Preview updated!', 'info', 1500);
     });
 
@@ -282,8 +391,16 @@ function bindL3CSSActivity(cfg) {
 
     function onReset() {
         if (editorEl) editorEl.value = cfg.resetValue || '';
-        var styleTag = document.getElementById('previewStyle');
-        if (styleTag) styleTag.textContent = '';
+        if (cfg.useIframe) {
+            var frame = document.getElementById('previewBox');
+            if (frame) {
+                var doc = frame.contentDocument || frame.contentWindow.document;
+                doc.open(); doc.write('<!DOCTYPE html><html><body></body></html>'); doc.close();
+            }
+        } else {
+            var styleTag = document.getElementById('previewStyle');
+            if (styleTag) styleTag.textContent = '';
+        }
         if (resultEl) {
             resultEl.innerHTML = '';
             resultEl.classList.remove('success', 'error');
@@ -420,6 +537,7 @@ var L3_PAGE_CONFIG = {
         validate: validateMediaQuery,
         successMsg: '✅ Activity complete — media query is correct!',
         topicNum: 7,
+        useIframe: true,
         resetValue: '@media (max-width: ____) {\n    body {\n        background-color: ____;\n    }\n}'
     }
 };
@@ -459,7 +577,11 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Wire up CSS editor activities (test-3.2 through test-3.7) */
     var cfg = L3_PAGE_CONFIG[page];
     if (cfg) {
-        initCSSRunner();
+        if (cfg.useIframe) {
+            initMediaQueryRunner();
+        } else {
+            initCSSRunner();
+        }
         bindL3CSSActivity(cfg);
     }
 });

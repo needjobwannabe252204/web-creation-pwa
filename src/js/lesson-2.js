@@ -196,8 +196,11 @@ function _updateChecklist(checks) {
         if (!li) return;
         var text = li.textContent.replace(/^[✅⬜]\s*/, '');
         li.textContent = (c.ok ? '✅ ' : '⬜ ') + text;
-        li.style.color = c.ok ? '#2e7d32' : '';
-        li.style.fontWeight = c.ok ? '600' : '';
+        /* Use bright mint-green for done items so they pop on the green card;
+           keep unchecked items crisp white — not the inherited card tint */
+        li.style.color      = c.ok ? '#7fffd4' : '#ffffff';
+        li.style.fontWeight = c.ok ? '700' : '400';
+        li.style.opacity    = c.ok ? '1' : '0.85';
     });
 }
 
@@ -294,6 +297,8 @@ function initActivityBuilder() {
             if (nextBtn) nextBtn.style.display = 'none';
             submitBtn.innerHTML = '✅ Submit My Webpage';
             submitBtn.disabled = false;
+            submitBtn.classList.remove('locked');
+            editor.readOnly = false;   /* re-enable typing after a completed-state reset */
             L2.lessonCompleted = false;
             saveL2State();
             /* Cascade: also wipe lesson 3 so its topics reset too */

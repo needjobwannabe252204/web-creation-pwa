@@ -886,3 +886,25 @@ table td {
 .blue{
     background:dodgerblue;
 }
+
+/* ---- Activity 2 requirement checklist ---- */
+/* Base: solid white so items are always legible on the green-to-navy card  */
+#requirementsList {
+  list-style: none;
+  padding-left: 0;
+}
+#requirementsList li {
+  color: #ffffff;
+  padding: 5px 0;
+  transition: color 0.25s ease, opacity 0.25s ease;
+  line-height: 1.5;
+}
+/* code snippets inside the checklist — dark pill so they contrast on green */
+#requirementsList code {
+  background: rgba(0, 0, 0, 0.35);
+  color: #a8f5b0;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.82em;
+  letter-spacing: 0.2px;
+}
