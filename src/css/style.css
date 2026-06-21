@@ -396,6 +396,54 @@ body {
     white-space: nowrap;
 }
 
+/* ==========================================================
+   Lesson 4 — adapted components (merged into global theme)
+   These styles replace the old lesson-specific stylesheet and
+   align visual elements with the site's color variables.
+   ========================================================== */
+
+.topic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.topic-chip { background: var(--color-surface); border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 0.65rem 0.75rem; font-size: 0.92rem; color: var(--color-text); display:flex; align-items:center; gap:0.45rem; }
+.topic-chip span.dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.dot-blue { background: var(--color-ict-blue); }
+.dot-green { background: var(--color-green); }
+
+.checklist { list-style: none; padding: 0; margin: 0; }
+.checklist li { display:flex; align-items:flex-start; gap:0.65rem; padding:0.55rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.95rem; color:var(--color-text); line-height:1.5; }
+.checklist li:last-child { border-bottom: none; }
+.check-icon { width:20px; height:20px; border-radius:50%; border:2px solid var(--accent); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; font-size:0.75rem; color:var(--accent); }
+
+.rubric-table { width:100%; border-collapse: collapse; font-size:0.92rem; }
+.rubric-table th { background: var(--color-surface); color: rgba(230,238,248,0.85); font-weight:600; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; padding:0.6rem 0.75rem; text-align:left; }
+.rubric-table td { padding:0.6rem 0.75rem; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--color-text); }
+.rubric-table tr:last-child td { border-bottom: none; font-weight:700; color: var(--color-text); }
+.pts { text-align:right; font-variant-numeric: tabular-nums; color: var(--accent); font-weight:600; }
+
+.level-grid { display:flex; flex-direction:column; gap:0.55rem; }
+.level-row { display:flex; align-items:center; gap:0.75rem; background: var(--color-surface); border-radius:10px; padding:0.65rem 0.9rem; }
+.level-badge { font-size:0.75rem; font-weight:700; padding:0.25rem 0.65rem; border-radius:999px; white-space:nowrap; }
+.lvl-exc { background: rgba(46,139,87,0.18); color: var(--color-green); border: 1px solid rgba(46,139,87,0.4); }
+.lvl-vg  { background: rgba(57,169,255,0.14); color: var(--color-ict-blue); border: 1px solid rgba(57,169,255,0.35); }
+.lvl-sat { background: rgba(255,202,40,0.14); color: var(--color-yellow); border: 1px solid rgba(255,202,40,0.35); }
+.lvl-ni  { background: rgba(230,238,248,0.08); color: rgba(230,238,248,0.65); border: 1px solid rgba(230,238,248,0.2); }
+.level-row p { margin:0; font-size:0.9rem; color: rgba(230,238,248,0.85); }
+
+.steps { counter-reset: step; list-style:none; padding:0; margin:0; }
+.steps li { counter-increment: step; display:flex; align-items:flex-start; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.95rem; color:var(--color-text); line-height:1.5; }
+.steps li:last-child { border-bottom: none; }
+.steps li::before { content: counter(step); background: var(--accent); color: #fff; font-size:0.75rem; font-weight:700; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+
+.l4-complete-section { text-align:center; padding:1rem 0 0.5rem; }
+
+#completeProjectBtn { width:100%; padding:1rem; background: linear-gradient(90deg, var(--color-green), var(--color-green-dark)); color:#fff; font-size:1rem; font-weight:700; border:none; border-radius:12px; cursor:pointer; transition: opacity 0.2s, transform 0.15s; }
+#completeProjectBtn:hover { opacity:0.95; }
+#completeProjectBtn:active { transform: scale(0.98); }
+#completeProjectBtn:disabled { background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.45); cursor:not-allowed; }
+
+#celebrationBanner { display:none; background: linear-gradient(135deg, var(--color-green-dark), var(--color-surface)); border:1px solid var(--color-green); border-radius:14px; padding:1.5rem 1.2rem; text-align:center; margin-top:1rem; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes popIn { from { opacity:0; transform:scale(0.9);} to { opacity:1; transform:scale(1);} }
+
+
 
 /* ==========================================================
    7) Progress Bar

@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 4</title>
+    <title>Lesson 4 – Final Project | Web Creation</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
+
+    <!-- Header -->
+    <header class="header">
         <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        <img src="/assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
     </header>
 
-    <!-- Primary navigation / sidebar -->
+    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar" aria-hidden="true">
         <button class="close-btn" id="closeBtn">✕</button>
         <a href="/index.html">🏠 Home</a>
@@ -28,15 +29,153 @@
     <div class="overlay" id="overlay"></div>
 
     <main class="container">
+
+        <!-- Hero -->
         <div class="card">
-            <h2>🚀 Lesson 4</h2>
-            <p class="competency">Interactive Learning Module</p>
-            <p class="description">Master HTML and CSS through hands-on lessons and real projects.</p>
+            <div class="competency">⭐ Lesson 4 · Final Project</div>
+            <h2>Create Your Own Website</h2>
+            <p>Apply everything from Lessons 1–3 to build a simple website using HTML and CSS. Show your skills, structure, and creativity!</p>
+        </div>
+
+        <!-- Progress -->
+        <div class="card">
+            <div class="progress-container">
+                <div id="lessonProgress" class="progress-bar"></div>
+            </div>
+            <p id="progressText">Progress: 0%</p>
+        </div>
+
+        <!-- Topics Covered -->
+        <div class="card">
+            <h3>📖 What You'll Apply</h3>
+            <div class="topic-grid">
+                <div class="topic-chip"><span class="dot dot-blue"></span>HTML Structure</div>
+                <div class="topic-chip"><span class="dot dot-blue"></span>HTML Elements</div>
+                <div class="topic-chip"><span class="dot dot-green"></span>CSS Styling</div>
+                <div class="topic-chip"><span class="dot dot-green"></span>Flexbox Layout</div>
+                <div class="topic-chip"><span class="dot dot-blue"></span>Hyperlinks & Lists</div>
+                <div class="topic-chip"><span class="dot dot-green"></span>Colors & Fonts</div>
+            </div>
+        </div>
+
+        <!-- Choose a Topic -->
+        <div class="card">
+            <h3>🎯 Choose a Topic</h3>
+            <ul class="checklist">
+                <li><span class="check-icon">👤</span>Personal Profile</li>
+                <li><span class="check-icon">🎮</span>Favorite Hobby</li>
+                <li><span class="check-icon">🏫</span>School Club</li>
+                <li><span class="check-icon">🛍️</span>Small Business</li>
+                <li><span class="check-icon">🌴</span>Tourist Destination</li>
+                <li><span class="check-icon">💼</span>Portfolio Website</li>
+            </ul>
+        </div>
+
+        <!-- HTML Requirements -->
+        <div class="card">
+            <h3>✅ HTML Requirements</h3>
+            <ul class="checklist">
+                <li><span class="check-icon">✓</span>At least 1 Heading</li>
+                <li><span class="check-icon">✓</span>At least 2 Paragraphs</li>
+                <li><span class="check-icon">✓</span>At least 1 Image</li>
+                <li><span class="check-icon">✓</span>At least 2 Hyperlinks</li>
+                <li><span class="check-icon">✓</span>At least 1 List (ordered or unordered)</li>
+                <li><span class="check-icon">✓</span>Proper HTML Document Structure</li>
+            </ul>
+        </div>
+
+        <!-- CSS Requirements -->
+        <div class="card">
+            <h3>🎨 CSS Requirements</h3>
+            <ul class="checklist">
+                <li><span class="check-icon">✓</span>Text Color Styling</li>
+                <li><span class="check-icon">✓</span>Background Color Styling</li>
+                <li><span class="check-icon">✓</span>Font Styling (family, size, weight)</li>
+                <li><span class="check-icon">✓</span>Margin and Padding</li>
+                <li><span class="check-icon">✓</span>Border Styling</li>
+                <li><span class="check-icon">✓</span>Simple Flexbox Layout <em style="color:#64748b">(optional but recommended)</em></li>
+            </ul>
+        </div>
+
+        <!-- Rubric -->
+        <div class="card">
+            <h3>📊 Assessment Rubric</h3>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Criteria</th>
+                        <th class="pts">Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>HTML Structure</td><td class="pts">20</td></tr>
+                    <tr><td>Use of HTML Elements</td><td class="pts">20</td></tr>
+                    <tr><td>CSS Styling</td><td class="pts">25</td></tr>
+                    <tr><td>Website Organization</td><td class="pts">15</td></tr>
+                    <tr><td>Creativity and Design</td><td class="pts">10</td></tr>
+                    <tr><td>Completeness</td><td class="pts">10</td></tr>
+                    <tr><td>Total</td><td class="pts">100</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Performance Levels -->
+        <div class="card">
+            <h3>⭐ Performance Levels</h3>
+            <div class="level-grid">
+                <div class="level-row">
+                    <span class="level-badge lvl-exc">90–100</span>
+                    <p>Excellent</p>
+                </div>
+                <div class="level-row">
+                    <span class="level-badge lvl-vg">80–89</span>
+                    <p>Very Good</p>
+                </div>
+                <div class="level-row">
+                    <span class="level-badge lvl-sat">75–79</span>
+                    <p>Satisfactory</p>
+                </div>
+                <div class="level-row">
+                    <span class="level-badge lvl-ni">Below 75</span>
+                    <p>Needs Improvement</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submission Steps -->
+        <div class="card">
+            <h3>📤 How to Submit</h3>
+            <ol class="steps">
+                <li>Create your website files: index.html and style.css</li>
+                <li>Open your index.html in a browser and test everything</li>
+                <li>Make sure all links and images are working properly</li>
+                <li>Submit the completed project folder to your teacher</li>
+            </ol>
+        </div>
+
+        <!-- Completion Button -->
+        <div class="card">
+
+                <p>Once you have finished building and submitting your website, mark this lesson as complete.</p>
+
+                <br>
+
+                <button id="completeProjectBtn" class="btn-primary">✅ I Have Completed My Project</button>
+
+                
+            <!-- Celebration -->
+            <div id="celebrationBanner">
+                <h3>🎉 Congratulations!</h3>
+                <p>You have completed the <strong>HTML and CSS Learning Module</strong>.<br>
+                Great work applying your skills to build a real website!</p>
+            </div>
         </div>
 
     </main>
 
     <script src="../../js/utils.js"></script>
     <script src="../../js/script.js"></script>
+    <script src="../../js/lesson-4.js"></script>
+
 </body>
 </html>

@@ -26,6 +26,8 @@ var PRECACHE_URLS = [
   '/src/js/lesson-2.js',
   '/src/js/lesson-3.js',
   // icons
+  '/assets/image/logo/icon-192.png',
+  '/assets/image/logo/icon-512.png',
   '/assets/image/logo/app-logo.png',
   '/assets/image/logo/cdm-logo.jpeg',
   // nav pages
