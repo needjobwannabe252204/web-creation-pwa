@@ -1,17 +1,12 @@
 /* ==========================================================
    lesson-3.js — Lesson 3 (CSS Styling) interactive logic
    ----------------------------------------------------------
-   Lesson 3 currently has reading topics only (no quiz pages).
-   This file:
-     • Tracks which topics the student has visited
-     • Updates the progress bar on lesson-3.html
-     • Marks the lesson complete when all topics are visited
-     • Gates the "Lesson 4" button until the lesson is done
-
-   To add a quiz or activity for Lesson 3:
-     1. Create the HTML test page (e.g. test-3.1.html)
-     2. Add a validator function here (like validateLinks in lesson-2.js)
-     3. Call bindL3Activity() from the DOMContentLoaded init block
+   Responsibilities:
+     1. Tracks which topics the student has visited/completed
+     2. Updates the progress bar on lesson-3.html
+     3. Marks the lesson complete when all topics are done
+     4. Gates the "Lesson 4" button until the lesson is done
+     5. Wires up interactive CSS activities on test-3.1–3.7
 
    Dependencies:
      utils.js must be loaded before this file.
@@ -24,7 +19,7 @@
    ---------------------------------------------------------- */
 
 var L3 = {
-    /* true when the student navigates to each topic page */
+    /* true when the student completes each topic's activity */
     visitedTopics: {
         topic1: false, topic2: false, topic3: false,
         topic4: false, topic5: false, topic6: false, topic7: false
@@ -64,7 +59,6 @@ function loadL3State() {
     } catch (e) { console.warn('[lesson-3] load failed:', e); }
 }
 
-/** Debug helper: expose a function to clear lesson-3 state (useful for dev). */
 function resetL3State() {
     try {
         localStorage.removeItem(L3_KEY);
@@ -82,9 +76,9 @@ window.resetL3State = resetL3State;
    ---------------------------------------------------------- */
 
 function updateL3ProgressUI() {
-    var keys      = Object.keys(L3.visitedTopics);
-    var visited   = keys.filter(function (k) { return L3.visitedTopics[k]; }).length;
-    var pct       = Math.round((visited / keys.length) * 100);
+    var keys    = Object.keys(L3.visitedTopics);
+    var visited = keys.filter(function (k) { return L3.visitedTopics[k]; }).length;
+    var pct     = Math.round((visited / keys.length) * 100);
 
     var bar  = document.getElementById('lessonProgress');
     var text = document.getElementById('progressText');
@@ -92,11 +86,6 @@ function updateL3ProgressUI() {
     if (text) text.textContent = 'Progress: ' + pct + '%';
 }
 
-/**
- * Apply state to the lesson-3 overview page:
- *   • Green border on visited topic cards
- *   • Update progress bar
- */
 function applyL3StateToUI() {
     for (var i = 1; i <= TOTAL_L3_TOPICS; i++) {
         if (!L3.visitedTopics['topic' + i]) continue;
@@ -106,36 +95,43 @@ function applyL3StateToUI() {
         }
     }
     updateL3ProgressUI();
+
+    /* Update the lesson-3 done button state */
+    _updateDoneBtn();
+}
+
+function _updateDoneBtn() {
+    var doneBtn = document.getElementById('doneBtn');
+    if (!doneBtn) return;
+    var allDone = Object.keys(L3.visitedTopics).every(function (k) {
+        return L3.visitedTopics[k];
+    });
+    if (allDone || L3.lessonCompleted) {
+        doneBtn.textContent = '✅ Lesson Complete!';
+        doneBtn.disabled = true;
+        var nextBtn = document.getElementById('nextLessonBtn');
+        if (nextBtn) nextBtn.style.display = 'inline-block';
+    } else {
+        doneBtn.textContent = '🔒 Complete Topics First';
+        doneBtn.disabled = true;
+    }
 }
 
 /* ----------------------------------------------------------
-   4) MARK TOPIC VISITED
-   Called automatically when the student lands on a topic page.
+   4) MARK TOPIC COMPLETED
    ---------------------------------------------------------- */
 
-/**
- * Mark a topic as visited, update progress, and check for
- * lesson completion.
- *
- * @param {number} n - Topic number (1–7).
- */
 function markL3TopicVisited(n) {
     var key = 'topic' + n;
     if (!L3.visitedTopics.hasOwnProperty(key)) return;
     L3.visitedTopics[key] = true;
 
-    /* Check if all topics are now visited */
-    var allVisited = Object.values
-        /* Object.values may not exist in very old browsers */
-        ? Object.values(L3.visitedTopics).every(Boolean)
-        : Object.keys(L3.visitedTopics).every(function (k) {
-              return L3.visitedTopics[k];
-          });
+    var allVisited = Object.keys(L3.visitedTopics).every(function (k) {
+        return L3.visitedTopics[k];
+    });
 
     if (allVisited && !L3.lessonCompleted) {
         L3.lessonCompleted = true;
-        /* Write to the central progress store so index.html can
-           unlock Lesson 4 */
         if (typeof markLessonComplete === 'function') {
             markLessonComplete(3);
         }
@@ -145,38 +141,325 @@ function markL3TopicVisited(n) {
     saveL3State();
     applyL3StateToUI();
 }
-window.markL3TopicVisited = markL3TopicVisited; /* for inline HTML handlers */
+window.markL3TopicVisited = markL3TopicVisited;
 
 /* ----------------------------------------------------------
-   5) AUTO-MARK TOPIC ON TOPIC PAGES
-   When the student lands on topic-3.N.html the visit is
-   recorded automatically — they don't need to click a button.
+   5) CSS EDITOR LIVE PREVIEW (Run button)
+   Applied to test-3.2 through test-3.7 which all use the
+   same #editor → #previewStyle → #previewBox pattern.
    ---------------------------------------------------------- */
 
-function _autoMarkCurrentTopic() {
-    var page = (typeof getCurrentPage === 'function') ? getCurrentPage() : '';
-    for (var i = 1; i <= TOTAL_L3_TOPICS; i++) {
-        if (page === ('topic-3.' + i + '.html')) {
-            /* Do NOT auto-mark topics on page load. Visiting a topic
-               should not automatically mark it completed — completion
-               must be an explicit action (e.g., a Done button). If the
-               topic was previously marked, still ensure the page's
-               header card shows the green completed border. */
-            if (L3.visitedTopics['topic' + i]) {
-                var firstCard = document.querySelector('.card');
-                if (firstCard) firstCard.style.borderLeft = '6px solid #4caf50';
-            }
-            break;
-        }
+function initCSSRunner() {
+    var runBtn   = document.getElementById('runBtn');
+    var editor   = document.getElementById('editor');
+    var styleTag = document.getElementById('previewStyle');
+    if (!runBtn || !editor || !styleTag) return;
+
+    runBtn.addEventListener('click', function () {
+        styleTag.textContent = editor.value || '';
+        showToast('Preview updated!', 'info', 1500);
+    });
+
+    if (typeof autoResizeTextarea === 'function') {
+        autoResizeTextarea(editor);
     }
 }
 
 /* ----------------------------------------------------------
-   6) INIT
+   6) VALIDATORS — return { ok, error? }
+   ---------------------------------------------------------- */
+
+function validateCSSSyntax(editorEl) {
+    /* test-3.2: p { color: blue; } */
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase().replace(/\s+/g, ' ');
+    if (!code.includes('p') || !code.includes('color'))
+        return { ok: false, error: 'Your rule must target the <p> element and set its color.' };
+    if (!code.includes('blue'))
+        return { ok: false, error: 'Set the color value to blue.' };
+    if (!code.includes('{') || !code.includes('}'))
+        return { ok: false, error: 'Remember the curly braces { } around your declaration.' };
+    return { ok: true };
+}
+
+function validateCSSColor(editorEl) {
+    /* test-3.3: .box { background-color: purple; } */
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase().replace(/\s+/g, ' ');
+    if (!code.includes('.box'))
+        return { ok: false, error: 'Use the class selector .box to target the element.' };
+    if (!code.includes('background-color'))
+        return { ok: false, error: 'Set the background-color property.' };
+    if (!code.includes('purple'))
+        return { ok: false, error: 'Set the background-color value to purple.' };
+    return { ok: true };
+}
+
+function validateCSSFont(editorEl) {
+    /* test-3.4: p { font-family: Arial; font-size: 18px; } */
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase().replace(/\s+/g, ' ');
+    if (!code.includes('font-family'))
+        return { ok: false, error: 'Add the font-family property.' };
+    if (!code.includes('arial'))
+        return { ok: false, error: 'Set font-family to Arial.' };
+    if (!code.includes('font-size'))
+        return { ok: false, error: 'Add the font-size property.' };
+    if (!code.includes('18px'))
+        return { ok: false, error: 'Set font-size to 18px.' };
+    return { ok: true };
+}
+
+function validateCSSBoxModel(editorEl) {
+    /* test-3.5: .box { padding: 10px; border: 2px solid black; margin: 15px; } */
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase().replace(/\s+/g, ' ');
+    if (!code.includes('padding') || !code.includes('10px'))
+        return { ok: false, error: 'Set padding to 10px.' };
+    if (!code.includes('border') || !code.includes('2px') || !code.includes('solid') || !code.includes('black'))
+        return { ok: false, error: 'Set border to 2px solid black.' };
+    if (!code.includes('margin') || !code.includes('15px'))
+        return { ok: false, error: 'Set margin to 15px.' };
+    return { ok: true };
+}
+
+function validateCSSFlex(editorEl) {
+    /* test-3.6: .flex-container { display: flex; justify-content: center; gap: 16px; } */
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase().replace(/\s+/g, ' ');
+    if (!code.includes('display') || !code.includes('flex'))
+        return { ok: false, error: 'Set display to flex.' };
+    if (!code.includes('justify-content') || !code.includes('center'))
+        return { ok: false, error: 'Set justify-content to center.' };
+    if (!code.includes('gap') || !code.includes('16px'))
+        return { ok: false, error: 'Set gap to 16px.' };
+    return { ok: true };
+}
+
+function validateMediaQuery(editorEl) {
+    /* test-3.7: @media (max-width: 600px) { body { background-color: lightblue; } } */
+    if (!editorEl) return { ok: false, error: 'Editor not found.' };
+    var code = (editorEl.value || '').toLowerCase().replace(/\s+/g, ' ');
+    if (!code.includes('@media'))
+        return { ok: false, error: 'Your answer must use a @media rule.' };
+    if (!code.includes('max-width') || !code.includes('600px'))
+        return { ok: false, error: 'Set the breakpoint to max-width: 600px.' };
+    if (!code.includes('background-color') || !code.includes('lightblue'))
+        return { ok: false, error: 'Inside the media query, set body background-color to lightblue.' };
+    return { ok: true };
+}
+
+/* ----------------------------------------------------------
+   7) ACTIVITY BINDER — reusable for all CSS editor tests
+   ---------------------------------------------------------- */
+
+function bindL3CSSActivity(cfg) {
+    var submitEl = document.getElementById(cfg.submitId);
+    if (!submitEl) return;
+
+    var resetEl  = cfg.resetId  ? document.getElementById(cfg.resetId)  : null;
+    var nextEl   = cfg.nextId   ? document.getElementById(cfg.nextId)   : null;
+    var resultEl = cfg.resultId ? document.getElementById(cfg.resultId) : null;
+    var editorEl = document.getElementById('editor');
+
+    function onSubmit() {
+        var res = cfg.validate(editorEl);
+        if (!res.ok) {
+            showToast(res.error || 'Check your code and try again.', 'error', 4000);
+            return;
+        }
+        if (resultEl) {
+            resultEl.innerHTML = cfg.successMsg || '✅ Activity complete!';
+            resultEl.classList.remove('error');
+            resultEl.classList.add('success', 'quiz-result');
+            resultEl.style.display = 'block';
+        }
+        submitEl.style.display = 'none';
+        if (resetEl) resetEl.style.display = 'inline-block';
+        if (nextEl)  nextEl.style.display  = 'inline-block';
+        markL3TopicVisited(cfg.topicNum);
+    }
+
+    function onReset() {
+        if (editorEl) editorEl.value = cfg.resetValue || '';
+        var styleTag = document.getElementById('previewStyle');
+        if (styleTag) styleTag.textContent = '';
+        if (resultEl) {
+            resultEl.innerHTML = '';
+            resultEl.classList.remove('success', 'error');
+            resultEl.style.display = 'none';
+        }
+        submitEl.style.display = 'inline-block';
+        if (resetEl) resetEl.style.display = 'none';
+        if (nextEl)  nextEl.style.display  = 'none';
+        /* Allow redo — un-mark the topic */
+        L3.visitedTopics['topic' + cfg.topicNum] = false;
+        saveL3State();
+        applyL3StateToUI();
+    }
+
+    submitEl.addEventListener('click', onSubmit);
+    if (resetEl) resetEl.addEventListener('click', onReset);
+}
+
+/* ----------------------------------------------------------
+   8) QUIZ BINDER — for test-3.1 (multiple-choice quiz)
+   ---------------------------------------------------------- */
+
+function bindL3Quiz() {
+    var submitBtn = document.getElementById('quizSubmit');
+    if (!submitBtn) return;
+
+    var resetBtn  = document.getElementById('quizReset');
+    var nextBtn   = document.getElementById('quizNext');
+    var resultEl  = document.getElementById('quizResult');
+    var form      = document.getElementById('quizForm');
+
+    /* Correct answers */
+    var answers = { q1: 'b', q2: 'c', q3: 'a' };
+
+    function grade() {
+        var score = 0;
+        var total = Object.keys(answers).length;
+        var allAnswered = true;
+
+        Object.keys(answers).forEach(function (q) {
+            var sel = form ? form.querySelector('input[name="' + q + '"]:checked') : null;
+            if (!sel) { allAnswered = false; return; }
+            if (sel.value === answers[q]) score++;
+        });
+
+        if (!allAnswered) {
+            showToast('Please answer all questions before submitting.', 'error', 3000);
+            return;
+        }
+
+        if (score === total) {
+            if (resultEl) {
+                resultEl.innerHTML = '✅ Perfect score! ' + score + '/' + total + ' — Activity complete!';
+                resultEl.classList.remove('error');
+                resultEl.classList.add('success', 'quiz-result');
+                resultEl.style.display = 'block';
+            }
+            submitBtn.style.display = 'none';
+            if (resetBtn) resetBtn.style.display = 'inline-block';
+            if (nextBtn)  nextBtn.style.display  = 'inline-block';
+            markL3TopicVisited(1);
+        } else {
+            if (resultEl) {
+                resultEl.innerHTML = '❌ ' + score + '/' + total + ' correct. Review the topic and try again!';
+                resultEl.classList.remove('success');
+                resultEl.classList.add('error', 'quiz-result');
+                resultEl.style.display = 'block';
+            }
+            showToast(score + '/' + total + ' — Try again!', 'error', 3000);
+        }
+    }
+
+    function resetQ() {
+        if (form) form.reset();
+        if (resultEl) {
+            resultEl.innerHTML = '';
+            resultEl.classList.remove('success', 'error');
+            resultEl.style.display = 'none';
+        }
+        submitBtn.style.display = 'inline-block';
+        if (resetBtn) resetBtn.style.display = 'none';
+        if (nextBtn)  nextBtn.style.display  = 'none';
+        L3.visitedTopics.topic1 = false;
+        saveL3State();
+        applyL3StateToUI();
+    }
+
+    submitBtn.addEventListener('click', grade);
+    if (resetBtn) resetBtn.addEventListener('click', resetQ);
+}
+
+/* ----------------------------------------------------------
+   9) PAGE CONFIG — maps filenames to activity settings
+   ---------------------------------------------------------- */
+
+var L3_PAGE_CONFIG = {
+    'test-3.2.html': {
+        submitId: 'syntaxSubmit', resetId: 'syntaxReset', nextId: 'syntaxNext', resultId: 'syntaxResult',
+        validate: validateCSSSyntax,
+        successMsg: '✅ Activity complete — CSS syntax is correct!',
+        topicNum: 2,
+        resetValue: 'p {\n    color: ____;\n}'
+    },
+    'test-3.3.html': {
+        submitId: 'colorSubmit', resetId: 'colorReset', nextId: 'colorNext', resultId: 'colorResult',
+        validate: validateCSSColor,
+        successMsg: '✅ Activity complete — background color set correctly!',
+        topicNum: 3,
+        resetValue: '.box {\n    background-color: ____;\n}'
+    },
+    'test-3.4.html': {
+        submitId: 'fontSubmit', resetId: 'fontReset', nextId: 'fontNext', resultId: 'fontResult',
+        validate: validateCSSFont,
+        successMsg: '✅ Activity complete — font properties set correctly!',
+        topicNum: 4,
+        resetValue: 'p {\n    font-family: ____;\n    font-size: ____;\n}'
+    },
+    'test-3.5.html': {
+        submitId: 'boxSubmit', resetId: 'boxReset', nextId: 'boxNext', resultId: 'boxResult',
+        validate: validateCSSBoxModel,
+        successMsg: '✅ Activity complete — box model properties set correctly!',
+        topicNum: 5,
+        resetValue: '.box {\n    padding: ____;\n    border: ____;\n    margin: ____;\n}'
+    },
+    'test-3.6.html': {
+        submitId: 'flexSubmit', resetId: 'flexReset', nextId: 'flexNext', resultId: 'flexResult',
+        validate: validateCSSFlex,
+        successMsg: '✅ Activity complete — Flexbox layout applied correctly!',
+        topicNum: 6,
+        resetValue: '.flex-container {\n    display: ____;\n    justify-content: ____;\n    gap: ____;\n}'
+    },
+    'test-3.7.html': {
+        submitId: 'mediaSubmit', resetId: 'mediaReset', nextId: 'mediaNext', resultId: 'mediaResult',
+        validate: validateMediaQuery,
+        successMsg: '✅ Activity complete — media query is correct!',
+        topicNum: 7,
+        resetValue: '@media (max-width: ____) {\n    body {\n        background-color: ____;\n    }\n}'
+    }
+};
+
+/* ----------------------------------------------------------
+   10) INIT
    ---------------------------------------------------------- */
 
 document.addEventListener('DOMContentLoaded', function () {
     loadL3State();
-    applyL3StateToUI();    /* for lesson-3.html overview */
-    _autoMarkCurrentTopic(); /* for topic-3.N pages */
+    applyL3StateToUI();
+
+    var page = (typeof getCurrentPage === 'function') ? getCurrentPage() : '';
+
+    /* Highlight first card green if this topic was already completed */
+    if (/^topic-3\.\d+\.html$/.test(page)) {
+        var topicMatch = page.match(/topic-3\.(\d+)\.html/);
+        if (topicMatch) {
+            var topicNum = parseInt(topicMatch[1], 10);
+            if (L3.visitedTopics['topic' + topicNum]) {
+                var firstCard = document.querySelector('.card');
+                if (firstCard) firstCard.style.borderLeft = '6px solid #4caf50';
+            }
+        }
+    }
+
+    /* Wire up lesson-3.html done button */
+    if (page === 'lesson-3.html') {
+        _updateDoneBtn();
+    }
+
+    /* Wire up test-3.1 quiz */
+    if (page === 'test-3.1.html') {
+        bindL3Quiz();
+    }
+
+    /* Wire up CSS editor activities (test-3.2 through test-3.7) */
+    var cfg = L3_PAGE_CONFIG[page];
+    if (cfg) {
+        initCSSRunner();
+        bindL3CSSActivity(cfg);
+    }
 });

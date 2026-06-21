@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 3.1</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+<header class="header">
+    <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+    <h1 class="title">Web Creation</h1>
+    <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+</header>
+
+<nav class="sidebar" id="sidebar" aria-hidden="true">
+    <button class="close-btn" id="closeBtn">✕</button>
+    <a href="/index.html">🏠 Home</a>
+    <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+    <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<main class="container">
+
+    <div class="card" id="quiz-1">
+
+        <h2>🎮 Interactive Activity</h2>
+        <p><strong>Instructions:</strong> Answer all 3 questions correctly to pass and unlock the next topic.</p>
+
+        <br>
+
+        <form id="quizForm">
+
+            <p><strong>1. What does CSS stand for?</strong></p>
+            <label><input type="radio" name="q1" value="a"> Creative Style Sheets</label><br>
+            <label><input type="radio" name="q1" value="b"> Cascading Style Sheets</label><br>
+            <label><input type="radio" name="q1" value="c"> Computer Style Sheets</label><br>
+            <label><input type="radio" name="q1" value="d"> Colorful Style Sheets</label>
+
+            <br><br>
+
+            <p><strong>2. What is the main job of CSS on a webpage?</strong></p>
+            <label><input type="radio" name="q2" value="a"> It stores data in a database</label><br>
+            <label><input type="radio" name="q2" value="b"> It defines the structure/content of the page</label><br>
+            <label><input type="radio" name="q2" value="c"> It controls the appearance and layout of the page</label><br>
+            <label><input type="radio" name="q2" value="d"> It handles server requests</label>
+
+            <br><br>
+
+            <p><strong>3. Which analogy best describes the relationship between HTML and CSS?</strong></p>
+            <label><input type="radio" name="q3" value="a"> HTML is the house structure, CSS is the paint and decoration</label><br>
+            <label><input type="radio" name="q3" value="b"> HTML is the paint, CSS is the house structure</label><br>
+            <label><input type="radio" name="q3" value="c"> They are unrelated technologies</label><br>
+            <label><input type="radio" name="q3" value="d"> CSS replaces HTML entirely</label>
+
+        </form>
+
+        <br>
+
+        <div id="quizResult" class="quiz-result"></div>
+
+        <br>
+
+        <div class="actions-flex">
+            <button id="quizSubmit" type="button">Submit Activity</button>
+            <button id="quizReset" type="button" style="display:none">Reset / Try Again</button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn" data-href="topic-3.1.html" aria-label="Go Back">← Go Back</button>
+            <button id="quizNext" class="btn btn-primary" data-href="topic-3.2.html" aria-label="Next" style="display:none">Next →</button>
+        </div>
+
+    </div>
+
+</main>
+
+<script src="../../js/utils.js"></script>
+<script src="../../js/script.js"></script>
+<script src="../../js/lesson-3.js"></script>
+
+</body>
+</html>

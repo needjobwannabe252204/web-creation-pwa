@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 3.3</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style id="previewStyle"></style>
+</head>
+<body>
+
+<header class="header">
+    <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+    <h1 class="title">Web Creation</h1>
+    <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+</header>
+
+<nav class="sidebar" id="sidebar" aria-hidden="true">
+    <button class="close-btn" id="closeBtn">✕</button>
+    <a href="/index.html">🏠 Home</a>
+    <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+    <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<main class="container">
+
+    <div class="card" id="quiz-3">
+
+        <h2>🎮 Interactive Activity</h2>
+
+        <p><strong>Instructions:</strong></p>
+        <p>
+            Write a CSS rule that selects the box below using the
+            <strong>.box</strong> class selector and sets its
+            <strong>background-color</strong> to <strong>purple</strong>.
+            Replace the blank (<code>____</code>), then press Run to preview, and Submit when ready.
+        </p>
+
+        <br>
+
+<textarea
+id="editor"
+placeholder="Type your CSS code here..."
+class="code-editor"
+style="height:120px;">
+.box {
+    background-color: ____;
+}</textarea>
+
+        <br><br>
+
+        <button id="runBtn" type="button" class="run-btn">▶ Run Code</button>
+
+        <br>
+
+        <h3>Preview:</h3>
+        <div id="previewBox" style="margin-top:15px; padding:15px; border:2px solid #ccc; border-radius:8px; min-height:60px; background:#fff; color:#111;">
+            <div class="box" style="padding:20px; text-align:center; border-radius:6px; background:#eeeeee;">My Color Box</div>
+        </div>
+
+        <br>
+
+        <div id="colorResult" class="quiz-result"></div>
+
+        <br>
+
+        <div class="actions-flex">
+            <button id="colorSubmit" type="button">Submit Activity</button>
+            <button id="colorReset" type="button" style="display:none">Reset / Try Again</button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn" data-href="topic-3.3.html" aria-label="Go Back">← Go Back</button>
+            <button id="colorNext" class="btn btn-primary" data-href="topic-3.4.html" aria-label="Next" style="display:none">Next →</button>
+        </div>
+
+    </div>
+
+</main>
+
+<script src="../../js/utils.js"></script>
+<script src="../../js/script.js"></script>
+<script src="../../js/lesson-3.js"></script>
+
+</body>
+</html>

@@ -108,19 +108,45 @@
             <button class="btn" data-href="topic-3.7.html">Learn →</button>
         </div>
 
-        <!-- Navigation footer -->
-        <div class="card">
-            <div class="nav-buttons">
-                <!-- BUG FIX: was linking back to lesson-3.html (self-loop). Now goes home. -->
-                <button class="btn" data-href="/index.html">← Return Home</button>
-                <button class="btn btn-primary" data-href="../lesson-4/lesson-4.html">Next: Lesson 4 →</button>
+        <!-- Final Activity — mirrors Lesson 1 & 2's gated completion pattern -->
+        <div id="activity-card" class="card">
+            <h3>⭐ Activity 3</h3>
+            <p class="competency">
+                Final Activity: Style Your Personal Webpage
+            </p>
+            <p>
+                Apply the CSS concepts from this lesson to the personal webpage you built in Lesson 2.
+            </p>
+            <br>
+            <p>Your stylesheet should include:</p>
+            <ul class="list-indent">
+                <li> Custom colors </li>
+                <li> A chosen font family and font sizes </li>
+                <li> Padding, border, and margin on at least one element </li>
+                <li> A Flexbox layout for at least one section </li>
+                <li> A responsive media query for smaller screens </li>
+            </ul>
+
+            <br>
+
+            <h3>Goodluck!</h3>
+
+            <br>
+
+            <button id="doneBtn" type="button" class="btn">🔒 Complete Topics First</button>
+
+            <div class="nav-buttons" style="display:flex;gap:8px;margin-top:12px">
+                <button class="btn" id="returnHomeBtn" data-href="/index.html" aria-label="Return Home">← Return Home</button>
+                <button id="nextLessonBtn" class="btn btn-primary" data-href="../lesson-4/lesson-4.html" aria-label="Next Lesson" style="display:none">Next: Lesson 4 →</button>
             </div>
         </div>
 
     </main>
 
     <!-- Load utils.js first so helpers are available to script.js and lesson-3.js -->
+    <script src="../../js/utils.js"></script>
     <script src="../../js/script.js"></script>
+    <script src="../../js/lesson-3.js"></script>
 
 </body>
 </html>

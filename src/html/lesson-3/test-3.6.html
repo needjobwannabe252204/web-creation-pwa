@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 3.6</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style id="previewStyle"></style>
+</head>
+<body>
+
+<header class="header">
+    <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+    <h1 class="title">Web Creation</h1>
+    <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+</header>
+
+<nav class="sidebar" id="sidebar" aria-hidden="true">
+    <button class="close-btn" id="closeBtn">✕</button>
+    <a href="/index.html">🏠 Home</a>
+    <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+    <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+
+<main class="container">
+
+    <div class="card" id="quiz-6">
+
+        <h2>🎮 Interactive Activity</h2>
+
+        <p><strong>Instructions:</strong></p>
+        <p>
+            Write a CSS rule that selects the <strong>.flex-container</strong> class and turns it
+            into a <strong>flex container</strong> with <strong>justify-content</strong> set to
+            <strong>center</strong> and <strong>gap</strong> set to <strong>16px</strong>.
+            Replace the blanks (<code>____</code>), then press Run to preview, and Submit when ready.
+        </p>
+
+        <br>
+
+<textarea
+id="editor"
+placeholder="Type your CSS code here..."
+class="code-editor"
+style="height:160px;">
+.flex-container {
+    display: ____;
+    justify-content: ____;
+    gap: ____;
+}</textarea>
+
+        <br><br>
+
+        <button id="runBtn" type="button" class="run-btn">▶ Run Code</button>
+
+        <br>
+
+        <h3>Preview:</h3>
+        <div id="previewBox" style="margin-top:15px; padding:15px; border:2px solid #ccc; border-radius:8px; min-height:80px; background:#fff; color:#111;">
+            <div class="flex-container" style="background:#f0f0f0; padding:10px; border-radius:6px;">
+                <div style="background:#4caf50; color:#fff; padding:12px 20px; border-radius:4px;">Box 1</div>
+                <div style="background:#1565c0; color:#fff; padding:12px 20px; border-radius:4px;">Box 2</div>
+                <div style="background:#c62828; color:#fff; padding:12px 20px; border-radius:4px;">Box 3</div>
+            </div>
+        </div>
+
+        <br>
+
+        <div id="flexResult" class="quiz-result"></div>
+
+        <br>
+
+        <div class="actions-flex">
+            <button id="flexSubmit" type="button">Submit Activity</button>
+            <button id="flexReset" type="button" style="display:none">Reset / Try Again</button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn" data-href="topic-3.6.html" aria-label="Go Back">← Go Back</button>
+            <button id="flexNext" class="btn btn-primary" data-href="topic-3.7.html" aria-label="Next" style="display:none">Next →</button>
+        </div>
+
+    </div>
+
+</main>
+
+<script src="../../js/utils.js"></script>
+<script src="../../js/script.js"></script>
+<script src="../../js/lesson-3.js"></script>
+
+</body>
+</html>

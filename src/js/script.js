@@ -120,6 +120,12 @@ document.addEventListener('DOMContentLoaded', function () {
         _initResetLesson2Button(reset2);
     }
 
+    /* Reset-progress button for Lesson 3 */
+    var reset3 = document.getElementById('reset-lesson3-btn');
+    if (reset3) {
+        _initResetLesson3Button(reset3);
+    }
+
     /* -------------------------------------------------------
        4) Index-page: lesson gate initialisation
        ------------------------------------------------------- */
@@ -153,6 +159,35 @@ function _refreshLesson1Badge() {
     } catch (e) {
         console.warn('[script.js] Could not refresh lesson-1 badge:', e);
     }
+}
+
+/**
+ * Set up reset button for Lesson 3.
+ * Clears `lesson3State` and updates `courseProgress` to mark
+ * lesson 3 as not completed and locks lesson 4 again.
+ */
+function _initResetLesson3Button(resetBtn) {
+    try {
+        var cp = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
+        var show = !!(cp.lessonsCompleted && cp.lessonsCompleted[3]);
+        resetBtn.style.display = show ? 'inline-flex' : 'none';
+    } catch (_) {
+        resetBtn.style.display = 'none';
+    }
+
+    resetBtn.addEventListener('click', function () {
+        if (!confirm('Clear Lesson 3 progress? This will lock Lesson 4 again.')) return;
+        try {
+            localStorage.removeItem('lesson3State');
+            var cp2 = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
+            if (cp2.lessonsCompleted) cp2.lessonsCompleted[3] = false;
+            if (cp2.lessonsUnlocked) cp2.lessonsUnlocked[4] = false;
+            saveCourseProgress(cp2);
+        } catch (e) {
+            console.warn('[script.js] Could not clear lesson-3 progress:', e);
+        }
+        location.reload();
+    });
 }
 
 /**
