@@ -296,9 +296,15 @@ function initActivityBuilder() {
             submitBtn.disabled = false;
             L2.lessonCompleted = false;
             saveL2State();
+            /* Cascade: also wipe lesson 3 so its topics reset too */
+            localStorage.removeItem('lesson3State');
             var cp = loadCourseProgress();
             cp.lessonsCompleted[2] = false;
+            cp.lessonsUnlocked[2]  = false;
+            cp.lessonsCompleted[3] = false;
             cp.lessonsUnlocked[3]  = false;
+            cp.lessonsCompleted[4] = false;
+            cp.lessonsUnlocked[4]  = false;
             saveCourseProgress(cp);
             var card = document.getElementById('activity-card');
             if (card) setCardBorder(card, null);
@@ -547,7 +553,7 @@ function initHeadingQuiz() {
         if (resultEl) {
             resultEl.innerHTML = score === total ? '🎉 Excellent! ' + score + '/' + total
                                : score >= 3     ? '👍 Good Job! '  + score + '/' + total
-                               :                  '📚 Keep practising — ' + score + '/' + total;
+                               :                  '📚 Keep practicing — ' + score + '/' + total;
             resultEl.classList.remove('error', 'success', 'quiz-result');
             resultEl.classList.add('quiz-result', passed ? 'success' : 'error');
             resultEl.style.display = 'block';

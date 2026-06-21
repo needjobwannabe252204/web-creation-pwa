@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
+    <title>About — Web Creation</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
+
+    <header class="header">
         <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="CDM logo" class="logo">
     </header>
 
-    <!-- Primary navigation / sidebar -->
     <nav class="sidebar" id="sidebar" aria-hidden="true">
         <button class="close-btn" id="closeBtn">✕</button>
         <a href="/index.html">🏠 Home</a>
@@ -22,15 +21,95 @@
         <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
     </nav>
 
+    <div class="overlay" id="overlay"></div>
+
     <main class="container">
-        <div class="card">
-            <h2>⁉️ About</h2>
-            <p class="competency">Interactive Learning Module</p>
-            <p class="description">Master HTML and CSS through hands-on lessons and real projects.</p>
+
+        <!-- About the App -->
+        <div class="card card-highlight">
+            <h2>⁉️ About This App</h2>
+            <p class="competency">Web Creation — Interactive Learning Module</p>
+            <p>
+                Web Creation is a Progressive Web App (PWA) designed to help students
+                learn the fundamentals of web development through interactive lessons,
+                hands-on activities, and real coding challenges.
+            </p>
         </div>
+
+        <!-- About the Research -->
+        <div class="card">
+            <h2>🔬 About the Research</h2>
+            <p class="competency">Research Title</p>
+            <!-- TODO: Replace with your full research title -->
+            <p>
+                <strong>"Development of a Progressive Web Application (PWA) as an
+                Interactive Learning Module on Web Creation for [Grade/Subject] Students
+                of Colegio de Montalban"</strong>
+            </p>
+            <br>
+            <p class="competency">Institution</p>
+            <p>🏫 Colegio de Montalban</p>
+            <br>
+            <p class="competency">School Year</p>
+            <!-- TODO: Update school year -->
+            <p>📅 S.Y. 2025 – 2026</p>
+        </div>
+
+        <!-- Researchers -->
+        <div class="card">
+            <h2>👨‍🎓 The Researchers</h2>
+            <p class="competency">Research Team</p>
+            <ul class="list-indent">
+                <li>Dumadangon, Priench Khyle D.</li>
+                <!-- TODO: Add the names of the other 4 researchers below -->
+                <li>[Researcher 2 — Last Name, First Name M.I.]</li>
+                <li>[Researcher 3 — Last Name, First Name M.I.]</li>
+                <li>[Researcher 4 — Last Name, First Name M.I.]</li>
+                <li>[Researcher 5 — Last Name, First Name M.I.]</li>
+            </ul>
+        </div>
+
+        <!-- Validators -->
+        <div class="card">
+            <h2>✅ Research Validators</h2>
+            <p class="competency">Panel of Validators</p>
+            <ul class="list-indent">
+                <!-- TODO: Replace with actual validator names and designations -->
+                <li>
+                    <strong>[Validator 1 Full Name]</strong><br>
+                    <span style="font-size:0.9rem; opacity:0.8;">[Designation / Department]</span>
+                </li>
+                <br>
+                <li>
+                    <strong>[Validator 2 Full Name]</strong><br>
+                    <span style="font-size:0.9rem; opacity:0.8;">[Designation / Department]</span>
+                </li>
+                <br>
+                <li>
+                    <strong>[Validator 3 Full Name]</strong><br>
+                    <span style="font-size:0.9rem; opacity:0.8;">[Designation / Department]</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Adviser -->
+        <div class="card">
+            <h2>👨‍🏫 Research Adviser</h2>
+            <!-- TODO: Replace with your actual adviser's name and designation -->
+            <p><strong>[Adviser Full Name]</strong></p>
+            <p style="font-size:0.9rem; opacity:0.8;">[Designation / Department], Colegio de Montalban</p>
+        </div>
+
+        <!-- Back button -->
+        <div class="card">
+            <div class="nav-buttons">
+                <button class="btn" data-href="/index.html">← Back to Home</button>
+                <button class="btn btn-primary" data-href="/src/html/nav-pages/contact.html">Contact Us →</button>
+            </div>
+        </div>
+
     </main>
 
-    <div class="overlay" id="overlay"></div>
     <script src="../../js/utils.js"></script>
     <script src="../../js/script.js"></script>
 </body>

@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact</title>
+    <title>Contact — Web Creation</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
+
+    <header class="header">
         <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="CDM logo" class="logo">
     </header>
 
-    <!-- Primary navigation / sidebar -->
     <nav class="sidebar" id="sidebar" aria-hidden="true">
         <button class="close-btn" id="closeBtn">✕</button>
         <a href="/index.html">🏠 Home</a>
@@ -22,46 +21,115 @@
         <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
     </nav>
 
+    <div class="overlay" id="overlay"></div>
+
     <main class="container">
-        <div class="card">
-            <h2>☎️ Contact</h2>
-            <p class="competency">Interactive Learning Module</p>
-            <p class="description"> Have questions or suggestions? We'd love to hear from you.
-        Send your feedback and help us improve our learning platform.</p>
+
+        <!-- Header card -->
+        <div class="card card-highlight">
+            <h2>☎️ Contact Us</h2>
+            <p class="competency">Get in Touch</p>
+            <p>
+                Have questions, suggestions, or feedback about the Web Creation learning module?
+                We'd love to hear from you!
+            </p>
         </div>
 
+        <!-- Social / Direct links -->
         <div class="card">
-    <p>📧 Email: <b>webpwa7@gmail.com</b></p>
+            <h2>🔗 Find Us Online</h2>
+            <p class="competency">Quick Links</p>
+            <br>
 
-    <form action="mailto:webpwa7@gmail.com"
-          method="post"
-          enctype="text/plain">
+            <!-- TODO: Replace the href="#" links below with your actual URLs -->
 
-        <input type="text"
-               name="Name"
-               placeholder="Your Name"
-               required>
+            <div class="actions-flex" style="flex-direction:column; align-items:flex-start; gap:12px;">
 
-        <input type="email"
-               name="Email"
-               placeholder="Your Email"
-               required>
+                <a class="btn hyper-btn" href="#" target="_blank" rel="noopener noreferrer"
+                   style="text-decoration:none; display:inline-block;">
+                    📘 Facebook Page
+                    <!-- TODO: Replace href="#" with your FB page link e.g. https://www.facebook.com/yourpage -->
+                </a>
 
-        <textarea
-            name="Feedback"
-            placeholder="Write your feedback here..."
-            required></textarea>
+                <a class="btn hyper-btn" href="mailto:webpwa7@gmail.com"
+                   style="text-decoration:none; display:inline-block;">
+                    📧 webpwa7@gmail.com
+                    <!-- TODO: Update email if needed -->
+                </a>
 
-        <button type="submit">📨 Send Feedback</button>
-    </form>
-</div>
+                <!-- TODO: Uncomment and fill in if you have a messenger link -->
+                <!--
+                <a class="btn hyper-btn" href="https://m.me/yourpage" target="_blank" rel="noopener noreferrer"
+                   style="text-decoration:none; display:inline-block;">
+                    💬 Message Us on Messenger
+                </a>
+                -->
 
-        
-
+            </div>
         </div>
+
+        <!-- Feedback form -->
+        <div class="card">
+            <h2>✉️ Send Feedback</h2>
+            <p class="competency">We read every message</p>
+            <br>
+
+            <form action="mailto:webpwa7@gmail.com" method="post" enctype="text/plain">
+
+                <input
+                    type="text"
+                    name="Name"
+                    placeholder="Your Name"
+                    required
+                    style="width:100%; margin-bottom:10px;">
+
+                <input
+                    type="email"
+                    name="Email"
+                    placeholder="Your Email"
+                    required
+                    style="width:100%; margin-bottom:10px;">
+
+                <!-- TODO: Add more field options if needed e.g. Subject dropdown -->
+
+                <textarea
+                    name="Feedback"
+                    placeholder="Write your feedback or question here..."
+                    required
+                    style="width:100%; min-height:120px; resize:vertical; margin-bottom:10px;"></textarea>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;">
+                    📨 Send Feedback
+                </button>
+
+            </form>
+        </div>
+
+        <!-- School info -->
+        <div class="card">
+            <h2>🏫 Colegio de Montalban</h2>
+            <!-- TODO: Add the school's full address if you want -->
+            <p style="opacity:0.8; font-size:0.95rem;">
+                [School Address — e.g. Montalban, Rizal, Philippines]
+            </p>
+            <br>
+            <!-- TODO: Add school FB page or website link -->
+            <a class="btn hyper-btn" href="#" target="_blank" rel="noopener noreferrer"
+               style="text-decoration:none; display:inline-block;">
+                🌐 Visit School Page
+            </a>
+        </div>
+
+        <!-- Back button -->
+        <div class="card">
+            <div class="nav-buttons">
+                <button class="btn" data-href="/index.html">← Back to Home</button>
+                <button class="btn" data-href="/src/html/nav-pages/about.html">⁉️ About Us</button>
+            </div>
+        </div>
+
     </main>
 
-    <div class="overlay" id="overlay"></div>
     <script src="../../js/utils.js"></script>
     <script src="../../js/script.js"></script>
 </body>

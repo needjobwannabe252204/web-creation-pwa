@@ -5,12 +5,11 @@
      1. Sidebar (hamburger menu) open / close
      2. Global button[data-href] navigation
      3. Index-page lesson card gating (lock / unlock)
-     4. Index-page lesson-1 completion badge
+     4. Index-page lesson completion badges
+     5. Reset buttons — cascade-clears downstream lessons too
 
    Dependencies:
      utils.js  — must be loaded BEFORE this file
-
-   Per-lesson logic lives in lesson-N.js, not here.
    ========================================================== */
 
 "use strict";
@@ -31,13 +30,10 @@ var closeBtn = document.getElementById('closeBtn');
 var sidebar  = document.getElementById('sidebar');
 var overlay  = document.getElementById('overlay');
 
-/* Warn but don't crash if elements are missing — some pages may
-   not use the full header/sidebar layout. */
 if (!menuBtn || !sidebar || !overlay) {
     console.warn('[script.js] Sidebar elements not found — menu setup skipped.');
 }
 
-/** Slide the sidebar into view and darken the page background. */
 function openMenu() {
     if (!sidebar || !overlay) return;
     sidebar.classList.add('open');
@@ -46,7 +42,6 @@ function openMenu() {
     sidebar.setAttribute('aria-hidden', 'false');
 }
 
-/** Slide the sidebar back out and remove the dark overlay. */
 function closeMenu() {
     if (!sidebar || !overlay) return;
     sidebar.classList.remove('open');
@@ -55,7 +50,6 @@ function closeMenu() {
     sidebar.setAttribute('aria-hidden', 'true');
 }
 
-/* Wire up menu toggle — clicking the burger icon opens *or* closes */
 if (menuBtn) {
     menuBtn.setAttribute('aria-controls', 'sidebar');
     menuBtn.setAttribute('aria-expanded',
@@ -70,7 +64,6 @@ if (menuBtn) {
     });
 }
 
-/* Three ways to close: close button, overlay click, Escape key */
 if (closeBtn) closeBtn.addEventListener('click', closeMenu);
 if (overlay)  overlay.addEventListener('click', closeMenu);
 
@@ -84,16 +77,11 @@ window.addEventListener('keydown', function (e) {
 
 /* ----------------------------------------------------------
    2) Global data-href navigation
-   ----------------------------------------------------------
-   Buttons marked with data-href="path/to/page.html" behave
-   like links without needing an <a> wrapper. Locked / can-unlock
-   buttons intercept the click themselves, so we skip those here.
    ---------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('button[data-href]').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
-            /* Let specialised lock handlers manage locked / can-unlock buttons */
             if (btn.classList.contains('locked') || btn.classList.contains('can-unlock')) {
                 e.preventDefault();
                 return;
@@ -104,30 +92,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     /* -------------------------------------------------------
-       3) Index-page: lesson-1 completion badge
+       3) Index-page: completion badges for all lessons
        ------------------------------------------------------- */
-    _refreshLesson1Badge();
-
-    /* Reset-progress button (only on index.html) */
-    var resetBtn = document.getElementById('reset-lesson1-btn');
-    if (resetBtn) {
-        _initResetButton(resetBtn);
-    }
-
-    /* Reset-progress button for Lesson 2 */
-    var reset2 = document.getElementById('reset-lesson2-btn');
-    if (reset2) {
-        _initResetLesson2Button(reset2);
-    }
-
-    /* Reset-progress button for Lesson 3 */
-    var reset3 = document.getElementById('reset-lesson3-btn');
-    if (reset3) {
-        _initResetLesson3Button(reset3);
-    }
+    _refreshAllBadges();
 
     /* -------------------------------------------------------
-       4) Index-page: lesson gate initialisation
+       4) Reset buttons
+       ------------------------------------------------------- */
+    var r1 = document.getElementById('reset-lesson1-btn');
+    if (r1) _initResetLesson1Button(r1);
+
+    var r2 = document.getElementById('reset-lesson2-btn');
+    if (r2) _initResetLesson2Button(r2);
+
+    var r3 = document.getElementById('reset-lesson3-btn');
+    if (r3) _initResetLesson3Button(r3);
+
+    /* -------------------------------------------------------
+       5) Index-page: lesson gate initialisation
        ------------------------------------------------------- */
     initLessonGates();
 
@@ -135,40 +117,146 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 /* ----------------------------------------------------------
-   3 (helper) — Update the Lesson 1 card on the index page
-   to reflect its completion state.
+   3) Badge refresh — reads both legacy lesson1State AND
+      courseProgress so every card shows its true state.
    ---------------------------------------------------------- */
-function _refreshLesson1Badge() {
-    try {
-        var raw = localStorage.getItem('lesson1State');
-        if (!raw) return;
-        var s = JSON.parse(raw);
-        if (!s || !s.lessonCompleted) return;
 
-        var card = document.getElementById('index-lesson1-card');
-        if (card) card.style.borderLeft = '6px solid #4caf50';
-
-        var btn = document.getElementById('index-lesson1-btn');
-        if (btn) {
-            btn.textContent = '✅ Completed — Review';
-            btn.disabled = false;
-        }
-
-        var resetBtn = document.getElementById('reset-lesson1-btn');
-        if (resetBtn) resetBtn.style.display = 'inline-flex';
-    } catch (e) {
-        console.warn('[script.js] Could not refresh lesson-1 badge:', e);
-    }
+function _refreshAllBadges() {
+    _refreshLessonBadge(1);
+    _refreshLessonBadge(2);
+    _refreshLessonBadge(3);
+    _refreshLessonBadge(4);
 }
 
 /**
- * Set up reset button for Lesson 3.
- * Clears `lesson3State` and updates `courseProgress` to mark
- * lesson 3 as not completed and locks lesson 4 again.
+ * Update a lesson card on the index page to show green + "Completed"
+ * if that lesson is recorded as done in storage.
  */
+function _refreshLessonBadge(n) {
+    try {
+        var done = false;
+
+        if (n === 1) {
+            /* Lesson 1 uses its own legacy key */
+            var raw = localStorage.getItem('lesson1State');
+            var s   = raw ? JSON.parse(raw) : null;
+            done = !!(s && s.lessonCompleted);
+        } else {
+            var cp = loadCourseProgress();
+            done = !!(cp.lessonsCompleted && cp.lessonsCompleted[n]);
+        }
+
+        if (!done) return;
+
+        /* Green border on the card */
+        var cardId = 'index-lesson' + n + '-card';
+        var card   = document.getElementById(cardId);
+        if (card) card.style.borderLeft = '6px solid #4caf50';
+
+        /* Update the button label */
+        var btnId = 'index-lesson' + n + '-btn';
+        var btn   = document.getElementById(btnId);
+        if (btn) {
+            btn.textContent = '✅ Completed — Review';
+            btn.disabled    = false;
+        }
+
+        /* Show the reset button */
+        var resetId = 'reset-lesson' + n + '-btn';
+        var resetEl = document.getElementById(resetId);
+        if (resetEl) resetEl.style.display = 'inline-flex';
+
+    } catch (e) {
+        console.warn('[script.js] _refreshLessonBadge(' + n + ') failed:', e);
+    }
+}
+
+/* Keep legacy name so nothing breaks */
+function _refreshLesson1Badge() { _refreshLessonBadge(1); }
+
+
+/* ----------------------------------------------------------
+   4) Reset helpers
+   ----------------------------------------------------------
+   KEY RULE: resetting lesson N must also wipe lessons N+1,
+   N+2 … so their topics don't appear done when the lesson
+   itself is locked. Each helper calls the ones below it.
+   ---------------------------------------------------------- */
+
+/**
+ * Wipe ALL progress for lesson 3 and below (does NOT touch 1 or 2).
+ * Called by reset-2 and reset-3 handlers.
+ */
+function _clearLesson3Data() {
+    localStorage.removeItem('lesson3State');
+    var cp = loadCourseProgress();
+    cp.lessonsCompleted[3] = false;
+    cp.lessonsUnlocked[3]  = false;
+    cp.lessonsCompleted[4] = false;
+    cp.lessonsUnlocked[4]  = false;
+    saveCourseProgress(cp);
+}
+
+/**
+ * Wipe ALL progress for lesson 2 and below.
+ * Also cascades into lesson 3 (calls _clearLesson3Data).
+ */
+function _clearLesson2Data() {
+    localStorage.removeItem('lesson2State');
+    var cp = loadCourseProgress();
+    cp.lessonsCompleted[2] = false;
+    cp.lessonsUnlocked[2]  = false;
+    saveCourseProgress(cp);
+    _clearLesson3Data(); /* cascade */
+}
+
+/**
+ * Wipe ALL progress — lesson 1, 2, 3, 4, and courseProgress.
+ */
+function _clearLesson1Data() {
+    localStorage.removeItem('lesson1State');
+    localStorage.removeItem('lesson2State');
+    localStorage.removeItem('lesson3State');
+    localStorage.removeItem('courseProgress');
+}
+
+/* -- Button initialisers -- */
+
+function _initResetLesson1Button(resetBtn) {
+    try {
+        var raw = localStorage.getItem('lesson1State');
+        var s   = raw ? JSON.parse(raw) : null;
+        resetBtn.style.display = (s && s.lessonCompleted) ? 'inline-flex' : 'none';
+    } catch (_) {
+        resetBtn.style.display = 'none';
+    }
+
+    resetBtn.addEventListener('click', function () {
+        if (!confirm('Clear ALL progress? Lessons 1, 2, and 3 will be reset.')) return;
+        _clearLesson1Data();
+        location.reload();
+    });
+}
+
+function _initResetLesson2Button(resetBtn) {
+    try {
+        var cp   = loadCourseProgress();
+        var show = !!(cp.lessonsCompleted && cp.lessonsCompleted[2]);
+        resetBtn.style.display = show ? 'inline-flex' : 'none';
+    } catch (_) {
+        resetBtn.style.display = 'none';
+    }
+
+    resetBtn.addEventListener('click', function () {
+        if (!confirm('Clear Lesson 2 progress? Lesson 3 will also be reset.')) return;
+        _clearLesson2Data();
+        location.reload();
+    });
+}
+
 function _initResetLesson3Button(resetBtn) {
     try {
-        var cp = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
+        var cp   = loadCourseProgress();
         var show = !!(cp.lessonsCompleted && cp.lessonsCompleted[3]);
         resetBtn.style.display = show ? 'inline-flex' : 'none';
     } catch (_) {
@@ -177,86 +265,14 @@ function _initResetLesson3Button(resetBtn) {
 
     resetBtn.addEventListener('click', function () {
         if (!confirm('Clear Lesson 3 progress? This will lock Lesson 4 again.')) return;
-        try {
-            localStorage.removeItem('lesson3State');
-            var cp2 = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
-            if (cp2.lessonsCompleted) cp2.lessonsCompleted[3] = false;
-            if (cp2.lessonsUnlocked) cp2.lessonsUnlocked[4] = false;
-            saveCourseProgress(cp2);
-        } catch (e) {
-            console.warn('[script.js] Could not clear lesson-3 progress:', e);
-        }
-        location.reload();
-    });
-}
-
-/**
- * Set up reset button for Lesson 2.
- * Clears `lesson2State` and updates `courseProgress` to mark
- * lesson 2 as not completed and locks lesson 3 again.
- */
-function _initResetLesson2Button(resetBtn) {
-    try {
-        var cp = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
-        var show = !!(cp.lessonsCompleted && cp.lessonsCompleted[2]);
-        resetBtn.style.display = show ? 'inline-flex' : 'none';
-    } catch (_) {
-        resetBtn.style.display = 'none';
-    }
-
-    resetBtn.addEventListener('click', function () {
-        if (!confirm('Clear Lesson 2 progress? This will lock Lesson 3 again.')) return;
-        try {
-            localStorage.removeItem('lesson2State');
-            var cp2 = loadCourseProgress() || { lessonsUnlocked: {}, lessonsCompleted: {} };
-            if (cp2.lessonsCompleted) cp2.lessonsCompleted[2] = false;
-            if (cp2.lessonsUnlocked) cp2.lessonsUnlocked[3] = false;
-            saveCourseProgress(cp2);
-        } catch (e) {
-            console.warn('[script.js] Could not clear lesson-2 progress:', e);
-        }
-        location.reload();
-    });
-}
-
-/**
- * Set up the reset-lesson-1-progress button.
- * Shows/hides itself based on stored state and confirms before clearing.
- */
-function _initResetButton(resetBtn) {
-    /* Determine initial visibility */
-    try {
-        var rawState = localStorage.getItem('lesson1State');
-        var s0 = rawState ? JSON.parse(rawState) : null;
-        resetBtn.style.display = (s0 && s0.lessonCompleted) ? 'inline-flex' : 'none';
-    } catch (_) {
-        resetBtn.style.display = 'none';
-    }
-
-    resetBtn.addEventListener('click', function () {
-        if (!confirm('Clear Lesson 1 progress? This cannot be undone.')) return;
-        try {
-            localStorage.removeItem('lesson1State');
-            localStorage.removeItem('courseProgress');
-        } catch (e) {
-            console.warn('[script.js] Could not clear progress:', e);
-        }
+        _clearLesson3Data();
         location.reload();
     });
 }
 
 
 /* ----------------------------------------------------------
-   4) Lesson gate system
-   ----------------------------------------------------------
-   Reads `data-lesson` and `data-prereq` attributes from index
-   buttons and locks/unlocks cards based on courseProgress.
-
-   States a button/card can be in:
-     • locked     — prerequisites not met yet
-     • can-unlock — prerequisites met; user must click to unlock
-     • unlocked   — user has explicitly unlocked; shows Start label
-     • (default)  — no prerequisites; always navigable
+   5) Lesson gate system
    ---------------------------------------------------------- */
 
 function _parsePrereqString(str) {
@@ -270,52 +286,64 @@ function initLessonGates() {
     var cp = loadCourseProgress();
 
     document.querySelectorAll('button[data-lesson]').forEach(function (btn) {
-        var prereqStr  = btn.getAttribute('data-prereq') || '';
-        var prereqArr  = _parsePrereqString(prereqStr);
-        var href       = btn.getAttribute('data-href');
-        var lessonNum  = Number(btn.getAttribute('data-lesson')) || 0;
-        var card       = btn.closest('.card');
+        var prereqStr = btn.getAttribute('data-prereq') || '';
+        var prereqArr = _parsePrereqString(prereqStr);
+        var href      = btn.getAttribute('data-href');
+        var lessonNum = Number(btn.getAttribute('data-lesson')) || 0;
+        var card      = btn.closest('.card');
 
-        /* Cache original label once so we can restore it after unlocking */
         if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent.trim();
 
         var prereqsMet = arePrereqsMet(prereqArr);
         var isUnlocked = !!(cp.lessonsUnlocked && cp.lessonsUnlocked[lessonNum]);
+        var isComplete = _isLessonDone(lessonNum);
 
-        if (prereqArr.length && !prereqsMet && !isUnlocked) {
-            /* ---- LOCKED ---- */
+        if (isComplete) {
+            /* Already completed — show green, skip gate logic */
+            if (card) setCardBorder(card, '#4caf50');
+            btn.textContent = '✅ Completed — Review';
+            btn.disabled    = false;
+            btn.classList.remove('locked', 'can-unlock');
+            var lb = card ? card.querySelector('.lock-badge') : null;
+            if (lb) lb.remove();
+
+        } else if (prereqArr.length && !prereqsMet && !isUnlocked) {
             _applyLockedState(btn, card, prereqStr);
 
         } else if (isUnlocked) {
-            /* ---- ALREADY UNLOCKED (from previous visit) ---- */
             _applyUnlockedState(btn, card);
 
         } else if (prereqArr.length && prereqsMet) {
-            /* ---- CAN UNLOCK (prereqs met; needs one click) ---- */
-            _applyCanUnlockState(btn, card);
+            /* Prereqs met — auto-unlock instead of requiring extra click */
+            _saveUnlock(lessonNum);
+            _applyUnlockedState(btn, card);
 
         } else {
-            /* ---- NO PREREQS — open by default ---- */
             _applyOpenState(btn, card);
         }
 
-        /* If this lesson was completed in the central courseProgress store,
-           show a completed state (green) on the index card and update label. */
-        try {
-            if (cp && cp.lessonsCompleted && cp.lessonsCompleted[lessonNum]) {
-                if (card) setCardBorder(card, '#4caf50');
-                if (btn) {
-                    btn.textContent = '✅ Completed — Review';
-                    btn.disabled = false;
-                }
-            }
-        } catch (_) {}
-
-        /* Attach the click handler that governs all state transitions */
         btn.addEventListener('click', function (ev) {
             _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href);
         });
     });
+}
+
+/**
+ * Check if a lesson is marked completed, handling the lesson-1
+ * legacy separate key as well as the central courseProgress store.
+ */
+function _isLessonDone(n) {
+    try {
+        if (n === 1) {
+            var raw = localStorage.getItem('lesson1State');
+            var s   = raw ? JSON.parse(raw) : null;
+            return !!(s && s.lessonCompleted);
+        }
+        var cp = loadCourseProgress();
+        return !!(cp.lessonsCompleted && cp.lessonsCompleted[n]);
+    } catch (e) {
+        return false;
+    }
 }
 
 /* -- State applicators -- */
@@ -375,21 +403,18 @@ function _ensureLockBadge(card, html) {
 /* -- Click handler for gated buttons -- */
 
 function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) {
-    /* No prerequisites — navigate directly */
     if (!prereqArr.length) {
         if (href) window.location.href = href;
         return;
     }
 
-    /* Can-unlock: user explicitly unlocks on this click (no auto-navigate) */
     if (btn.classList.contains('can-unlock')) {
         ev.preventDefault();
         _performUnlock(btn, card, lessonNum);
         return;
     }
 
-    /* Check live (re-read storage in case another tab updated it) */
-    var cp = loadCourseProgress();
+    var cp         = loadCourseProgress();
     var nowUnlocked = !!(cp.lessonsUnlocked && cp.lessonsUnlocked[lessonNum]);
 
     if (arePrereqsMet(prereqArr) && nowUnlocked) {
@@ -397,7 +422,12 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
         return;
     }
 
-    /* Still locked: guide to the blocking lesson */
+    /* Completed lessons are always navigable for review */
+    if (_isLessonDone(lessonNum)) {
+        if (href) window.location.href = href;
+        return;
+    }
+
     ev.preventDefault();
     var missingLesson = prereqArr.find(function (n) {
         return !arePrereqsMet([n]);
@@ -415,17 +445,14 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
     }
 }
 
-/** Animate and persist the unlock of a lesson card. */
 function _performUnlock(btn, card, lessonNum) {
     if (!card) {
-        /* No card: persist state and restore label immediately */
         _saveUnlock(lessonNum);
         btn.classList.remove('can-unlock');
         if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
         return;
     }
 
-    /* Update badge text while animation plays */
     var lb = card.querySelector('.lock-badge');
     if (lb) lb.innerHTML = '🔓 Unlocking…';
 
@@ -437,7 +464,6 @@ function _performUnlock(btn, card, lessonNum) {
         card.classList.remove('unlock-animate', 'locked');
         var lb2 = card.querySelector('.lock-badge');
         if (lb2) lb2.remove();
-
         btn.classList.remove('can-unlock');
         _saveUnlock(lessonNum);
         if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
@@ -452,12 +478,7 @@ function _saveUnlock(lessonNum) {
 
 
 /* ----------------------------------------------------------
-   5) Legacy global: doneLesson()
-   ----------------------------------------------------------
-   Some inline onclick handlers in older HTML pages still call
-   this. Keep it here so those pages don't break.
-   TODO: Replace alert with a proper toast once all pages have
-   been updated to remove inline onclick attributes.
+   6) Legacy global: doneLesson()
    ---------------------------------------------------------- */
 function doneLesson() {
     showToast('Marked as read. Good job! 🎉', 'success');
