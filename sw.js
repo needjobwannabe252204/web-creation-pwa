@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.0';
+var APP_VERSION = '1.1.1';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -168,19 +168,30 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  // For other requests, try cache, then network, then fail
+  // For other requests (CSS, JS, images): stale-while-revalidate.
+  // Serve the cached copy immediately for speed/offline use, but also
+  // kick off a network fetch in the background to refresh the cache.
+  // This means a CSS/JS change shows up after one extra reload instead
+  // of staying stuck until someone remembers to bump APP_VERSION.
   event.respondWith(
     caches.match(request).then(function (cached) {
-      if (cached) return cached;
-      return fetch(request).then(function (response) {
-        // Cache fetched files for future use
-        if (!request.url.startsWith('http')) return response;
-        var resClone = response.clone();
-        caches.open(CACHE_NAME).then(function (cache) {
-          cache.put(request, resClone);
-        });
+      var networkFetch = fetch(request).then(function (response) {
+        if (response && response.ok && request.url.startsWith('http')) {
+          var resClone = response.clone();
+          caches.open(CACHE_NAME).then(function (cache) {
+            cache.put(request, resClone);
+          });
+        }
         return response;
-      }).catch(function () { return cached; });
+      }).catch(function () { return null; });
+
+      // Cached copy wins the race for speed; network result silently
+      // updates the cache for the next time this file is requested.
+      if (cached) {
+        networkFetch.catch(function () {}); // don't let rejection bubble
+        return cached;
+      }
+      return networkFetch.then(function (response) { return response || Response.error(); });
     })
   );
 });
