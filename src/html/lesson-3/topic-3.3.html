@@ -1,289 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic 3.3</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
-<body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Topic 3.3</title>
+        <link rel="stylesheet" href="../../css/style.css">
+    </head>
 
-    <div class="overlay" id="overlay"></div>
+    <body>
 
-    <main class="container">
-        <div class="card">
-            <h2>Topic 3: Colors</h2>
-            <br>
-             <p class="competency">Why Colors Matter.</p>
-             <p> Colors influence emotions and user behavior.</p>
-             <br>
-             <style>
-    table {
-        width: 80%;
-        border-collapse: collapse;
-        font-family: Arial, sans-serif;
-    }
+    <!-- Header: site title and menu (hamburger) -->
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h1 class="title">Web Creation</h1>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
 
-    th, td {
-        border: 1px solid black;
-        padding: 12px;
-        text-align: left;
-    }
+        <!-- Primary navigation / sidebar -->
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
 
-    th {
-        background-color: #f2f2f2;
-    }
-</style>
-</head>
-<body>
+        <div class="overlay" id="overlay"></div>
 
-<table>
-    <tr>
-        <th style="color: rgb(0, 0, 0);">Color</th>
-        <th style="color: rgb(0, 0, 0);">Common Meaning</th>
-    </tr>
-    <tr>
-        <td>Red</td>
-        <td>Energy, urgency</td>
-    </tr>
-    <tr>
-        <td>Blue</td>
-        <td>Trust, professionalism</td>
-    </tr>
-    <tr>
-        <td>Green</td>
-        <td>Success, growth</td>
-    </tr>
-    <tr>
-        <td>Yellow</td>
-        <td>Attention, happiness</td>
-    </tr>
-    <tr>
-        <td>Black</td>
-        <td>Luxury, elegance</td>
-    </tr>
-</table>
-<br>
-<hr>
-<br>
-<p><b> Visual Example: </b></p>
-<div class="message-list">
+        <main class="container">
 
-    <div class="message">
-        <span class="dot red"></span>
-        <span>Error Message</span>
-    </div>
+            <div class="card">
 
-    <div class="message">
-        <span class="dot green"></span>
-        <span>Success Message</span>
-    </div>
+                <h3>Topic 3: Colors</h3>
+                <p class="competency">
+                    Why Colors Matter.
+                </p>
 
-    <div class="message">
-        <span class="dot blue"></span>
-        <span>Information Message</span>
-    </div>
+                <p>
+                    Colors play a crucial role in web design, 
+                    as they can influence user emotions, 
+                    highlight important elements, 
+                    and improve the overall visual appeal of a website.
+                </p>
 
-</div>
+                <br>
 
-<style>
-.message{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:15px 0;
-    color:white;
-    font-family:Consolas, monospace;
-    
-}
+                <table border="1">
+                    <tr>
+                        <th>Color</th>
+                        <th>Common Meaning</th>
+                    </tr>
+                    <tr>
+                        <td>Red</td>
+                        <td>Passion, Energy, Urgency</td>
+                    </tr>
+                    <tr>
+                        <td>Blue</td>
+                        <td>Trust, Calmness, Professionalism</td>
+                    </tr>
+                    <tr>
+                        <td>Green</td>
+                        <td>Growth, Health, Nature</td>
+                    </tr>
+                    <tr>
+                        <td>Yellow</td>
+                        <td>Happiness, Optimism, Attention-Grabbing</td>
+                    </tr>
+                </table>
 
-.dot{
-    width:12px;
-    height:12px;
-    border-radius:50%;
-}
+                <br>
+                <hr>
+                <br>
 
-.red{
-    background:red;
-}
+                <h3>Color Psychology in Web Design</h3>
+                <p>
+                    Different colors can evoke different emotions and reactions from users. 
+                    For example, red can create a sense of urgency, making it effective for call-to-action buttons. 
+                    Blue can instill trust and is often used by financial institutions. 
+                    Green is associated with health and nature, making it popular for eco-friendly brands. 
+                    Yellow can grab attention and create a cheerful atmosphere.
+                </p>
 
-.green{
-    background:limegreen;
-}
+                <br>
 
-.blue{
-    background:dodgerblue;
-}
-</style>
-<br>
-<hr>
-<br>
-<p><b> text color example </b></p>
-<br>
- <style>
+                <h3>Color Messages</h3>
 
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                width: 100%;
-                max-width:450px;
-                box-sizing: border-;
-                color:white;
-                font-family:Consolas, monospace;
-                
-            }
-
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
-
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
-
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                
-                </style>
-
-                 <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-
-                <pre><code><span class="selector">p</span> {
-    color <span class="value">navy</span>                   
-        }</code></pre>
-         </div>
-        <br>
-        <p><b> background color example </b></p>
-        <br>
-         <style>
-
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                width: 100%;
-                max-width:450px;
-                box-sizing: border-;
-                color:white;
-                font-family:Consolas, monospace;
-                
-            }
-
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
-
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
-
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                
-                </style>
-
-                 <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-
-                <pre><code><span class="selector">body</span> {
-    background-color: <span class="">#f5f5f5;
-</span>                   
-        }</code></pre>
-         </div>
-         <br>
-         <p><b> Gradient Example </b></p>
-         <br>
-            <style>
-.code-box{
-    background:#050505;
-    border:1px solid #222;
-    border-radius:20px;
-    padding:20px;
-    width:350px;
-    color:white;
-    font-family:Consolas, monospace;
-}
-
-.code-title{
-    font-size:18px;
-    font-weight:bold;
-    margin-bottom:15px;
-}
-
-.selector{
-    color:#58a6ff;
-}
-
-.property{
-    color:white;
-}
-
-.value{
-    color:#ffa657;
-}
-
-pre{
-    margin:0;
-    line-height:1.8;
-}
-</style>
-<div class="code-box">
-    <div class="code-title">&lt;/&gt; CSS</div>
-
-<pre><code><span class="selector">body</span> {
-    <span class="property">background:</span>
-        <span class="value">linear-gradient</span>(
-        to right,
-        blue,
-        purple
-    );
-}</code></pre>
-</div>
-
- <button class="btn" data-href="test-3.3.html">▶ Activity: Test Your Learning</button>
-
-                <div class="nav-buttons">
-                    <button class="btn" data-href="topic-3.2.html" aria-label="Go Back">← Go Back</button>
-                    <button class="btn btn-primary" data-href="topic-3.4.html" aria-label="Next Topic">Next Topic →</button>
+                <div class="message">
+                    <span class="dot red"></span>
+                    <span>Error Message</span>
                 </div>
 
+                <div class="message">
+                    <span class="dot green"></span>
+                    <span>Success Message</span>
+                </div>
 
+                <div class="message">
+                    <span class="dot blue"></span>
+                    <span>Information Message</span>
+                </div>
 
-          
-        </div>
+                <br>
+                <hr>
+                <br>
+                
+                <h3>Color Examples</h3>
 
-    </main>
+<div class="black-box">
+<strong>&lt;/&gt; CSS</strong>
+<pre>
 
-    <script src="../../js/utils.js"></script>
-    <script src="../../js/script.js"></script>
-    <script src="../../js/lesson-3.js"></script>
-</body>
+p {
+    color: navy                   
+        }
+</pre>
+</div>
+
+                <br>
+                <h3>Background Color Examples</h3>
+
+<div class="black-box">
+<strong>&lt;/&gt; CSS</strong>
+<pre>
+
+body {
+    background-color: #f5f5f5;
+                   
+        }
+</pre>
+</div>
+
+                <br>
+                <h3>Gradient Background Example</h3>
+
+<div class="black-box">
+<strong>&lt;/&gt; CSS</strong>
+<pre>
+
+body {
+    background: linear-gradient(to right,blue,purple);
+}
+</pre>
+</div>
+
+                <br>
+
+                <button class="btn" data-href="test-3.4.html">▶ Activity: Test Your Learning</button>
+
+                <div class="nav-buttons">
+                    <button class="btn" data-href="lesson-3.html" aria-label="Go Back">← Go Back</button>
+                    <button class="btn btn-primary" data-href="topic-3.4.html" aria-label="Next Topic">Next Topic →</button>
+                </div>
+                
+            </div>
+
+        </main>
+
+        <script src="../../js/utils.js"></script>
+        <script src="../../js/script.js"></script>
+        <script src="../../js/lesson-3.js"></script>
+
+    </body>
+
 </html>

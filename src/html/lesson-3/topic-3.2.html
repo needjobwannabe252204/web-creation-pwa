@@ -1,325 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic 3.2</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
-<body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Topic 3.2</title>
+        <link rel="stylesheet" href="../../css/style.css">
+    </head>
 
-    <div class="overlay" id="overlay"></div>
+    <body>
 
-    <main class="container">
-        <div class="card">
-          <h2>Topic 2: CSS Syntax</h2>
-            <br>
-            <p>CSS (Cascading Style Sheets) is a language used to control the appearance
-            and layout of web pages. It lets you change colors, fonts, spacing, and positioning of HTML elements.</p>
-            <br>
-            <p><b> Syntax</b></p> <p>is the set of rules that tells you how to write code correctly in a programming or styling language.</p>
-            <br>
-            <hr>
-            <br>
-            <p><b> Example:</b></p>
+    <!-- Header: site title and menu (hamburger) -->
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h1 class="title">Web Creation</h1>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
+
+        <!-- Primary navigation / sidebar -->
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
+
+        <div class="overlay" id="overlay"></div>
+
+        <main class="container">
+
+            <div class="card">
+
+                <h2>Topic 2: CSS Syntax</h2>
+                <p>CSS syntax is used to define the style and layout of web pages.</p>
+                <p>CSS rules are made up of selectors and declarations.</p>
+
                 <br>
-             <style>
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                max-width:450px;
-                color:white;
-                font-family:Consolas, monospace;
-                
-            }
 
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
+                <h3>CSS Rule Structure</h3>
+                <p>A CSS rule consists of a selector and a declaration block.</p>
 
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
+                <br>
 
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                </style>
-                
-                <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-
-            <pre><code><span class="selector">p</span> {
-  color: <span class="value">red</span>;
-        }</code></pre>
+                <div class="black-box">
+                    <strong>&lt;/&gt; CSS</strong>
+                    <pre>  
+selector {
+    property: value;   
+}
+                    </pre>
                 </div>
-                <br>
-                <p> "p" -is the selector (chooses all paragraph elements).  </p>
-                <p> "color" -is the property (what to change).</p> 
-                <p> "red"  -is the value (the new setting).</p>
-                <br>
-                <hr>
-                <br>
-                <p><b> correct example</b></p>
+
                 <br>
 
+                <h3>Example</h3>
+                <div class="black-box">
+                    <strong>&lt;/&gt; CSS</strong>
+                    <pre>
 
-                <style>
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                max-width:450px;
-                color:white;
-                font-family:Consolas, monospace;
-                
-            }
-
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
-
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
-
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                .value{color: #ffa657;}
-                </style>
-
-                 <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-
-        <pre><code><span class="selector">p</span> {
-    color: <span class="value">blue;</span>
-    font-size: <span class="value"> 24px; </span> 
-        }</code></pre>
+h1 {
+    color: red;
+    font-size: 24px;
+}
+                    </pre>
                 </div>
+
                 <br>
-                <p><b> incorrect</b></p>
+
+                <table border="1">
+                    <tr>
+                        <th>Selector</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>h1</td>
+                        <td>The first-level heading element.</td>
+                    </tr>
+                    <tr>
+                        <td>color</td>
+                        <td>A CSS property that sets the text color.</td>
+                    </tr>
+                    <tr>
+                        <td>red</td>
+                        <td>A color value that sets the text color to red.</td>
+                    </tr>
+                    <tr>
+                        <td>font-size</td>
+                        <td>A CSS property that sets the size of the font.</td>
+                    </tr>
+                    <tr>
+                        <td>24px</td>
+                        <td>A length value that sets the font size to 24 pixels.</td>
+                    </tr>
+                </table>
+
                 <br>
-                 <style>
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                max-width:450px;
-                color:white;
-                font-family:Consolas, monospace;
-                
-            }
 
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
-
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
-
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                
-                </style>
-
-                 <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-
-                <pre><code><span class="selector">p</span> {
-    color: <span class="value">blue</span>
-    font-size: <span class=""> 24px </span> 
-        }</code></pre>
-                </div>
-            <div >
-                <ul style="padding: 20px;">
-            <li><p> Missing semicolons may cause problems.</p></li>
+                <h3>Important Notes</h3>
+                <p>When writing CSS rules, it's important to remember that:</p>
+                <ul class="list-indent">
+                    <li>Selectors are used to target HTML elements.</li>
+                    <li>Declarations are used to define the styles for the selected elements.</li>
+                    <li>Each declaration must end with a semicolon.</li>
                 </ul>
-                <br>
-                <hr>
-                <br>
-                <h3>common selector</h3>
-                <br>
-                <p> Element selector </p>
+
                 <br>
 
-                 <style>
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                max-width:450px;
-                color:white;
-                font-family:Consolas, monospace;
+                <button class="btn" data-href="test-3.2.html">▶ Activity: Test Your Learning</button>
                 
-            }
-
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
-
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
-
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                
-                </style>
-
-                 <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-                    <pre><code><span class="selector">p</span> {
-    color: <span class="value">blue</span>
-                    
-        }</code></pre>
-                </div>
-                <br>
-                 <p> Class selector </p>
-                <br>
-
-                 <style>
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                max-width:450px;
-                color:white;
-                font-family:Consolas, monospace;
-                
-            }
-
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
-
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
-
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                
-                </style>
-
-                 <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-
-                <pre><code><span class="value">.card</span> {
-    background: <span class="value">white</span>
-                    
-        }</code></pre>
-                </div>
-
-                  <br>
-                 <p> ID selector </p>
-                <br>
-
-                 <style>
-            .code-box{
-                background:#050505;
-                border:1px solid #222;
-                border-radius:16px;
-                padding:12px 16px;
-                max-width:450px;
-                color:white;
-                font-family:Consolas, monospace;
-                
-            }
-
-                .code-title{
-                    font-size:14px;
-                    font-weight:600;
-                    margin-bottom:10px;
-                }
-
-                .code-box pre{
-                    margin:0;
-                    font-size:14px;
-                    line-height:1.6;
-                    text-align: left;
-                }
-
-                .selector{color:#58a6ff;}
-                .value{color:#ffa657;}
-                
-                </style>
-
-                 <div class="code-box">
-                    <div class="code-title">&lt;/&gt; CSS</div>
-
-                <pre><code><span class="selector">#header</span> {
-    background: <span class="value">black</span>
-                    
-        }</code></pre>
-                </div>
-                <br>
-                <hr>
-                <br>
-                <p><b> Importance: </b></p> 
-                 <ul style="padding: 20px;">
-            <li><p>CSS syntax is important because it tells the browser
-                 how to read and apply your styles. If the syntax is incorrect,
-                  the browser may ignore some or all of your CSS rules.</p></li>
-                </ul>   
-                <br><br>
-             <button class="btn" data-href="test-3.2.html">▶ Activity: Test Your Learning</button>
-
                 <div class="nav-buttons">
-                    <button class="btn" data-href="topic-3.1.html" aria-label="Go Back">← Go Back</button>
+                    <button class="btn" data-href="lesson-3.html" aria-label="Go Back">← Go Back</button>
                     <button class="btn btn-primary" data-href="topic-3.3.html" aria-label="Next Topic">Next Topic →</button>
                 </div>
+                
+            </div>
 
-        </div>
+        </main>
 
-    </main>
+        <script src="../../js/utils.js"></script>
+        <script src="../../js/script.js"></script>
+        <script src="../../js/lesson-3.js"></script>
 
-    <script src="../../js/utils.js"></script>
-    <script src="../../js/script.js"></script>
-    <script src="../../js/lesson-3.js"></script>
-</body>
+    </body>
+
 </html>

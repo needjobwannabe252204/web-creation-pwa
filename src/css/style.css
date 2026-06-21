@@ -537,6 +537,13 @@ body {
     box-sizing: border-box;
 }
 
+.white-box pre {
+    margin: 0;
+    white-space: pre;
+    color: #d4d4d4;
+    font-family: Consolas, monospace;
+}
+
 .black-box {
     width: 100%;
     min-height: 120px;
@@ -549,6 +556,13 @@ body {
     font-size: 15px;
     resize: vertical;
     box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.black-box pre {
+    margin: 0;
+    white-space: pre;
 }
 
 .run-btn {
@@ -842,4 +856,33 @@ table td {
     .thumbnail {
         width: 200px;
     }
+}
+
+/* Additional responsive tweaks can be added here as needed */
+
+.message{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:5px 0;
+    color:white;
+    font-family:Consolas, monospace;
+    
+}
+.dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+}
+
+.red{
+    background:red;
+}
+
+.green{
+    background:limegreen;
+}
+
+.blue{
+    background:dodgerblue;
 }

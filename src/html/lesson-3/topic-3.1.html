@@ -1,144 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic 3.1</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
-<body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Topic 3.1</title>
+        <link rel="stylesheet" href="../../css/style.css">
+    </head>
 
-    <div class="overlay" id="overlay"></div>
+    <body>
 
-    <main class="container">
-        <div class="card">
-          <h2> Topic 1: What is CSS? </h2>
-            <p class="competency">CSS stands for Cascading Style Sheets.</p>
-            <br>
-            <p> While HTML provides the structure of a webpage, CSS controls how it looks.</p>
-            <br>
-            <p>Think of it this way: </p>
-            <br>
-            <p>🏠 HTML = House Structure</p>
-            <p>🎨 CSS = Paint, Decorations, Furniture</p>
-            <br>
-            <hr>
-            <br>
-            <p><b> Example: </b></p>
-            <br>
-            <style>
-.code-box{
-    background:#050505;
-    border:1px solid #222;
-    border-radius:16px;
-    padding:12px 16px;
-    max-width:450px;
-    color:white;
-    font-family:Consolas, monospace;
+    <!-- Header: site title and menu (hamburger) -->
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h1 class="title">Web Creation</h1>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
+
+        <!-- Primary navigation / sidebar -->
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
+
+        <div class="overlay" id="overlay"></div>
+
+        <main class="container">
+
+            <div class="card">
+
+                <h3>🚀 Topic 1: What is CSS?</h3>
+
+                <p class="competency">CSS stands for Cascading Style Sheets.</p>
+                <p>While HTML provides the structure of a webpage, CSS controls how it looks.</p>
+                <p>CSS allows you to style your webpage by changing colors, fonts, layouts, and more.</p>
+
+                <br>
+
+                <p>Think of it this way:</p>
+                <ul class="list-indent">
+                    <li>HTML = House Structure</li>
+                    <li>CSS = Paint, Decorations, Furniture</li>
+                </ul>
+
+                <br>
+                <hr>
+                <br>
+
+                <h3>Example</h3>
+
+<div class="black-box">
+<strong>&lt;/&gt; CSS</strong>
+<pre>
+
+h1 {
+    color: blue;
 }
-
-.code-title{
-    font-size:14px;
-    font-weight:600;
-    margin-bottom:10px;
-}
-
-.code-box pre{
-    margin:0;
-    font-size:14px;
-    line-height:1.6;
-}
-
-.selector{color:#58a6ff;}
-.value{color:#ffa657;}
-</style>
-
-<div class="code-box">
-    <div class="code-title">&lt;/&gt; CSS</div>
-
-<pre><code><span class="selector">h1</span> {
-    color: <span class="value">blue</span>;
-}</code></pre>
-</div>
-        <br>
-        <hr>
-        <br>
-
-        <p><b>Why CSS is Important</b></p>
-        <br>
-        <p> Without CSS, websites look plain and difficult to use. </p>
-        <br>
-        <p> CSS helps: </p>
-        
-        <ul style="padding: 20px;">
-            <li>Make websites attractive</li>
-            <li>Improve readability</li>
-            <li>Create professional layouts</li>
-            <li>Make websites work on phones and tablets</li>
-            <li>Improve user experience</li>
-        </ul>
-        <br>
-        <hr>
-        <br>
-        <p><b>Real World Examples</b></p>
-        <br>
-        <p>Popular websites that heavily use CSS:</p>
-         <ul style="padding: 20px;">
-            <li>facebook</li>
-            <li>youtube</li>
-            <li>netflix</li>
-         <br>
-         <div class="image-row">
-    <img src="facebook_mobile.png">
-    <img src="youtube.png">
-    <img src="netflix.png">
+</pre>
 </div>
 
-<style>
-.image-row{
-    display:flex;
-    justify-content:flex-start; 
-    align-items:flex-start;
-    gap:10px;
-    width:100%;
-}
+                <br>
+                <hr>
+                <br>
 
-.image-row img{
-    width:100px;
-    height:100px;
-    object-fit:cover;
-    border-radius:8px;
-}
-</style>
-          <button class="btn" data-href="test-3.1.html">▶ Activity: Test Your Learning</button>
+                <h3>Why CSS is important</h3>
+                <p>CSS is important because it separates the content of a webpage from its presentation, making it easier to maintain and update.</p>
 
+                <br>
+
+                <p>CSS offers several key benefits:</p>
+                
+                <ul class="list-indent">
+                    <li>Make websites attractive</li>
+                    <li>Improve readability</li>
+                    <li>Create professional layouts</li>
+                    <li>Enhance user experience</li>
+                    <li>Make websites work on phones and tablets</li>
+                </ul>
+
+                <br>
+                <hr>
+                <br>
+
+                <h3>Real World Examples</h3>
+                
+                <br>
+
+                <p>Popular websites that heavily use CSS:</p>
+                <ul class="list-indent">
+                    <li>Apple</li>
+                    <li>Google</li>
+                    <li>Microsoft</li>
+                </ul>
+
+                <div class="gallary" id="code-editor">
+                    
+                    <img 
+                    class="thumbnail" 
+                    src="../../../assets/image/web-example-image/apple.png" 
+                    alt="Apple CSS Example"
+                    onclick="openImage(this)">
+                    
+                    <img 
+                    class="thumbnail" 
+                    src="../../../assets/image/web-example-image/google.png" 
+                    alt="Google CSS Example" 
+                    onclick="openImage(this)">
+
+                    <img 
+                    class="thumbnail" 
+                    src="../../../assets/image/web-example-image/microsoft.png" 
+                    alt="Microsoft CSS Example" 
+                    onclick="openImage(this)">
+
+                </div>
+
+                <div id="imageModal" class="modal" onclick="closeImage()">
+                    <span class="close" onclick="closeImage()">&times;</span>
+                    <img id="modalImage" class="modal-content" onclick="event.stopPropagation()">
+                </div>
+
+
+                <br>
+
+                <button class="btn" data-href="test-3.1.html">▶ Activity: Test Your Learning</button>
+                
                 <div class="nav-buttons">
                     <button class="btn" data-href="lesson-3.html" aria-label="Go Back">← Go Back</button>
                     <button class="btn btn-primary" data-href="topic-3.2.html" aria-label="Next Topic">Next Topic →</button>
                 </div>
+                
+            </div>
 
+        </main>
 
+        <script src="../../js/lesson-3.js"></script>
+        <script src="../../js/utils.js"></script>
+        <script src="../../js/script.js"></script>
 
-        </div>
+    </body>
 
-    </main>
-
-    <script src="../../js/utils.js"></script>
-    <script src="../../js/script.js"></script>
-    <script src="../../js/lesson-3.js"></script>
-</body>
 </html>

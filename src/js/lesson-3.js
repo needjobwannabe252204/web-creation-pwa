@@ -64,6 +64,19 @@ function loadL3State() {
     } catch (e) { console.warn('[lesson-3] load failed:', e); }
 }
 
+/** Debug helper: expose a function to clear lesson-3 state (useful for dev). */
+function resetL3State() {
+    try {
+        localStorage.removeItem(L3_KEY);
+        L3.visitedTopics = { topic1:false, topic2:false, topic3:false, topic4:false, topic5:false, topic6:false, topic7:false };
+        L3.lessonCompleted = false;
+        applyL3StateToUI();
+        saveL3State();
+        console.info('[lesson-3] resetL3State: cleared lesson3State from localStorage');
+    } catch (e) { console.warn('[lesson-3] resetL3State failed:', e); }
+}
+window.resetL3State = resetL3State;
+
 /* ----------------------------------------------------------
    3) PROGRESS UI
    ---------------------------------------------------------- */
@@ -144,15 +157,14 @@ function _autoMarkCurrentTopic() {
     var page = (typeof getCurrentPage === 'function') ? getCurrentPage() : '';
     for (var i = 1; i <= TOTAL_L3_TOPICS; i++) {
         if (page === ('topic-3.' + i + '.html')) {
-            /* Only mark if not already visited, to avoid toast spam on refresh */
-            if (!L3.visitedTopics['topic' + i]) {
-                markL3TopicVisited(i);
-            } else {
-                /* Still green the first card to show completion status */
+            /* Do NOT auto-mark topics on page load. Visiting a topic
+               should not automatically mark it completed — completion
+               must be an explicit action (e.g., a Done button). If the
+               topic was previously marked, still ensure the page's
+               header card shows the green completed border. */
+            if (L3.visitedTopics['topic' + i]) {
                 var firstCard = document.querySelector('.card');
-                if (firstCard && L3.visitedTopics['topic' + i]) {
-                    firstCard.style.borderLeft = '6px solid #4caf50';
-                }
+                if (firstCard) firstCard.style.borderLeft = '6px solid #4caf50';
             }
             break;
         }

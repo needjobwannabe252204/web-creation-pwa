@@ -316,6 +316,32 @@ function autoResizeTextarea(area) {
 
 
 /* ----------------------------------------------------------
+   7) IMAGE LIGHTBOX (global)
+   Make a simple modal available to any topic page that wants
+   clickable thumbnails to open a larger view.
+   ---------------------------------------------------------- */
+
+function openImage(imgOrSrc) {
+    var src = typeof imgOrSrc === 'string' ? imgOrSrc : (imgOrSrc && imgOrSrc.src) || '';
+    var alt = (typeof imgOrSrc === 'object' && imgOrSrc && imgOrSrc.alt) || '';
+    var modal    = getEl('imageModal');
+    var modalImg = getEl('modalImage');
+    if (!modal || !modalImg) return;
+    modalImg.src = src;
+    modalImg.alt = alt;
+    modal.style.display = 'flex';
+}
+
+function closeImage() {
+    var modal    = getEl('imageModal');
+    var modalImg = getEl('modalImage');
+    if (!modal) return;
+    modal.style.display = 'none';
+    if (modalImg) { modalImg.src = ''; modalImg.alt = ''; }
+}
+
+
+/* ----------------------------------------------------------
    Exports — attach to window so all scripts can access them.
    Using window.* because this project doesn't use ES modules.
    ---------------------------------------------------------- */

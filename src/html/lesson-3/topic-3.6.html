@@ -1,39 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic 3.6</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
-<body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Topic 3.6</title>
+        <link rel="stylesheet" href="../../css/style.css">
+    </head>
 
-    <div class="overlay" id="overlay"></div>
+    <body>
 
-    <main class="container">
-        <div class="card">
-            <h2>🚀 Lesson 4</h2>
+    <!-- Header: site title and menu (hamburger) -->
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h1 class="title">Web Creation</h1>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
 
-        </div>
+        <!-- Primary navigation / sidebar -->
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
 
-    </main>
+        <div class="overlay" id="overlay"></div>
 
-    <script src="../../js/utils.js"></script>
-    <script src="../../js/script.js"></script>
-    <script src="../../js/lesson-3.js"></script>
-</body>
+        <main class="container">
+
+            <div class="card">
+
+                <h3>Topic 6: Flexbox</h3>
+
+                <p class="competency">What is Flexbox?</p>
+                <p>Flexbox is a layout model that allows you to design flexible and responsive layouts for your web pages.</p>
+
+                <br>
+                
+                <p>Without flexbox, creating responsive layouts can be quite challenging and time-consuming.</p>
+
+                <br>
+
+                <h3>Without Flexbox</h3>
+
+                <div class="black-box">
+
+                    <p>Card 1</p>
+                    <p>Card 2</p>
+                    <p>Card 3</p>
+                    
+                </div>
+
+                <br>
+
+                <h3>With Flexbox</h3>
+
+                <div class="black-box">
+                    <p>| Card 1 | Card 2 | Card 3 |</p>
+                </div>
+
+                <br>
+                <hr>
+                <br>
+
+                <h3>Activate Flexbox</h3>
+
+<div class="black-box">
+<pre>
+.container {
+    display: flex;
+}
+</pre>
+</div>
+
+                <br>
+
+                <h3>Align Items Horizontally</h3>
+
+<div class="black-box">
+<pre>
+.container {
+    display: flex;
+    justify-content: center;
+}
+</pre>
+</div>               
+
+                <br>
+
+                <h3>Align Items Vertically</h3>
+
+<div class="black-box">
+<pre>
+.container {
+    display: flex;
+    align-items: center;
+}
+</pre>
+</div>        
+
+                <br>
+                <hr>
+                <br>
+                
+                <h3>Why Flexbox Matters</h3>
+                <p>
+                    Flexbox matters in CSS because it revolutionizes layout design by simplifying alignment, distribution, and responsiveness.
+                </p>
+
+
+                <br>
+
+                <button class="btn" data-href="test-3.4.html">▶ Activity: Test Your Learning</button>
+
+                <div class="nav-buttons">
+                    <button class="btn" data-href="lesson-3.html" aria-label="Go Back">← Go Back</button>
+                    <button class="btn btn-primary" data-href="topic-3.7.html" aria-label="Next Topic">Next Topic →</button>
+                </div>
+                
+            </div>
+
+        </main>
+
+        <script src="../../js/utils.js"></script>
+        <script src="../../js/script.js"></script>
+        <script src="../../js/lesson-3.js"></script>
+
+    </body>
+
 </html>

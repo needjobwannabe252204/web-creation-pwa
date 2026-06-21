@@ -1,39 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic 3.7</title>
-    <link rel="stylesheet" href="../../css/style.css">
-</head>
-<body>
-<!-- Header: site title and menu (hamburger) -->
-     <header class="header">
-        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
-        <h1 class="title">Web Creation</h1>
-        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
-    </header>
 
-    <!-- Primary navigation / sidebar -->
-    <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <button class="close-btn" id="closeBtn">✕</button>
-        <a href="/index.html">🏠 Home</a>
-        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
-        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
-    </nav>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Topic 3.7</title>
+        <link rel="stylesheet" href="../../css/style.css">
+    </head>
 
-    <div class="overlay" id="overlay"></div>
+    <body>
 
-    <main class="container">
-        <div class="card">
-        
-       
-        </div>
+    <!-- Header: site title and menu (hamburger) -->
+        <header class="header">
+            <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+            <h1 class="title">Web Creation</h1>
+            <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        </header>
 
-    </main>
+        <!-- Primary navigation / sidebar -->
+        <nav class="sidebar" id="sidebar" aria-hidden="true">
+            <button class="close-btn" id="closeBtn">✕</button>
+            <a href="/index.html">🏠 Home</a>
+            <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+            <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        </nav>
 
-    <script src="../../js/utils.js"></script>
-    <script src="../../js/script.js"></script>
-    <script src="../../js/lesson-3.js"></script>
-</body>
+        <div class="overlay" id="overlay"></div>
+
+        <main class="container">
+
+            <div class="card">
+
+                <h3>Topic 7: Responsive Design</h3>
+                <p class="competency">
+                    What is Responsive Design?
+                </p>
+
+                <p>
+                    Responsive web design is a CSS and HTML approach 
+                    that ensures websites render well across various 
+                    devices and screen sizes by using fluid grids, 
+                    flexible images, and CSS media queries.
+                </p>
+
+                <br>
+
+                <p>Responsive design allows websites to adapt to:</p>
+                <ul class="list-indent">
+                    <li>Desktop computers</li>
+                    <li>Laptops</li>
+                    <li>Tablets</li>
+                    <li>Smartphones</li>
+                </ul>
+
+                <br><hr><br>
+
+                <h3>Why is it Important?</h3>
+                <p>
+                    Users access websites from different devices.
+                    A website should look good on all screen sizes.
+                </p>
+
+                <br><hr><br>
+
+                <h3>Example:</h3>
+
+<div class="black-box">
+<pre>
+@media (max-width: 768px) {
+
+    body {
+        font-size: 14px;
+    }
+
+}
+</pre>
+</div>
+
+                <br>
+
+                <p>This changes the font size when the screen width is 768px or smaller.</p>
+
+                <br><hr><br>
+
+                <h3>Responsive Design Features</h3>
+
+                <ul class="list-indent">
+                    <li>Flexible layouts</li>
+                    <li>Scalable images</li>
+                    <li>Media queries</li>
+                    <li>Mobile-friendly design</li>
+                </ul>
+
+                <br>
+
+                <button class="btn" data-href="test-3.4.html">▶ Activity: Test Your Learning</button>
+
+                <div class="nav-buttons">
+                    <button class="btn" data-href="lesson-3.html" aria-label="Go Back">← Go Back</button>
+                    <button class="btn btn-primary" data-href="lesson-3.html" aria-label="Next Topic">Next Topic →</button>
+                </div>
+                
+            </div>
+
+        </main>
+
+        <script src="../../js/utils.js"></script>
+        <script src="../../js/script.js"></script>
+        <script src="../../js/lesson-3.js"></script>
+
+    </body>
+
 </html>
