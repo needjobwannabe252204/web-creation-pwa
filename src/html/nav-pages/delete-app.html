@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete App — Web Creation</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="CDM logo" class="logo">
+    </header>
+
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        <a href="/src/html/nav-pages/profile.html">👤 Profile</a>
+        <a href="/src/html/nav-pages/updates.html">🔔 Updates</a>
+        <a href="/src/html/nav-pages/delete-app.html">🗑️ Delete App</a>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+
+        <div class="card card-highlight">
+            <h2>🗑️ Delete / Uninstall</h2>
+            <p class="description">
+                A web app can't remove its own icon from your phone or computer —
+                only your device's operating system can do that, the same as any
+                other app. Here's how, plus an option to erase your saved data
+                from this device first.
+            </p>
+        </div>
+
+        <!-- OS-specific instructions, filled in by JS based on the device -->
+        <div class="card" id="uninstallStepsCard">
+            <h2 id="uninstallStepsTitle">📱 How to Uninstall</h2>
+            <ol class="list-indent" id="uninstallStepsList">
+                <li>Detecting your device…</li>
+            </ol>
+        </div>
+
+        <!-- Clear data (separate from uninstalling) -->
+        <div class="card">
+            <h2>🧹 Clear My Data</h2>
+            <p class="description">
+                This wipes your profile and lesson progress from this device and
+                removes the offline files, but does <strong>not</strong> remove
+                the app icon — do that using the steps above. Useful if you want
+                to start over, or before handing the device to someone else.
+            </p>
+            <button id="clearDataBtn" class="btn" style="background-color:#c62828;">
+                Clear Profile, Progress & Offline Files
+            </button>
+            <p class="install-status-text" id="clearDataStatus" style="display:none"></p>
+        </div>
+
+        <!-- Back -->
+        <div class="card">
+            <div class="nav-buttons">
+                <button class="btn" data-href="/index.html">← Back to Home</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/script.js"></script>
+    <script src="../../js/delete-app.js"></script>
+</body>
+</html>

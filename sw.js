@@ -3,9 +3,13 @@
      download progress back to the page that's waiting on it.
    - Serves cached responses first, falls back to network.
    - Provides an offline page for navigations when offline.
+   - Bump APP_VERSION on every release; the updates page surfaces it
+     and uses the standard updatefound/controllerchange events to
+     detect when a newer service worker is ready to take over.
 */
 
-var CACHE_NAME = 'webcreation-v2';
+var APP_VERSION = '1.1.0';
+var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
   '/index.html',
@@ -14,6 +18,10 @@ var PRECACHE_URLS = [
   '/src/css/style.css',
   '/src/js/utils.js',
   '/src/js/script.js',
+  '/src/js/devtools.js',
+  '/src/js/profile.js',
+  '/src/js/updates.js',
+  '/src/js/delete-app.js',
   '/src/js/lesson-1.js',
   '/src/js/lesson-2.js',
   '/src/js/lesson-3.js',
@@ -24,6 +32,9 @@ var PRECACHE_URLS = [
   // nav pages
   '/src/html/nav-pages/about.html',
   '/src/html/nav-pages/contact.html',
+  '/src/html/nav-pages/profile.html',
+  '/src/html/nav-pages/updates.html',
+  '/src/html/nav-pages/delete-app.html',
   // main lesson pages (cache core content for offline review)
   '/src/html/lesson-1/lesson-1.html',
   '/src/html/lesson-2/lesson-2.html',
@@ -74,7 +85,26 @@ self.addEventListener('install', function (event) {
       return Promise.all(tasks).then(function () {
         return broadcast({ type: 'precache-done', total: total });
       });
-    }).then(function () { return self.skipWaiting(); })
+    }).then(function () {
+      /* First-ever install (nobody currently controls any open tab):
+         activate right away so the brand-new install/profile/unlock
+         flow isn't stuck waiting on anything.
+         A later UPDATE (this device already has an older SW running
+         this app) intentionally does NOT auto-skip — that's what lets
+         the Updates page show a real "update available" prompt instead
+         of swapping the app under the user mid-session. The user (or
+         the updates page's "Update now" button) triggers skipWaiting
+         explicitly via the 'skip-waiting' message handled below. */
+      return self.clients.matchAll({ type: 'window' }).then(function () {
+        if (!self.registration.active) {
+          /* No previous SW was active for this scope yet — genuine first install. */
+          return self.skipWaiting();
+        }
+        /* An older SW is/was active: this is an update. Leave it
+           waiting; broadcast so any open page can offer to update. */
+        return broadcast({ type: 'update-ready', version: APP_VERSION });
+      });
+    })
   );
 });
 
@@ -102,6 +132,19 @@ self.addEventListener('message', function (event) {
         complete: keys.length >= PRECACHE_URLS.length
       });
     });
+  }
+
+  if (event.data && event.data.type === 'get-version') {
+    event.source && event.source.postMessage({
+      type: 'version-info',
+      version: APP_VERSION
+    });
+  }
+
+  /* Lets the "Update now" button on the updates page skip waiting
+     immediately instead of waiting for all tabs to close. */
+  if (event.data && event.data.type === 'skip-waiting') {
+    self.skipWaiting();
   }
 });
 

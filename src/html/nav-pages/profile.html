@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — Web Creation</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="CDM logo" class="logo">
+    </header>
+
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        <a href="/src/html/nav-pages/profile.html">👤 Profile</a>
+        <a href="/src/html/nav-pages/updates.html">🔔 Updates</a>
+        <a href="/src/html/nav-pages/delete-app.html">🗑️ Delete App</a>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+
+        <!-- Intro banner — only shown when the user just finished installing -->
+        <div class="card card-highlight" id="profileIntroCard" style="display:none">
+            <h2>📲 Almost there!</h2>
+            <p class="description">
+                Your offline copy is ready. Tell us a little about yourself, then
+                Lesson 1 will unlock.
+            </p>
+        </div>
+
+        <!-- Profile form -->
+        <div class="card" id="profileFormCard">
+            <h2>👤 My Profile</h2>
+            <p class="competency">Tell us who you are</p>
+            <p class="description">This stays on your device — it isn't sent anywhere.</p>
+
+            <form id="profileForm" autocomplete="off">
+                <label class="form-label" for="profileName">Name / Nickname</label>
+                <input class="form-input" type="text" id="profileName" name="name" placeholder="e.g. Juan, Yan, etc." required maxlength="60">
+
+                <label class="form-label" for="profileCourse">Course</label>
+                <input class="form-input" type="text" id="profileCourse" name="course" placeholder="e.g. BS Information Technology" required maxlength="80">
+
+                <label class="form-label" for="profileSection">Section</label>
+                <input class="form-input" type="text" id="profileSection" name="section" placeholder="e.g. ICT 11 - St. Augustine" required maxlength="60">
+
+                <label class="form-label" for="profileSemester">Semester</label>
+                <select class="form-input" id="profileSemester" name="semester" required>
+                    <option value="" disabled selected>Select semester</option>
+                    <option value="1st Semester">1st Semester</option>
+                    <option value="2nd Semester">2nd Semester</option>
+                    <option value="Summer">Summer</option>
+                </select>
+
+                <label class="form-label" for="profileYearLevel">Year Level</label>
+                <select class="form-input" id="profileYearLevel" name="yearLevel" required>
+                    <option value="" disabled selected>Select year level</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                </select>
+
+                <div class="actions-flex" style="margin-top:1rem">
+                    <button type="submit" id="profileSaveBtn" class="btn-primary">Save Profile →</button>
+                </div>
+            </form>
+
+            <p class="install-status-text" id="profileSavedNote" style="display:none">✅ Profile saved.</p>
+        </div>
+
+        <!-- Progress / accomplishments -->
+        <div class="card" id="profileProgressCard">
+            <h2>📈 My Progress</h2>
+            <p class="competency">Overall completion</p>
+
+            <div class="install-progress-wrap show">
+                <div class="install-progress-label">
+                    <span>Lessons completed</span>
+                    <span id="profileProgressPercent">0%</span>
+                </div>
+                <div class="install-progress-track">
+                    <div class="install-progress-fill" id="profileProgressFill"></div>
+                </div>
+            </div>
+
+            <p class="competency" style="margin-top:1.25rem;">Accomplishments</p>
+            <ul class="list-indent" id="profileAccomplishments">
+                <li id="acc-1">⬜ Lesson 1 — Tools for Web Design</li>
+                <li id="acc-2">⬜ Lesson 2 — HTML Basics</li>
+                <li id="acc-3">⬜ Lesson 3 — CSS Styling & Layout</li>
+                <li id="acc-4">⬜ Lesson 4 — Final Project</li>
+            </ul>
+        </div>
+
+        <!-- Back -->
+        <div class="card">
+            <div class="nav-buttons">
+                <button class="btn" data-href="/index.html">← Back to Home</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/script.js"></script>
+    <script src="../../js/profile.js"></script>
+</body>
+</html>

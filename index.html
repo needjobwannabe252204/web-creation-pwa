@@ -15,7 +15,7 @@
     <header class="header">
         <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
         <h1 class="title">Web Creation</h1>
-        <img src="/assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo">
+        <img src="/assets/image/logo/cdm-logo.jpeg" alt="cdm logo" class="logo" id="devTapLogo">
     </header>
 
     <!-- Primary navigation / sidebar -->
@@ -24,6 +24,9 @@
         <a href="/index.html">🏠 Home</a>
         <a href="/src/html/nav-pages/about.html">⁉️ About</a>
         <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        <a href="/src/html/nav-pages/profile.html">👤 Profile</a>
+        <a href="/src/html/nav-pages/updates.html">🔔 Updates</a>
+        <a href="/src/html/nav-pages/delete-app.html">🗑️ Delete App</a>
     </nav>
 
     <div class="overlay" id="overlay"></div>
@@ -57,7 +60,7 @@
             <p class="competency">Tools for Web Design</p>
             <p class="description">Before creating websites, web developers need the right tools.</p>
             <div class="actions-flex">
-                <button id="index-lesson1-btn" data-lesson="1" data-prereq="install" data-href="src/html/lesson-1/lesson-1.html">Start Lesson →</button>
+                <button id="index-lesson1-btn" data-lesson="1" data-prereq="install,profile" data-href="src/html/lesson-1/lesson-1.html">Start Lesson →</button>
                 <button id="reset-lesson1-btn" style="display:none">Reset Progress</button>
             </div>
         </div>
@@ -93,6 +96,7 @@
 
     <script src="/src/js/utils.js"></script>
     <script src="/src/js/script.js"></script>
+    <script src="/src/js/devtools.js"></script>
 
 </body>
 </html>

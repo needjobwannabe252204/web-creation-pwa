@@ -300,6 +300,74 @@ function isRunningStandalone() {
 
 
 /* ----------------------------------------------------------
+   3c) User profile (localStorage)
+   ----------------------------------------------------------
+   Collected right after install finishes, before Lesson 1
+   unlocks. Stored under its own key so it's easy to read from
+   the profile page, the sidebar, and the lesson gate check.
+
+   Schema:
+   {
+     name: "Juan D.",
+     course: "...",
+     section: "...",
+     semester: "1st" | "2nd",
+     yearLevel: "..."
+     savedAt: <ISO timestamp>
+   }
+   ---------------------------------------------------------- */
+
+var PROFILE_KEY = 'userProfile';
+
+/**
+ * Load the saved profile, or null if none has been saved yet.
+ * @returns {object|null}
+ */
+function loadProfile() {
+    try {
+        var raw = localStorage.getItem(PROFILE_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+        console.warn('[utils] Could not load profile:', e);
+        return null;
+    }
+}
+
+/**
+ * Persist the profile object. Expects { name, course, section,
+ * semester, yearLevel }; adds savedAt automatically.
+ * @param {object} profile
+ */
+function saveProfile(profile) {
+    try {
+        profile = profile || {};
+        profile.savedAt = new Date().toISOString();
+        localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+        return true;
+    } catch (e) {
+        console.warn('[utils] Could not save profile:', e);
+        return false;
+    }
+}
+
+/**
+ * Has the user filled out and saved their profile?
+ * @returns {boolean}
+ */
+function isProfileComplete() {
+    var p = loadProfile();
+    return !!(p && p.name && p.course && p.section && p.semester && p.yearLevel);
+}
+
+/**
+ * Wipe the saved profile (used by Delete App / reset flows).
+ */
+function clearProfile() {
+    try { localStorage.removeItem(PROFILE_KEY); } catch (e) {}
+}
+
+
+/* ----------------------------------------------------------
    4) Page identity helper
    ---------------------------------------------------------- */
 
@@ -410,6 +478,10 @@ window.WCUtils = {
     isInstallUnlocked  : isInstallUnlocked,
     setInstallUnlocked : setInstallUnlocked,
     isRunningStandalone: isRunningStandalone,
+    loadProfile        : loadProfile,
+    saveProfile        : saveProfile,
+    isProfileComplete  : isProfileComplete,
+    clearProfile       : clearProfile,
     getCurrentPage     : getCurrentPage,
     swapActivityButtons: swapActivityButtons,
     autoResizeTextarea : autoResizeTextarea
@@ -429,6 +501,10 @@ window.arePrereqsMet       = arePrereqsMet;
 window.isInstallUnlocked   = isInstallUnlocked;
 window.setInstallUnlocked  = setInstallUnlocked;
 window.isRunningStandalone = isRunningStandalone;
+window.loadProfile         = loadProfile;
+window.saveProfile         = saveProfile;
+window.isProfileComplete   = isProfileComplete;
+window.clearProfile        = clearProfile;
 window.getCurrentPage      = getCurrentPage;
 window.swapActivityButtons = swapActivityButtons;
 window.autoResizeTextarea  = autoResizeTextarea;

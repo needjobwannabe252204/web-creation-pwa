@@ -956,3 +956,205 @@ table td {
   font-size: 0.82em;
   letter-spacing: 0.2px;
 }
+
+/* ==========================================================
+   DEV TOOLS PANEL
+   ----------------------------------------------------------
+   Hidden by default. Opened by tapping the header logo 5x
+   (see devtools.js). Purely a development aid — not part of
+   the learner-facing UI.
+   ========================================================== */
+
+.devtools-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 80vh;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-top: 2px solid var(--color-yellow);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.55);
+    z-index: 10000;
+    transform: translateY(100%);
+    transition: transform 220ms ease;
+    overflow-y: auto;
+    font-size: 0.9rem;
+}
+.devtools-panel.open {
+    transform: translateY(0);
+}
+
+.devtools-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    background: rgba(255,202,40,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+}
+
+.devtools-close {
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+    font-size: 1.1rem;
+    width: auto;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+}
+
+.devtools-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.devtools-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: rgba(230,238,248,0.6);
+    margin: 0 0 0.5rem 0;
+}
+
+.devtools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.devtools-btn {
+    flex: 1 1 auto;
+    min-width: 120px;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.devtools-btn:hover {
+    background: rgba(255,255,255,0.12);
+}
+.devtools-btn-good {
+    border-color: rgba(76,175,80,0.4);
+    background: rgba(76,175,80,0.12);
+}
+.devtools-btn-warn {
+    border-color: rgba(255,202,40,0.4);
+    background: rgba(255,202,40,0.10);
+}
+.devtools-btn-danger {
+    border-color: rgba(198,40,40,0.5);
+    background: rgba(198,40,40,0.15);
+}
+
+.devtools-chip {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+}
+.devtools-chip-warn {
+    background: rgba(198,40,40,0.10);
+    border-color: rgba(198,40,40,0.3);
+}
+
+.devtools-storage {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 0.75rem;
+    max-height: 220px;
+    overflow: auto;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #a8f5b0;
+}
+
+@media (min-width: 700px) {
+    .devtools-panel {
+        left: auto;
+        right: 1.5rem;
+        bottom: 1.5rem;
+        width: 420px;
+        max-height: 70vh;
+        border-radius: 16px;
+        border: 2px solid var(--color-yellow);
+        border-top: 2px solid var(--color-yellow);
+        transform: translateY(20px) scale(0.97);
+        opacity: 0;
+        pointer-events: none;
+    }
+    .devtools-panel.open {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+
+/* ==========================================================
+   PROFILE FORM
+   ----------------------------------------------------------
+   Simple, accessible form fields matching the dark card theme.
+   Used on profile.html.
+   ========================================================== */
+
+.form-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(230,238,248,0.85);
+    margin: 0.9rem 0 0.35rem;
+}
+.form-label:first-of-type {
+    margin-top: 0;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.25);
+    color: var(--color-text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-ict-blue);
+    box-shadow: 0 0 0 3px rgba(57,169,255,0.2);
+}
+.form-input::placeholder {
+    color: rgba(230,238,248,0.4);
+}
+select.form-input {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a8c2e8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1.1rem;
+    padding-right: 2.2rem;
+}
+select.form-input option {
+    background: #0f1a2b;
+    color: var(--color-text);
+}
+
+.profile-accomplishment-done {
+    color: #a8f5b0;
+}

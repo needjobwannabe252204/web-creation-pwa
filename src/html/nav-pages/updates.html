@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Updates — Web Creation</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <button class="menu-btn" id="menuBtn" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle menu">☰</button>
+        <h1 class="title">Web Creation</h1>
+        <img src="../../../assets/image/logo/cdm-logo.jpeg" alt="CDM logo" class="logo">
+    </header>
+
+    <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <button class="close-btn" id="closeBtn">✕</button>
+        <a href="/index.html">🏠 Home</a>
+        <a href="/src/html/nav-pages/about.html">⁉️ About</a>
+        <a href="/src/html/nav-pages/contact.html">☎️ Contact</a>
+        <a href="/src/html/nav-pages/profile.html">👤 Profile</a>
+        <a href="/src/html/nav-pages/updates.html">🔔 Updates</a>
+        <a href="/src/html/nav-pages/delete-app.html">🗑️ Delete App</a>
+    </nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+
+        <!-- Live status: checks the service worker for a newer version -->
+        <div class="card card-highlight">
+            <h2>🔔 App Updates</h2>
+            <p class="competency" id="updateCurrentVersion">Checking your installed version…</p>
+            <p class="description" id="updateStatusText">Looking for updates…</p>
+            <div class="actions-flex">
+                <button id="checkUpdateBtn" class="btn">🔍 Check for Updates</button>
+                <button id="applyUpdateBtn" class="btn-primary" style="display:none">⬇️ Update Now</button>
+            </div>
+        </div>
+
+        <!-- Changelog -->
+        <div class="card">
+            <h2>📋 What's New</h2>
+
+            <p class="competency">Version 1.1.0</p>
+            <ul class="list-indent">
+                <li>Added Profile, Updates, and Delete App pages.</li>
+                <li>Lesson 1 now unlocks after install <em>and</em> completing your profile.</li>
+                <li>Install progress bar with live download percentage.</li>
+            </ul>
+            <br>
+
+            <p class="competency">Version 1.0.0</p>
+            <ul class="list-indent">
+                <li>Initial release — Lessons 1 to 4, offline install support.</li>
+            </ul>
+        </div>
+
+        <!-- Back -->
+        <div class="card">
+            <div class="nav-buttons">
+                <button class="btn" data-href="/index.html">← Back to Home</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../../js/utils.js"></script>
+    <script src="../../js/script.js"></script>
+    <script src="../../js/updates.js"></script>
+</body>
+</html>

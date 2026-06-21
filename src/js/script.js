@@ -113,6 +113,20 @@ document.addEventListener('DOMContentLoaded', function () {
        ------------------------------------------------------- */
     initLessonGates();
 
+    /* -------------------------------------------------------
+       6) Returning from the profile page right after install —
+          scroll Lesson 1 into view so the unlock state (and the
+          tap-to-unlock animation) is the first thing they see.
+       ------------------------------------------------------- */
+    if (/unlocked=1/.test(window.location.search)) {
+        var lesson1Card = document.getElementById('index-lesson1-card');
+        if (lesson1Card) {
+            setTimeout(function () {
+                lesson1Card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+    }
+
 }); // end DOMContentLoaded
 
 
@@ -146,24 +160,35 @@ function _refreshLessonBadge(n) {
             done = !!(cp.lessonsCompleted && cp.lessonsCompleted[n]);
         }
 
-        if (!done) return;
+        var cardId  = 'index-lesson' + n + '-card';
+        var card    = document.getElementById(cardId);
+        var btnId   = 'index-lesson' + n + '-btn';
+        var btn     = document.getElementById(btnId);
+        var resetId = 'reset-lesson' + n + '-btn';
+        var resetEl = document.getElementById(resetId);
+
+        if (!done) {
+            /* Not completed (or just got reset) — make sure no leftover
+               "completed" styling lingers from a previous state. This
+               matters most during dev/testing: editing localStorage by
+               hand or via the dev panel used to leave the green border
+               and "Completed" label stuck on screen even after the
+               underlying data said otherwise. */
+            if (card && !card.classList.contains('locked')) card.style.borderLeft = '';
+            if (resetEl) resetEl.style.display = 'none';
+            return;
+        }
 
         /* Green border on the card */
-        var cardId = 'index-lesson' + n + '-card';
-        var card   = document.getElementById(cardId);
         if (card) card.style.borderLeft = '6px solid #4caf50';
 
         /* Update the button label */
-        var btnId = 'index-lesson' + n + '-btn';
-        var btn   = document.getElementById(btnId);
         if (btn) {
             btn.textContent = '✅ Completed — Review';
             btn.disabled    = false;
         }
 
         /* Show the reset button */
-        var resetId = 'reset-lesson' + n + '-btn';
-        var resetEl = document.getElementById(resetId);
         if (resetEl) resetEl.style.display = 'inline-flex';
 
     } catch (e) {
@@ -278,28 +303,38 @@ function _initResetLesson3Button(resetBtn) {
 /**
  * Parse a data-prereq string into an array of requirements.
  * Numeric entries (e.g. "1", "1,2") mean "lesson N must be completed".
- * The special token "install" means "this device must have installed
- * the PWA and finished its offline download" — see isInstallUnlocked().
+ * Special tokens:
+ *   "install" — this device must have installed the PWA and finished
+ *               its offline download. See isInstallUnlocked().
+ *   "profile" — the user must have filled out and saved their profile
+ *               (name, course, section, semester, year level).
+ *               See isProfileComplete().
  */
 function _parsePrereqString(str) {
     if (!str) return [];
+    var SPECIAL = { install: 'install', profile: 'profile' };
     return String(str).split(',')
         .map(function (s) { return s.trim(); })
         .filter(Boolean)
         .map(function (s) {
-            return s.toLowerCase() === 'install' ? 'install' : Number(s);
+            var lower = s.toLowerCase();
+            return SPECIAL[lower] ? SPECIAL[lower] : Number(s);
         })
-        .filter(function (v) { return v === 'install' || (typeof v === 'number' && !isNaN(v) && v !== 0); });
+        .filter(function (v) {
+            return v === 'install' || v === 'profile' ||
+                (typeof v === 'number' && !isNaN(v) && v !== 0);
+        });
 }
 
 /**
  * Check whether every entry in a parsed prereq array is satisfied.
- * Mixes numeric lesson-completion checks with the special "install" check.
+ * Mixes numeric lesson-completion checks with the special tokens.
  */
 function _prereqsSatisfied(prereqArr) {
     if (!prereqArr || !prereqArr.length) return true;
     return prereqArr.every(function (p) {
         if (p === 'install') return isInstallUnlocked();
+        if (p === 'profile') return isProfileComplete();
         return arePrereqsMet([p]);
     });
 }
@@ -309,7 +344,9 @@ function _prereqsSatisfied(prereqArr) {
  * and confirm() dialogs.
  */
 function _prereqLabel(p) {
-    return p === 'install' ? 'installing the app' : ('Lesson ' + p);
+    if (p === 'install') return 'installing the app';
+    if (p === 'profile') return 'completing your profile';
+    return 'Lesson ' + p;
 }
 
 function initLessonGates() {
@@ -383,7 +420,7 @@ function _applyLockedState(btn, card, prereqStr, prereqArr) {
     btn.textContent = '🔒 Locked';
     var labels = (prereqArr || []).map(_prereqLabel);
     btn.title = labels.length
-        ? ('Complete ' + labels.join(' and ') + ' first')
+        ? ('Requires: ' + labels.join(' + '))
         : ('Complete lesson(s) ' + prereqStr + ' first');
     if (card) {
         card.classList.add('locked');
@@ -465,6 +502,7 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
 
     var missing = prereqArr.find(function (p) {
         if (p === 'install') return !isInstallUnlocked();
+        if (p === 'profile') return !isProfileComplete();
         return !arePrereqsMet([p]);
     });
 
@@ -472,6 +510,13 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
         showToast('Tap "Install →" above first to get your own offline copy.', 'info');
         var welcomeCard = document.querySelector('#installBtn');
         if (welcomeCard) welcomeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    if (missing === 'profile') {
+        if (confirm('Please complete your profile first. Go there now?')) {
+            window.location.href = 'src/html/nav-pages/profile.html?from=lesson1';
+        }
         return;
     }
 
@@ -575,8 +620,13 @@ window.doneLesson = doneLesson;
     }
 
     /**
-     * Re-check whether the unlock condition is fully met, and if so,
-     * persist it and refresh the lesson cards so Lesson 1 opens up.
+     * Re-check whether the install half of the unlock condition is
+     * fully met, and if so, persist it. Lesson 1 itself needs BOTH
+     * install AND profile (see data-prereq="install,profile" on the
+     * index page) — so finishing install alone doesn't unlock the
+     * lesson by itself anymore; it sends the user to fill out their
+     * profile first, and the unlock + animation happens back on the
+     * homepage once that's saved too.
      * Safe to call repeatedly — it's a no-op once already unlocked.
      */
     function tryFinalizeInstallUnlock() {
@@ -584,11 +634,22 @@ window.doneLesson = doneLesson;
 
         if (isRunningStandalone() && precacheComplete) {
             setInstallUnlocked();
-            setStatus('✅ Your offline copy is ready — Lesson 1 is unlocked!');
             if (progressWrap) progressWrap.classList.remove('show');
             if (installBtn) installBtn.style.display = 'none';
-            showToast('Your copy is installed — Lesson 1 unlocked! 🎉', 'success');
-            if (typeof initLessonGates === 'function') initLessonGates();
+
+            if (typeof isProfileComplete === 'function' && isProfileComplete()) {
+                /* Returning device / profile already on file (e.g. a
+                   reinstall) — nothing left to ask, unlock right away. */
+                setStatus('✅ Your offline copy is ready — Lesson 1 is unlocked!');
+                showToast('Your copy is installed — Lesson 1 unlocked! 🎉', 'success');
+                if (typeof initLessonGates === 'function') initLessonGates();
+            } else {
+                setStatus('✅ Download complete! One quick step left — tell us about yourself.');
+                showToast('Installed! Let\u2019s set up your profile next. 📝', 'success', 2200);
+                setTimeout(function () {
+                    window.location.href = 'src/html/nav-pages/profile.html?from=lesson1';
+                }, 1400);
+            }
         } else if (precacheComplete && !isRunningStandalone()) {
             /* Cached, but they're still in the browser tab, not the
                installed app. Tell them what's left to do. */
