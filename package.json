@@ -1,0 +1,11 @@
+{
+  "name": "web-creation-pwa-tools",
+  "version": "1.0.0",
+  "description": "Small tooling to generate PWA icon sizes and update manifest/service worker",
+  "scripts": {
+    "generate-icons": "node scripts/generate-icons.js"
+  },
+  "dependencies": {
+    "sharp": "^0.32.0"
+  }
+}

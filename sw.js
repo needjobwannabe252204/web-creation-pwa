@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.1';
+var APP_VERSION = '1.1.2';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -26,8 +26,7 @@ var PRECACHE_URLS = [
   '/src/js/lesson-2.js',
   '/src/js/lesson-3.js',
   // icons
-  '/assets/image/logo/icon-192.svg',
-  '/assets/image/logo/icon-512.svg',
+  '/assets/image/logo/app-logo.png',
   '/assets/image/logo/cdm-logo.jpeg',
   // nav pages
   '/src/html/nav-pages/about.html',
