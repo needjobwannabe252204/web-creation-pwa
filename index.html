@@ -35,7 +35,20 @@
             <h2>🚀 Web Creation</h2>
             <p class="competency">Interactive Learning Module</p>
             <p class="description">Master HTML and CSS through hands-on lessons and real projects.</p>
-            <button id="installBtn" style="display:none">Install →</button>
+            <button id="installBtn">Install →</button>
+
+            <!-- Download / caching progress, shown while the app is being
+                 saved to the device for offline use. -->
+            <div class="install-progress-wrap" id="installProgressWrap">
+                <div class="install-progress-label">
+                    <span>Downloading your copy…</span>
+                    <span id="installProgressPercent">0%</span>
+                </div>
+                <div class="install-progress-track">
+                    <div class="install-progress-fill" id="installProgressFill"></div>
+                </div>
+            </div>
+            <p class="install-status-text" id="installStatusText" style="display:none"></p>
         </div>
 
         <!-- Lesson 1: Introduction -->
@@ -44,7 +57,7 @@
             <p class="competency">Tools for Web Design</p>
             <p class="description">Before creating websites, web developers need the right tools.</p>
             <div class="actions-flex">
-                <button id="index-lesson1-btn" data-lesson="1" data-href="src/html/lesson-1/lesson-1.html">Start Lesson →</button>
+                <button id="index-lesson1-btn" data-lesson="1" data-prereq="install" data-href="src/html/lesson-1/lesson-1.html">Start Lesson →</button>
                 <button id="reset-lesson1-btn" style="display:none">Reset Progress</button>
             </div>
         </div>

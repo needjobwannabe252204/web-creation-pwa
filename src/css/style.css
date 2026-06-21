@@ -268,6 +268,54 @@ body {
     transform: translateY(-1px);
 }
 
+/* Ensure the install button's text is centered and vertically aligned */
+#installBtn {
+    display: none; /* hidden by default; shown by JS when install is available */
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-align: center;
+    width: 100%; /* keep full width like other card buttons */
+}
+
+/* Install progress bar — shown while the service worker is caching
+   the app for offline use. Hidden until the install actually starts. */
+.install-progress-wrap {
+    display: none;
+    margin-top: 0.75rem;
+}
+.install-progress-wrap.show {
+    display: block;
+}
+.install-progress-label {
+    font-size: 0.8rem;
+    color: rgba(230,238,248,0.85);
+    margin-bottom: 0.35rem;
+    display: flex;
+    justify-content: space-between;
+}
+.install-progress-track {
+    width: 100%;
+    height: 10px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.install-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    border-radius: 999px;
+    transition: width 200ms ease;
+}
+.install-status-text {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(230,238,248,0.9);
+    text-align: center;
+}
+
 /* Class-based variant (was previously an invalid `.card hyper-btn` element selector) */
 .card .hyper-btn {
     display: block;

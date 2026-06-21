@@ -275,11 +275,41 @@ function _initResetLesson3Button(resetBtn) {
    5) Lesson gate system
    ---------------------------------------------------------- */
 
+/**
+ * Parse a data-prereq string into an array of requirements.
+ * Numeric entries (e.g. "1", "1,2") mean "lesson N must be completed".
+ * The special token "install" means "this device must have installed
+ * the PWA and finished its offline download" — see isInstallUnlocked().
+ */
 function _parsePrereqString(str) {
     if (!str) return [];
     return String(str).split(',')
-        .map(function (s) { return Number(s.trim()); })
-        .filter(Boolean);
+        .map(function (s) { return s.trim(); })
+        .filter(Boolean)
+        .map(function (s) {
+            return s.toLowerCase() === 'install' ? 'install' : Number(s);
+        })
+        .filter(function (v) { return v === 'install' || (typeof v === 'number' && !isNaN(v) && v !== 0); });
+}
+
+/**
+ * Check whether every entry in a parsed prereq array is satisfied.
+ * Mixes numeric lesson-completion checks with the special "install" check.
+ */
+function _prereqsSatisfied(prereqArr) {
+    if (!prereqArr || !prereqArr.length) return true;
+    return prereqArr.every(function (p) {
+        if (p === 'install') return isInstallUnlocked();
+        return arePrereqsMet([p]);
+    });
+}
+
+/**
+ * Human-readable description of what's still missing, for tooltips
+ * and confirm() dialogs.
+ */
+function _prereqLabel(p) {
+    return p === 'install' ? 'installing the app' : ('Lesson ' + p);
 }
 
 function initLessonGates() {
@@ -294,7 +324,7 @@ function initLessonGates() {
 
         if (!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent.trim();
 
-        var prereqsMet = arePrereqsMet(prereqArr);
+        var prereqsMet = _prereqsSatisfied(prereqArr);
         var isUnlocked = !!(cp.lessonsUnlocked && cp.lessonsUnlocked[lessonNum]);
         var isComplete = _isLessonDone(lessonNum);
 
@@ -308,7 +338,7 @@ function initLessonGates() {
             if (lb) lb.remove();
 
         } else if (prereqArr.length && !prereqsMet && !isUnlocked) {
-            _applyLockedState(btn, card, prereqStr);
+            _applyLockedState(btn, card, prereqStr, prereqArr);
 
         } else if (isUnlocked) {
             _applyUnlockedState(btn, card);
@@ -348,10 +378,13 @@ function _isLessonDone(n) {
 
 /* -- State applicators -- */
 
-function _applyLockedState(btn, card, prereqStr) {
+function _applyLockedState(btn, card, prereqStr, prereqArr) {
     btn.classList.add('locked');
     btn.textContent = '🔒 Locked';
-    btn.title = 'Complete lesson(s) ' + prereqStr + ' first';
+    var labels = (prereqArr || []).map(_prereqLabel);
+    btn.title = labels.length
+        ? ('Complete ' + labels.join(' and ') + ' first')
+        : ('Complete lesson(s) ' + prereqStr + ' first');
     if (card) {
         card.classList.add('locked');
         _ensureLockBadge(card, '🔒 Locked');
@@ -417,7 +450,7 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
     var cp         = loadCourseProgress();
     var nowUnlocked = !!(cp.lessonsUnlocked && cp.lessonsUnlocked[lessonNum]);
 
-    if (arePrereqsMet(prereqArr) && nowUnlocked) {
+    if (_prereqsSatisfied(prereqArr) && nowUnlocked) {
         if (href) window.location.href = href;
         return;
     }
@@ -429,16 +462,26 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
     }
 
     ev.preventDefault();
-    var missingLesson = prereqArr.find(function (n) {
-        return !arePrereqsMet([n]);
+
+    var missing = prereqArr.find(function (p) {
+        if (p === 'install') return !isInstallUnlocked();
+        return !arePrereqsMet([p]);
     });
-    if (missingLesson) {
+
+    if (missing === 'install') {
+        showToast('Tap "Install →" above first to get your own offline copy.', 'info');
+        var welcomeCard = document.querySelector('#installBtn');
+        if (welcomeCard) welcomeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    if (missing) {
         if (confirm(
-            'You must complete Lesson ' + missingLesson +
+            'You must complete Lesson ' + missing +
             ' before this one. Go there now?'
         )) {
-            window.location.href = 'src/html/lesson-' + missingLesson +
-                '/lesson-' + missingLesson + '.html';
+            window.location.href = 'src/html/lesson-' + missing +
+                '/lesson-' + missing + '.html';
         }
     } else {
         showToast('Complete the prerequisites first.', 'info');
@@ -484,3 +527,160 @@ function doneLesson() {
     showToast('Marked as read. Good job! 🎉', 'success');
 }
 window.doneLesson = doneLesson;
+
+/* ----------------------------------------------------------
+   PWA: Service Worker registration, install prompt, download
+   progress bar, and the Lesson-1 "install" unlock condition.
+   ----------------------------------------------------------
+   How the unlock works:
+     1. Register /sw.js. While it precaches the app shell, it
+        posts progress messages back here, which drive the
+        progress bar under the Install button.
+     2. The "Install →" button triggers the native install
+        prompt (beforeinstallprompt). Accepting it doesn't by
+        itself unlock anything — the user could still be
+        looking at the regular browser tab.
+     3. The actual unlock condition is: this tab/window is
+        running in standalone display mode (i.e. opened from
+        the installed app icon, not a browser tab) AND the
+        service worker has finished caching the app shell.
+        That combination is the real signal that "this device
+        now has its own offline copy" — which is what should
+        unlock Lesson 1, not merely a one-time prompt click.
+     4. Once both are true, isInstallUnlocked() is persisted to
+        localStorage permanently and the lesson gates are
+        re-evaluated so Lesson 1 unlocks immediately.
+   ---------------------------------------------------------- */
+(function () {
+    var deferredPrompt   = null;
+    var precacheComplete = false;
+    var swReg            = null;
+
+    var installBtn      = document.getElementById('installBtn');
+    var progressWrap     = document.getElementById('installProgressWrap');
+    var progressFill      = document.getElementById('installProgressFill');
+    var progressPercent   = document.getElementById('installProgressPercent');
+    var statusText        = document.getElementById('installStatusText');
+
+    function setStatus(msg) {
+        if (!statusText) return;
+        statusText.textContent = msg;
+        statusText.style.display = msg ? 'block' : 'none';
+    }
+
+    function setProgress(percent) {
+        if (progressWrap) progressWrap.classList.add('show');
+        if (progressFill) progressFill.style.width = percent + '%';
+        if (progressPercent) progressPercent.textContent = percent + '%';
+    }
+
+    /**
+     * Re-check whether the unlock condition is fully met, and if so,
+     * persist it and refresh the lesson cards so Lesson 1 opens up.
+     * Safe to call repeatedly — it's a no-op once already unlocked.
+     */
+    function tryFinalizeInstallUnlock() {
+        if (isInstallUnlocked()) return; // already done on a previous visit
+
+        if (isRunningStandalone() && precacheComplete) {
+            setInstallUnlocked();
+            setStatus('✅ Your offline copy is ready — Lesson 1 is unlocked!');
+            if (progressWrap) progressWrap.classList.remove('show');
+            if (installBtn) installBtn.style.display = 'none';
+            showToast('Your copy is installed — Lesson 1 unlocked! 🎉', 'success');
+            if (typeof initLessonGates === 'function') initLessonGates();
+        } else if (precacheComplete && !isRunningStandalone()) {
+            /* Cached, but they're still in the browser tab, not the
+               installed app. Tell them what's left to do. */
+            setStatus('Download complete. Open the app from your home screen to finish.');
+        }
+    }
+
+    /* -------- Service worker registration + progress wiring -------- */
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('message', function (event) {
+            var data = event.data || {};
+
+            if (data.type === 'precache-progress') {
+                setProgress(data.percent);
+                setStatus('Downloading your copy… (' + data.done + '/' + data.total + ')');
+            }
+
+            if (data.type === 'precache-done' || (data.type === 'precache-status' && data.complete)) {
+                precacheComplete = true;
+                setProgress(100);
+                tryFinalizeInstallUnlock();
+            }
+        });
+
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js').then(function (reg) {
+                swReg = reg;
+                console.log('[SW] Registered:', reg.scope);
+
+                /* If the SW was already active from a previous visit,
+                   ask it directly whether the cache is already complete
+                   instead of waiting for a fresh install event. */
+                if (navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({ type: 'check-precache' });
+                }
+            }).catch(function (err) {
+                console.warn('[SW] Registration failed:', err);
+            });
+        });
+    } else {
+        setStatus('Offline install isn\u2019t supported in this browser.');
+    }
+
+    /* -------- Native install prompt -------- */
+    window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) installBtn.style.display = 'inline-flex';
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', function () {
+            if (!deferredPrompt) {
+                /* Browser hasn't offered the native prompt (e.g. iOS
+                   Safari, or already installed). Just surface status. */
+                if (isRunningStandalone()) {
+                    setStatus('Already running as an installed app.');
+                } else {
+                    showToast('Use your browser\u2019s "Add to Home Screen" option to install.', 'info');
+                }
+                return;
+            }
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function (choiceResult) {
+                if (choiceResult.outcome === 'accepted') {
+                    showToast('Installing… open it from your home screen next. 📲', 'success');
+                    setStatus('Installing your offline copy…');
+                    if (progressWrap) progressWrap.classList.add('show');
+                } else {
+                    showToast('Installation dismissed', 'info');
+                }
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            });
+        });
+    }
+
+    window.addEventListener('appinstalled', function () {
+        showToast('App installed — open it from your home screen 📲', 'success');
+    });
+
+    /* -------- Standalone detection on load / visibility change --------
+       Covers the case where the user already installed earlier, closed
+       the tab, and is now opening the app icon for the first time. */
+    window.addEventListener('load', function () {
+        if (isRunningStandalone()) {
+            setStatus('Checking your offline copy…');
+            tryFinalizeInstallUnlock();
+        }
+    });
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') tryFinalizeInstallUnlock();
+    });
+})();

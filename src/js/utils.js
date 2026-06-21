@@ -247,6 +247,59 @@ function arePrereqsMet(prereqArr) {
 
 
 /* ----------------------------------------------------------
+   3b) PWA install-unlock flag
+   ----------------------------------------------------------
+   Lesson 1 has a special prerequisite: "install" instead of a
+   lesson number. It's satisfied once this device has opened the
+   app as an installed PWA (standalone display mode) AND the
+   service worker finished caching the app shell offline — i.e.
+   the user actually has their own offline copy, not just a tab
+   open on the live site.
+
+   This is stored under its own key (not tied to any one lesson
+   number) and, once true, stays true permanently for this
+   device/browser profile.
+   ---------------------------------------------------------- */
+
+var INSTALL_UNLOCK_KEY = 'pwaInstallUnlocked';
+
+/**
+ * Has this device already satisfied the install condition?
+ * @returns {boolean}
+ */
+function isInstallUnlocked() {
+    try {
+        return localStorage.getItem(INSTALL_UNLOCK_KEY) === 'true';
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * Permanently mark the install condition as satisfied on this device.
+ */
+function setInstallUnlocked() {
+    try {
+        localStorage.setItem(INSTALL_UNLOCK_KEY, 'true');
+    } catch (e) {
+        console.warn('[utils] Could not persist install unlock:', e);
+    }
+}
+
+/**
+ * Live check: is this page currently running as an installed,
+ * standalone PWA right now? (Does NOT check the saved flag —
+ * use isInstallUnlocked() for the persisted result.)
+ * @returns {boolean}
+ */
+function isRunningStandalone() {
+    var mq = window.matchMedia && window.matchMedia('(display-mode: standalone)');
+    var iosStandalone = window.navigator && window.navigator.standalone === true; // older iOS Safari
+    return !!((mq && mq.matches) || iosStandalone);
+}
+
+
+/* ----------------------------------------------------------
    4) Page identity helper
    ---------------------------------------------------------- */
 
@@ -354,6 +407,9 @@ window.WCUtils = {
     markLessonComplete : markLessonComplete,
     isLessonCompleted  : isLessonCompleted,
     arePrereqsMet      : arePrereqsMet,
+    isInstallUnlocked  : isInstallUnlocked,
+    setInstallUnlocked : setInstallUnlocked,
+    isRunningStandalone: isRunningStandalone,
     getCurrentPage     : getCurrentPage,
     swapActivityButtons: swapActivityButtons,
     autoResizeTextarea : autoResizeTextarea
@@ -370,6 +426,9 @@ window.saveCourseProgress  = saveCourseProgress;
 window.markLessonComplete  = markLessonComplete;
 window.isLessonCompleted   = isLessonCompleted;
 window.arePrereqsMet       = arePrereqsMet;
+window.isInstallUnlocked   = isInstallUnlocked;
+window.setInstallUnlocked  = setInstallUnlocked;
+window.isRunningStandalone = isRunningStandalone;
 window.getCurrentPage      = getCurrentPage;
 window.swapActivityButtons = swapActivityButtons;
 window.autoResizeTextarea  = autoResizeTextarea;
