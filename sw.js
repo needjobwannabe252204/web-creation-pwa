@@ -25,7 +25,12 @@ var PRECACHE_URLS = [
   '/src/js/lesson-1.js',
   '/src/js/lesson-2.js',
   '/src/js/lesson-3.js',
+  '/src/js/lesson-4.js',
   // icons
+  '/assets/image/logo/icon-48.png',
+  '/assets/image/logo/icon-72.png',
+  '/assets/image/logo/icon-96.png',
+  '/assets/image/logo/icon-144.png',
   '/assets/image/logo/icon-192.png',
   '/assets/image/logo/icon-512.png',
   '/assets/image/logo/app-logo.png',

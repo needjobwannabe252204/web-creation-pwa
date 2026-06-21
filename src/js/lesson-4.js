@@ -45,17 +45,42 @@ function l4MarkComplete() {
 document.addEventListener("DOMContentLoaded", function () {
     var btn    = document.getElementById("completeProjectBtn");
     var banner = document.getElementById("celebrationBanner");
-    var isDone = localStorage.getItem(L4_COMPLETE_KEY) === "true";
 
-    // Restore state on page load
-    if (isDone) {
-        if (btn) {
-            btn.textContent = "✅ Project Completed!";
-            btn.disabled    = true;
+    function checkDoneState() {
+        var keyFlag = localStorage.getItem(L4_COMPLETE_KEY) === "true";
+        var central = false;
+        if (typeof isLessonCompleted === 'function') {
+            try { central = isLessonCompleted(4); } catch (e) { central = false; }
+        } else {
+            try {
+                var cp = loadCourseProgress();
+                central = !!(cp.lessonsCompleted && cp.lessonsCompleted[4]);
+            } catch (e) { central = false; }
         }
-        if (banner) banner.style.display = "block";
+        return keyFlag || central;
     }
-    l4UpdateProgress(isDone);
+
+    function applyDoneUI(done) {
+        if (done) {
+            if (btn) {
+                btn.textContent = "✅ Project Completed!";
+                btn.disabled    = true;
+            }
+            if (banner) banner.style.display = "block";
+        }
+        l4UpdateProgress(done);
+    }
+
+    // Initial restore on page load
+    applyDoneUI(checkDoneState());
+
+    // React to localStorage changes made in other windows / devtools
+    window.addEventListener('storage', function (ev) {
+        if (!ev) return;
+        if (ev.key === L4_COMPLETE_KEY || ev.key === 'courseProgress') {
+            applyDoneUI(checkDoneState());
+        }
+    });
 
     if (btn) {
         btn.addEventListener("click", function () {

@@ -484,7 +484,9 @@ window.WCUtils = {
     clearProfile       : clearProfile,
     getCurrentPage     : getCurrentPage,
     swapActivityButtons: swapActivityButtons,
-    autoResizeTextarea : autoResizeTextarea
+    autoResizeTextarea : autoResizeTextarea,
+    openImage          : openImage,
+    closeImage         : closeImage
 };
 
 /* Also expose the most-used helpers at the top level for convenience
@@ -508,3 +510,5 @@ window.clearProfile        = clearProfile;
 window.getCurrentPage      = getCurrentPage;
 window.swapActivityButtons = swapActivityButtons;
 window.autoResizeTextarea  = autoResizeTextarea;
+window.openImage           = openImage;
+window.closeImage          = closeImage;
