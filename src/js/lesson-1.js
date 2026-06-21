@@ -65,9 +65,12 @@ function loadState() {
    ---------------------------------------------------------- */
 
 function updateProgress() {
-    var keys      = Object.keys(completedTopics);
+    /* Denominator = 3 topics + quiz + 1 for the activity = 5 total.
+       3 topics = 60%, quiz = 80%, activity = 100%. */
+    var keys      = Object.keys(completedTopics);   /* topic1, topic2, topic3, quiz */
     var completed = keys.filter(function (k) { return completedTopics[k]; }).length;
-    var pct       = Math.round((completed / keys.length) * 100);
+    var total     = keys.length + 1;                /* +1 slot for the activity */
+    var pct       = Math.round((completed + (lessonCompleted ? 1 : 0)) / total * 100);
 
     var bar  = getEl('lessonProgress');
     var text = getEl('progressText');
@@ -82,7 +85,7 @@ function updateProgress() {
     var ready = completedTopics.topic1 && completedTopics.topic2 &&
                 completedTopics.topic3 && quizPassed;
     activityBtn.innerHTML = ready ? '🚀 Install VS Code' : '🔒 Complete Lesson First';
-    if (nextBtn) nextBtn.style.display = ready ? 'inline-block' : 'none';
+    if (nextBtn) nextBtn.style.display = (ready || lessonCompleted) ? 'inline-block' : 'none';
 }
 
 /* ----------------------------------------------------------

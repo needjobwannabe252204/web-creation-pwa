@@ -314,9 +314,9 @@ function initLessonGates() {
             _applyUnlockedState(btn, card);
 
         } else if (prereqArr.length && prereqsMet) {
-            /* Prereqs met — auto-unlock instead of requiring extra click */
-            _saveUnlock(lessonNum);
-            _applyUnlockedState(btn, card);
+            /* Prereqs met — show the "can-unlock" state so the user
+               clicks to perform the unlock animation (consistent UX). */
+            _applyCanUnlockState(btn, card);
 
         } else {
             _applyOpenState(btn, card);

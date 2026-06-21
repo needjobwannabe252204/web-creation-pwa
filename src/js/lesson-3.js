@@ -24,6 +24,7 @@ var L3 = {
         topic1: false, topic2: false, topic3: false,
         topic4: false, topic5: false, topic6: false, topic7: false
     },
+    activityCompleted: false,   /* set when the student presses the final "Done" button */
     lessonCompleted: false
 };
 
@@ -37,8 +38,9 @@ var L3_KEY = 'lesson3State';
 function saveL3State() {
     try {
         localStorage.setItem(L3_KEY, JSON.stringify({
-            visitedTopics  : L3.visitedTopics,
-            lessonCompleted: !!L3.lessonCompleted
+            visitedTopics    : L3.visitedTopics,
+            activityCompleted: !!L3.activityCompleted,
+            lessonCompleted  : !!L3.lessonCompleted
         }));
     } catch (e) { console.warn('[lesson-3] save failed:', e); }
 }
@@ -55,7 +57,8 @@ function loadL3State() {
                     L3.visitedTopics[k] = !!s.visitedTopics[k];
             });
         }
-        if (typeof s.lessonCompleted === 'boolean') L3.lessonCompleted = s.lessonCompleted;
+        if (typeof s.activityCompleted === 'boolean') L3.activityCompleted = s.activityCompleted;
+        if (typeof s.lessonCompleted   === 'boolean') L3.lessonCompleted   = s.lessonCompleted;
     } catch (e) { console.warn('[lesson-3] load failed:', e); }
 }
 
@@ -63,6 +66,7 @@ function resetL3State() {
     try {
         localStorage.removeItem(L3_KEY);
         L3.visitedTopics = { topic1:false, topic2:false, topic3:false, topic4:false, topic5:false, topic6:false, topic7:false };
+        L3.activityCompleted = false;
         L3.lessonCompleted = false;
         applyL3StateToUI();
         saveL3State();
@@ -76,9 +80,13 @@ window.resetL3State = resetL3State;
    ---------------------------------------------------------- */
 
 function updateL3ProgressUI() {
+    /* Denominator = 7 topics + 1 for the final activity.
+       Topics alone max out at 7/8 = 87%; activity button pushes to 100%. */
     var keys    = Object.keys(L3.visitedTopics);
     var visited = keys.filter(function (k) { return L3.visitedTopics[k]; }).length;
-    var pct     = Math.round((visited / keys.length) * 100);
+    var total   = keys.length + 1;   /* +1 slot for the activity */
+    var completed = visited + (L3.activityCompleted ? 1 : 0);
+    var pct     = Math.round((completed / total) * 100);
 
     var bar  = document.getElementById('lessonProgress');
     var text = document.getElementById('progressText');
@@ -94,6 +102,11 @@ function applyL3StateToUI() {
             btn.closest('.card').style.borderLeft = '6px solid #4caf50';
         }
     }
+    /* Restore activity-card green border on page load if already completed */
+    if (L3.activityCompleted || L3.lessonCompleted) {
+        var actCard = document.getElementById('activity-card');
+        if (actCard) setCardBorder(actCard, '#4caf50');
+    }
     updateL3ProgressUI();
 
     /* Update the lesson-3 done button state */
@@ -103,18 +116,70 @@ function applyL3StateToUI() {
 function _updateDoneBtn() {
     var doneBtn = document.getElementById('doneBtn');
     if (!doneBtn) return;
-    var allDone = Object.keys(L3.visitedTopics).every(function (k) {
+    var allTopicsDone = Object.keys(L3.visitedTopics).every(function (k) {
         return L3.visitedTopics[k];
     });
-    if (allDone || L3.lessonCompleted) {
+
+    if (L3.activityCompleted || L3.lessonCompleted) {
+        /* Already completed — show done state, turn card green, show Next */
         doneBtn.textContent = '✅ Lesson Complete!';
         doneBtn.disabled = true;
+        var card = document.getElementById('activity-card');
+        if (card) setCardBorder(card, '#4caf50');
         var nextBtn = document.getElementById('nextLessonBtn');
         if (nextBtn) nextBtn.style.display = 'inline-block';
+    } else if (allTopicsDone) {
+        /* Topics all done — unlock the button so the student can click it */
+        doneBtn.textContent = '✅ Mark Lesson Complete';
+        doneBtn.disabled = false;
+        doneBtn.classList.remove('locked');
+        /* Wire the click only once using a one-time listener flag */
+        if (!doneBtn._l3Wired) {
+            doneBtn._l3Wired = true;
+            doneBtn.addEventListener('click', function onDoneClick() {
+                L3.activityCompleted = true;
+                L3.lessonCompleted   = true;
+                saveL3State();
+                if (typeof markLessonComplete === 'function') markLessonComplete(3);
+                var actCard = document.getElementById('activity-card');
+                if (actCard) setCardBorder(actCard, '#4caf50');
+                doneBtn.textContent = '✅ Lesson Complete!';
+                doneBtn.disabled    = true;
+                var next = document.getElementById('nextLessonBtn');
+                if (next) next.style.display = 'inline-block';
+                updateL3ProgressUI();
+                showToast('🎉 Lesson 3 complete! Lesson 4 is now unlocked.', 'success', 4000);
+            });
+        }
     } else {
         doneBtn.textContent = '🔒 Complete Topics First';
         doneBtn.disabled = true;
+        doneBtn.classList.add('locked');
     }
+}
+
+/* ----------------------------------------------------------
+   4b) Overview handlers
+   Attach click handlers to the lesson overview's topic buttons
+   so clicking "Learn →" marks the topic visited (persisted)
+   before navigation occurs.
+   ---------------------------------------------------------- */
+function initL3OverviewHandlers() {
+    document.querySelectorAll('button[data-href]').forEach(function (btn) {
+        var href = btn.getAttribute('data-href') || '';
+        var m = href.match(/^topic-3\.(\d+)\.html$/);
+        if (m) {
+            var n = Number(m[1]);
+            btn.addEventListener('click', function () {
+                try {
+                    L3.visitedTopics['topic' + n] = true;
+                    saveL3State();
+                    applyL3StateToUI();
+                } catch (_) {}
+                /* navigation is handled by global data-href wiring */
+            });
+        }
+    });
 }
 
 /* ----------------------------------------------------------
@@ -130,12 +195,13 @@ function markL3TopicVisited(n) {
         return L3.visitedTopics[k];
     });
 
-    if (allVisited && !L3.lessonCompleted) {
-        L3.lessonCompleted = true;
-        if (typeof markLessonComplete === 'function') {
-            markLessonComplete(3);
-        }
-        showToast('Lesson 3 complete! 🎉 Lesson 4 is now unlocked.', 'success', 4000);
+    /* NOTE: finishing the topics only unlocks Activity 3 — it must NOT
+       mark the lesson complete itself. Completion happens exclusively
+       when the student presses the "Activity 3" doneBtn below, same
+       as Lesson 1 & 2. (Doing it here disabled the button before the
+       student ever got to click it.) */
+    if (allVisited && !L3.lessonCompleted && !L3.activityCompleted) {
+        showToast('🎉 All topics complete! Scroll down to finish Activity 3.', 'success', 4000);
     }
 
     saveL3State();
@@ -567,6 +633,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Wire up lesson-3.html done button */
     if (page === 'lesson-3.html') {
         _updateDoneBtn();
+        initL3OverviewHandlers();
     }
 
     /* Wire up test-3.1 quiz */

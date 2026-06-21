@@ -79,9 +79,13 @@ function loadL2State() {
    ---------------------------------------------------------- */
 
 function updateProgressUI() {
-    var keys      = Object.keys(L2.completedTopics).filter(function(k){ return k.indexOf('topic')===0; });
-    var completed = keys.filter(function (k) { return L2.completedTopics[k]; }).length;
-    var pct       = keys.length ? Math.round((completed / keys.length) * 100) : 0;
+    /* Denominator = 8 topics + 1 for the final activity.
+       Topics alone max out at 8/9 = 89%; activity submission pushes to 100%. */
+    var topicKeys = Object.keys(L2.completedTopics).filter(function(k){ return k.indexOf('topic')===0; });
+    var topicDone = topicKeys.filter(function (k) { return L2.completedTopics[k]; }).length;
+    var total     = topicKeys.length + 1;          /* +1 slot for the activity */
+    var completed = topicDone + (L2.lessonCompleted ? 1 : 0);
+    var pct       = Math.round((completed / total) * 100);
     var bar  = document.getElementById('lessonProgress');
     var text = document.getElementById('progressText');
     if (bar)  bar.style.width  = pct + '%';
@@ -136,38 +140,19 @@ function applyL2StateToUI() {
    ---------------------------------------------------------- */
 
 var ACTIVITY_STARTER =
-'<header>\n' +
-'  <h1>My Name</h1>\n' +
-'  <nav><a href="#">Home</a></nav>\n' +
-'</header>\n\n' +
-'<main>\n' +
-'  <h2>About Me</h2>\n' +
-'  <p>Write something about yourself here.</p>\n\n' +
-'  <h2>My Hobbies</h2>\n' +
-'  <ul>\n' +
-'    <li>Hobby 1</li>\n' +
-'    <li>Hobby 2</li>\n' +
-'  </ul>\n\n' +
-'  <h2>My Favorite Sites</h2>\n' +
-'  <a href="https://www.google.com">Google</a>\n\n' +
-'  <h2>My Photo</h2>\n' +
-'  <img src="https://picsum.photos/200/150" alt="A photo">\n\n' +
-'  <h2>My Schedule</h2>\n' +
-'  <table border="1">\n' +
-'    <tr><th>Day</th><th>Activity</th></tr>\n' +
-'    <tr><td>Monday</td><td>Study</td></tr>\n' +
-'    <tr><td>Friday</td><td>Rest</td></tr>\n' +
-'  </table>\n\n' +
-'  <h2>Contact Me</h2>\n' +
-'  <form>\n' +
-'    <label for="name">Name: <input type="text" id="name"></label><br>\n' +
-'    <label for="email">Email: <input type="email" id="email"></label><br>\n' +
-'    <button type="submit">Send</button>\n' +
-'  </form>\n' +
-'</main>\n\n' +
-'<footer>\n' +
-'  <p>Made by Me — 2025</p>\n' +
-'</footer>';
+    '<header>\n' +
+    '  <!-- Place a header with your name -->\n' +
+    '</header>\n\n' +
+    '<nav>\n' +
+    '  <!-- Place a hyperlink-->\n' +
+    '</nav>\n\n' +
+    '<main>\n' +
+    '  <!-- Introduce yourself here -->\n' +
+    '  <!-- Must contain a list, an image, a table, and a button (add these yourself) -->\n' +
+    '</main>\n\n' +
+    '<footer>\n' +
+    '  <!-- Explore: add contact info or links -->\n' +
+    '</footer>';
 
 /**
  * Validate the activity editor content against all 8 requirements.
@@ -218,7 +203,15 @@ function initActivityBuilder() {
     /* Pre-fill starter template if nothing saved */
     if (!editor.value) editor.value = ACTIVITY_STARTER;
 
-    if (typeof autoResizeTextarea === 'function') autoResizeTextarea(editor);
+    /* Disable line wrapping and enable horizontal scrolling so long
+       lines do not wrap into new visual lines. Keep a max height. */
+    try {
+        editor.wrap = 'off';
+        editor.style.whiteSpace = 'pre';
+        editor.style.overflowX = 'auto';
+        editor.style.overflowY = 'auto';
+        editor.style.maxHeight = '480px';
+    } catch (_) {}
 
     /* Live checklist update as user types */
     editor.addEventListener('input', function() {
