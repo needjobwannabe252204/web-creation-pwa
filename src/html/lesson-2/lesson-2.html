@@ -105,42 +105,68 @@
 
             <div id="activity-card" class="card">
                 <h3>⭐ Activity 2</h3>
-                <p class="competency">
-                    Final Activity: My Personal Webpage
-                </p>
+                <p class="competency">Final Activity: My Personal Webpage</p>
                 <p>
-                    Create a simple webpage about yourself using the HTML concepts learned in Lesson 2.
+                    Build a personal webpage about yourself right here using everything you learned in Lesson 2.
+                    Write your HTML in the editor below, use <strong>▶ Run</strong> to preview it live, then hit
+                    <strong>Submit</strong> when you're done.
                 </p>
-                    <br>
-                <p>
-                    Your webpage should include:
-                </p>
-                <ul class="list-indent">
-                    <li> Headings </li>
-                    <li> Paragraphs </li>
-                    <li> Links </li>
-                    <li> Images </li>
-                    <li> Lists </li>
-                    <li> A table </li>
-                    <li> A form </li>
-                    <li> Semantic HTML elements </li>
+
+                <br>
+
+                <p><strong>Your webpage must include all 8 of these:</strong></p>
+                <ul class="list-indent" id="requirementsList">
+                    <li id="req-heading">⬜ A heading (<code>&lt;h1&gt;</code> or <code>&lt;h2&gt;</code>)</li>
+                    <li id="req-paragraph">⬜ A paragraph (<code>&lt;p&gt;</code>)</li>
+                    <li id="req-link">⬜ A link (<code>&lt;a href="..."&gt;</code>)</li>
+                    <li id="req-image">⬜ An image (<code>&lt;img src="..."&gt;</code>)</li>
+                    <li id="req-list">⬜ A list (<code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code>)</li>
+                    <li id="req-table">⬜ A table (<code>&lt;table&gt;</code> with rows)</li>
+                    <li id="req-form">⬜ A form (<code>&lt;form&gt;</code> with inputs)</li>
+                    <li id="req-semantic">⬜ Semantic elements (<code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;footer&gt;</code>)</li>
                 </ul>
 
                 <br>
 
-
-                <h3>Goodluck!</h3>
+                <textarea
+                    id="activityEditor"
+                    class="code-editor"
+                    placeholder="Write your HTML here..."
+                    style="height:320px; resize:vertical;"
+                ></textarea>
 
                 <br>
 
-                <button id="doneBtn" type="button" class="btn">🔒 Complete Lesson</button>
+                <button id="activityRunBtn" type="button" class="run-btn">▶ Run — Preview My Webpage</button>
+
+                <br><br>
+
+                <h3>👁️ Preview:</h3>
+                <iframe
+                    id="activityPreview"
+                    style="width:100%; height:360px; border:2px solid #ccc; border-radius:8px; background:#fff;"
+                    sandbox="allow-same-origin"
+                    title="Webpage Preview"
+                ></iframe>
+
+                <br><br>
+
+                <div id="activityResult" class="quiz-result" style="display:none;"></div>
+
+                <br>
+
+                <div class="actions-flex">
+                    <button id="doneBtn" type="button" class="btn">🔒 Complete Topics First</button>
+                    <button id="activityReset" type="button" style="display:none;">Reset / Try Again</button>
+                </div>
 
                 <div class="nav-buttons" style="display:flex;gap:8px;margin-top:12px">
-                    <button class="btn" id="returnHomeBtn" data-href="../../../index.html" aria-label="Return Home">← Return Home</button>
-                    <button id="nextLessonBtn" class="btn btn-primary" data-href="../lesson-3/lesson-3.html" aria-label="Next Lesson" style="display:none">Next: Lesson 3 →</button>
+                    <button class="btn" id="returnHomeBtn" data-href="/index.html" aria-label="Return Home">← Return Home</button>
+                    <button id="nextLessonBtn" class="btn btn-primary" data-href="../lesson-3/lesson-3.html" aria-label="Next Lesson" style="display:none;">Next: Lesson 3 →</button>
                 </div>
 
             </div>
+
 
         </main>
 

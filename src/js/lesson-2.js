@@ -130,52 +130,221 @@ function applyL2StateToUI() {
    Mirrors the lesson-1 behaviour: Next hidden until 100%, Done
    locked until all topics complete. Also handles Done action.
    ---------------------------------------------------------- */
+/* ----------------------------------------------------------
+   ACTIVITY BUILDER — lesson-2.html final activity
+   Live HTML editor + checklist validator.
+   ---------------------------------------------------------- */
+
+var ACTIVITY_STARTER =
+'<header>\n' +
+'  <h1>My Name</h1>\n' +
+'  <nav><a href="#">Home</a></nav>\n' +
+'</header>\n\n' +
+'<main>\n' +
+'  <h2>About Me</h2>\n' +
+'  <p>Write something about yourself here.</p>\n\n' +
+'  <h2>My Hobbies</h2>\n' +
+'  <ul>\n' +
+'    <li>Hobby 1</li>\n' +
+'    <li>Hobby 2</li>\n' +
+'  </ul>\n\n' +
+'  <h2>My Favorite Sites</h2>\n' +
+'  <a href="https://www.google.com">Google</a>\n\n' +
+'  <h2>My Photo</h2>\n' +
+'  <img src="https://picsum.photos/200/150" alt="A photo">\n\n' +
+'  <h2>My Schedule</h2>\n' +
+'  <table border="1">\n' +
+'    <tr><th>Day</th><th>Activity</th></tr>\n' +
+'    <tr><td>Monday</td><td>Study</td></tr>\n' +
+'    <tr><td>Friday</td><td>Rest</td></tr>\n' +
+'  </table>\n\n' +
+'  <h2>Contact Me</h2>\n' +
+'  <form>\n' +
+'    <label for="name">Name: <input type="text" id="name"></label><br>\n' +
+'    <label for="email">Email: <input type="email" id="email"></label><br>\n' +
+'    <button type="submit">Send</button>\n' +
+'  </form>\n' +
+'</main>\n\n' +
+'<footer>\n' +
+'  <p>Made by Me — 2025</p>\n' +
+'</footer>';
+
+/**
+ * Validate the activity editor content against all 8 requirements.
+ * Returns { passed: bool, results: [{id, label, ok}] }
+ */
+function validateActivity(code) {
+    var lower = code.toLowerCase();
+    var checks = [
+        { id: 'req-heading',   ok: /<h[1-6][\s>]/i.test(code),                               label: 'Heading' },
+        { id: 'req-paragraph', ok: /<p[\s>]/i.test(code),                                     label: 'Paragraph' },
+        { id: 'req-link',      ok: /<a\s[^>]*href\s*=/i.test(code),                           label: 'Link' },
+        { id: 'req-image',     ok: /<img\s[^>]*src\s*=/i.test(code),                          label: 'Image' },
+        { id: 'req-list',      ok: /<ul[\s>]/i.test(code) || /<ol[\s>]/i.test(code),          label: 'List' },
+        { id: 'req-table',     ok: /<table[\s>]/i.test(code) && /<tr[\s>]/i.test(code),       label: 'Table' },
+        { id: 'req-form',      ok: /<form[\s>]/i.test(code) && /<input[\s>]/i.test(code),     label: 'Form' },
+        { id: 'req-semantic',  ok: /<header[\s>]/i.test(code) && /<main[\s>]/i.test(code) && /<footer[\s>]/i.test(code), label: 'Semantic elements' }
+    ];
+    var passed = checks.every(function(c){ return c.ok; });
+    return { passed: passed, checks: checks };
+}
+
+/** Update the live checklist items with green ✅ or grey ⬜ */
+function _updateChecklist(checks) {
+    checks.forEach(function(c) {
+        var li = document.getElementById(c.id);
+        if (!li) return;
+        var text = li.textContent.replace(/^[✅⬜]\s*/, '');
+        li.textContent = (c.ok ? '✅ ' : '⬜ ') + text;
+        li.style.color = c.ok ? '#2e7d32' : '';
+        li.style.fontWeight = c.ok ? '600' : '';
+    });
+}
+
+function initActivityBuilder() {
+    var editor    = document.getElementById('activityEditor');
+    var runBtn    = document.getElementById('activityRunBtn');
+    var preview   = document.getElementById('activityPreview');
+    var submitBtn = document.getElementById('doneBtn');
+    var resetBtn  = document.getElementById('activityReset');
+    var resultEl  = document.getElementById('activityResult');
+    var nextBtn   = document.getElementById('nextLessonBtn');
+
+    if (!editor || !runBtn || !preview) return;
+
+    /* Pre-fill starter template if nothing saved */
+    if (!editor.value) editor.value = ACTIVITY_STARTER;
+
+    if (typeof autoResizeTextarea === 'function') autoResizeTextarea(editor);
+
+    /* Live checklist update as user types */
+    editor.addEventListener('input', function() {
+        var res = validateActivity(editor.value);
+        _updateChecklist(res.checks);
+    });
+    /* Run initial check on the starter template */
+    _updateChecklist(validateActivity(editor.value).checks);
+
+    /* ▶ Run — render into iframe */
+    runBtn.addEventListener('click', function() {
+        var doc = preview.contentDocument || preview.contentWindow.document;
+        doc.open();
+        doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:12px;color:#111;}</style></head><body>' + editor.value + '</body></html>');
+        doc.close();
+        showToast('Preview updated!', 'info', 1500);
+    });
+
+    /* Restore completed state if already done */
+    if (L2.lessonCompleted) {
+        _setActivityCompleted(editor, submitBtn, resetBtn, resultEl, nextBtn);
+        return;
+    }
+
+    /* Topics must be done before Submit unlocks */
+    updateOverviewButtons();
+
+    /* Submit */
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+            if (L2.lessonCompleted) return;
+            /* Guard: topics not done yet */
+            var topicsComplete = true;
+            for (var i = 1; i <= 8; i++) {
+                if (!L2.completedTopics['topic' + i]) { topicsComplete = false; break; }
+            }
+            if (!topicsComplete) {
+                showToast('Complete all 8 topics first, then submit your webpage.', 'info');
+                return;
+            }
+            /* Validate HTML content */
+            var res = validateActivity(editor.value);
+            _updateChecklist(res.checks);
+            if (!res.passed) {
+                var missing = res.checks.filter(function(c){ return !c.ok; }).map(function(c){ return c.label; });
+                showToast('Missing: ' + missing.join(', ') + '. Add them and try again!', 'error', 5000);
+                if (resultEl) {
+                    resultEl.innerHTML = '❌ Your webpage is missing: <strong>' + missing.join(', ') + '</strong>. Add them and resubmit!';
+                    resultEl.classList.remove('success');
+                    resultEl.classList.add('error');
+                    resultEl.style.display = 'block';
+                }
+                return;
+            }
+            /* All good — complete the lesson */
+            L2.lessonCompleted = true;
+            saveL2State();
+            if (typeof markLessonComplete === 'function') markLessonComplete(2);
+            var card = document.getElementById('activity-card');
+            if (card) setCardBorder(card, '#4caf50');
+            _setActivityCompleted(editor, submitBtn, resetBtn, resultEl, nextBtn);
+            showToast('🎉 Activity complete! Lesson 3 is now unlocked.', 'success', 4000);
+        });
+    }
+
+    /* Reset */
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            if (!confirm('Reset your webpage? Your code will be cleared.')) return;
+            editor.value = ACTIVITY_STARTER;
+            var doc = preview.contentDocument || preview.contentWindow.document;
+            doc.open(); doc.write(''); doc.close();
+            if (resultEl) { resultEl.innerHTML = ''; resultEl.style.display = 'none'; resultEl.classList.remove('success','error'); }
+            submitBtn.style.display = 'inline-block';
+            resetBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+            submitBtn.innerHTML = '✅ Submit My Webpage';
+            submitBtn.disabled = false;
+            L2.lessonCompleted = false;
+            saveL2State();
+            var cp = loadCourseProgress();
+            cp.lessonsCompleted[2] = false;
+            cp.lessonsUnlocked[3]  = false;
+            saveCourseProgress(cp);
+            var card = document.getElementById('activity-card');
+            if (card) setCardBorder(card, null);
+            _updateChecklist(validateActivity(editor.value).checks);
+            updateOverviewButtons();
+        });
+    }
+}
+
+function _setActivityCompleted(editor, submitBtn, resetBtn, resultEl, nextBtn) {
+    if (submitBtn) { submitBtn.innerHTML = '✅ Submitted!'; submitBtn.disabled = true; submitBtn.style.display = 'none'; }
+    if (resetBtn)  resetBtn.style.display = 'inline-block';
+    if (nextBtn)   nextBtn.style.display  = 'inline-block';
+    if (resultEl) {
+        resultEl.innerHTML = '✅ Great work! Your personal webpage has all 8 required elements. Lesson 3 is now unlocked!';
+        resultEl.classList.remove('error');
+        resultEl.classList.add('success');
+        resultEl.style.display = 'block';
+    }
+    if (editor) editor.readOnly = true;
+    var card = document.getElementById('activity-card');
+    if (card) setCardBorder(card, '#4caf50');
+    _updateChecklist(validateActivity(editor ? editor.value : '').checks);
+}
+
 function updateOverviewButtons() {
     var doneBtn = document.getElementById('doneBtn');
     var nextBtn = document.getElementById('nextLessonBtn');
-    if (!doneBtn && !nextBtn) return;
 
     var topicsComplete = true;
     for (var i = 1; i <= 8; i++) {
         if (!L2.completedTopics['topic' + i]) { topicsComplete = false; break; }
     }
 
-    var keys      = Object.keys(L2.completedTopics).filter(function(k){ return k.indexOf('topic')===0; });
-    var completed = keys.filter(function (k) { return L2.completedTopics[k]; }).length;
-    var pct       = Math.round((completed / keys.length) * 100);
-
-    if (doneBtn) {
-        doneBtn.innerHTML = topicsComplete ? '✅ Done — Activity' : '🔒 Complete Topics First';
-        doneBtn.disabled = !topicsComplete;
+    if (doneBtn && !L2.lessonCompleted) {
+        doneBtn.innerHTML = topicsComplete ? '✅ Submit My Webpage' : '🔒 Complete Topics First';
+        doneBtn.disabled  = !topicsComplete;
         if (!topicsComplete) doneBtn.classList.add('locked'); else doneBtn.classList.remove('locked');
     }
 
-    if (nextBtn) {
-        nextBtn.style.display = (pct === 100) ? 'inline-block' : 'none';
+    if (nextBtn && !L2.lessonCompleted) {
+        nextBtn.style.display = 'none';
     }
 }
 
-function startLessonActivity() {
-    /* If already completed, this is just a review click — nothing to do. */
-    if (L2.lessonCompleted) return;
-    /* Ensure all topics done */
-    for (var i = 1; i <= 8; i++) {
-        if (!L2.completedTopics['topic' + i]) {
-            showToast('Complete all 8 topics before marking this lesson done.', 'info');
-            return;
-        }
-    }
-    L2.lessonCompleted = true;
-    saveL2State();
-    /* Persist to global courseProgress so index page can unlock next lesson */
-    if (typeof markLessonComplete === 'function') markLessonComplete(2);
-    /* Visual update */
-    var card = document.getElementById('activity-card');
-    if (card) setCardBorder(card, '#4caf50');
-    var doneBtn = document.getElementById('doneBtn');
-    if (doneBtn) { doneBtn.innerHTML = '✅ Completed — Review'; doneBtn.disabled = false; }
-    updateOverviewButtons();
-}
+function startLessonActivity() { /* kept for legacy compatibility — no longer called directly */ }
 
 /**
  * Mark a topic complete, save, and refresh the UI.
@@ -655,15 +824,9 @@ document.addEventListener('DOMContentLoaded', function () {
         /* For test-2.3 .. test-2.7, use the centralized PAGE_CONFIG */
         registerPageFromConfig(page);
     }
-    /* Lesson overview wiring: Done / Next buttons */
+    /* Lesson overview wiring: activity builder */
     if (page === 'lesson-2.html') {
-        var doneBtn = document.getElementById('doneBtn');
-        var activityCard = document.getElementById('activity-card');
-        if (doneBtn) {
-            doneBtn.addEventListener('click', function () { startLessonActivity(); });
-        }
-        /* ensure initial button states reflect saved progress */
-        updateOverviewButtons();
+        initActivityBuilder();
     }
     /* lesson-2.html and topic pages: applyL2StateToUI already handled UI updates */
 
