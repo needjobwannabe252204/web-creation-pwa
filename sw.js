@@ -69,10 +69,10 @@ self.addEventListener('install', function (event) {
          resolves, so the page can show a live X / total progress bar. */
       var tasks = PRECACHE_URLS.map(function (url) {
         return fetch(url, { cache: 'no-cache' }).then(function (response) {
-          if (response && response.ok) {
+          if (response && response.ok && response.status === 200) {
             return cache.put(url, response);
           }
-          /* Non-fatal: skip files that 404 instead of aborting install */
+          /* Non-fatal: skip files that 404 or return partial content (206) */
           return null;
         }).catch(function () {
           /* Network hiccup on one file shouldn't break the whole install */

@@ -13,8 +13,6 @@
 
 "use strict";
 
-var L4_COMPLETE_KEY = "lesson4Complete";
-
 function l4UpdateProgress(done) {
     var bar  = getEl ? getEl('lessonProgress') : document.getElementById('lessonProgress');
     var text = getEl ? getEl('progressText')   : document.getElementById('progressText');
@@ -27,7 +25,6 @@ function l4MarkComplete() {
     var btn    = document.getElementById("completeProjectBtn");
     var banner = document.getElementById("celebrationBanner");
 
-    localStorage.setItem(L4_COMPLETE_KEY, "true");
     if (btn) {
         btn.textContent = "✅ Project Completed!";
         btn.disabled    = true;
@@ -35,8 +32,7 @@ function l4MarkComplete() {
     if (banner) banner.style.display = "block";
     l4UpdateProgress(true);
 
-    // Notify the rest of the app that lesson 4 is done
-    // (mirrors the pattern used by other lesson pages)
+    // Mark lesson 4 as complete in the central progress store
     if (typeof markLessonComplete === "function") {
         markLessonComplete(4);
     }
@@ -46,18 +42,17 @@ document.addEventListener("DOMContentLoaded", function () {
     var btn    = document.getElementById("completeProjectBtn");
     var banner = document.getElementById("celebrationBanner");
 
-    function checkDoneState() {
-        var keyFlag = localStorage.getItem(L4_COMPLETE_KEY) === "true";
-        var central = false;
+    function isDone() {
         if (typeof isLessonCompleted === 'function') {
-            try { central = isLessonCompleted(4); } catch (e) { central = false; }
-        } else {
-            try {
-                var cp = loadCourseProgress();
-                central = !!(cp.lessonsCompleted && cp.lessonsCompleted[4]);
-            } catch (e) { central = false; }
+            try { return isLessonCompleted(4); } catch (e) { return false; }
         }
-        return keyFlag || central;
+        // Fallback if isLessonCompleted is not available
+        try {
+            var cp = loadCourseProgress();
+            return !!(cp.lessonsCompleted && cp.lessonsCompleted[4]);
+        } catch (e) { 
+            return false; 
+        }
     }
 
     function applyDoneUI(done) {
@@ -67,24 +62,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 btn.disabled    = true;
             }
             if (banner) banner.style.display = "block";
+        } else {
+            if (btn) {
+                btn.textContent = "✅ I Have Completed My Project";
+                btn.disabled    = false;
+            }
+            if (banner) banner.style.display = "none";
         }
         l4UpdateProgress(done);
     }
 
     // Initial restore on page load
-    applyDoneUI(checkDoneState());
+    applyDoneUI(isDone());
 
-    // React to localStorage changes made in other windows / devtools
+    // React to courseProgress changes made in other windows / devtools
     window.addEventListener('storage', function (ev) {
         if (!ev) return;
-        if (ev.key === L4_COMPLETE_KEY || ev.key === 'courseProgress') {
-            applyDoneUI(checkDoneState());
+        if (ev.key === 'courseProgress') {
+            applyDoneUI(isDone());
         }
     });
 
     if (btn) {
         btn.addEventListener("click", function () {
-            if (localStorage.getItem(L4_COMPLETE_KEY) !== "true") {
+            if (!isDone()) {
                 l4MarkComplete();
             }
         });

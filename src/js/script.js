@@ -473,6 +473,12 @@ function _ensureLockBadge(card, html) {
 /* -- Click handler for gated buttons -- */
 
 function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) {
+    /* DEV MODE: If dev mode is enabled, always allow access */
+    if (localStorage.getItem('__devModeEnabled') === 'true') {
+        if (href) window.location.href = href;
+        return;
+    }
+
     if (!prereqArr.length) {
         if (href) window.location.href = href;
         return;
@@ -480,7 +486,7 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
 
     if (btn.classList.contains('can-unlock')) {
         ev.preventDefault();
-        _performUnlock(btn, card, lessonNum);
+        _performUnlock(btn, card, lessonNum, href);
         return;
     }
 
@@ -533,11 +539,12 @@ function _handleGateClick(ev, btn, card, prereqArr, prereqStr, lessonNum, href) 
     }
 }
 
-function _performUnlock(btn, card, lessonNum) {
+function _performUnlock(btn, card, lessonNum, href) {
     if (!card) {
         _saveUnlock(lessonNum);
         btn.classList.remove('can-unlock');
         if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
+        if (href) window.location.href = href;
         return;
     }
 
@@ -555,6 +562,13 @@ function _performUnlock(btn, card, lessonNum) {
         btn.classList.remove('can-unlock');
         _saveUnlock(lessonNum);
         if (btn.dataset.origLabel) btn.textContent = btn.dataset.origLabel;
+        
+        /* After animation completes, navigate to the lesson */
+        if (href) {
+            setTimeout(function() {
+                window.location.href = href;
+            }, 300);
+        }
     });
 }
 
@@ -630,7 +644,20 @@ window.doneLesson = doneLesson;
      * Safe to call repeatedly — it's a no-op once already unlocked.
      */
     function tryFinalizeInstallUnlock() {
-        if (isInstallUnlocked()) return; // already done on a previous visit
+        if (isInstallUnlocked()) {
+            /* Already installed on this device previously. 
+               If they're on the website (not standalone), show status. */
+            if (!isRunningStandalone()) {
+                setStatus('✅ You have an installed copy on this device. Open it from your home screen, or click the button above to reset.');
+                if (installBtn) {
+                    installBtn.style.display = 'inline-flex';
+                } else {
+                    var btn = document.getElementById('installBtn');
+                    if (btn) btn.style.display = 'inline-flex';
+                }
+            }
+            return;
+        }
 
         if (isRunningStandalone() && precacheComplete) {
             setInstallUnlocked();
@@ -652,8 +679,17 @@ window.doneLesson = doneLesson;
             }
         } else if (precacheComplete && !isRunningStandalone()) {
             /* Cached, but they're still in the browser tab, not the
-               installed app. Tell them what's left to do. */
+               installed app. Tell them what's left to do AND show button. */
             setStatus('Download complete. Open the app from your home screen to finish.');
+            /* Always show the button as fallback for manual install or if
+               beforeinstallprompt didn't fire for some reason */
+            if (installBtn) {
+                installBtn.style.display = 'inline-flex';
+            } else {
+                /* Defensive: if button wasn't found, try finding it again */
+                var btn = document.getElementById('installBtn');
+                if (btn) btn.style.display = 'inline-flex';
+            }
         }
     }
 
@@ -707,6 +743,15 @@ window.doneLesson = doneLesson;
                    Safari, or already installed). Just surface status. */
                 if (isRunningStandalone()) {
                     setStatus('Already running as an installed app.');
+                } else if (localStorage.getItem('pwaInstallUnlocked') === 'true') {
+                    /* On the website, but install was already done on this device.
+                       Show reset option. */
+                    if (confirm('Your app is already installed on this device.\n\nWould you like to reset the install state? This lets you reinstall if needed.')) {
+                        localStorage.removeItem('pwaInstallUnlocked');
+                        setStatus('Install state reset. Reload the page to reinstall.');
+                        showToast('Install state cleared. Reload the page to continue.', 'info');
+                        setTimeout(function() { window.location.reload(); }, 1500);
+                    }
                 } else {
                     showToast('Use your browser\u2019s "Add to Home Screen" option to install.', 'info');
                 }
@@ -722,7 +767,9 @@ window.doneLesson = doneLesson;
                     showToast('Installation dismissed', 'info');
                 }
                 deferredPrompt = null;
-                installBtn.style.display = 'none';
+                var btn = document.getElementById('installBtn');
+                if (btn) btn.style.display = 'none';
+                if (installBtn) installBtn.style.display = 'none';
             });
         });
     }

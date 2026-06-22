@@ -651,4 +651,197 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         bindL3CSSActivity(cfg);
     }
+
+    /* Wire up final activity on lesson-3.html */
+    if (page === 'lesson-3.html') {
+        initL3FinalActivity();
+    }
 });
+
+/* ----------------------------------------------------------
+    11) FINAL ACTIVITY — CSS Styling with checklist validation
+    Uses iframe preview and live requirement checking
+    ---------------------------------------------------------- */
+
+function validateL3FinalActivity(code) {
+    var lower = code.toLowerCase();
+    var checks = [
+        { id: 'req-color', ok: /(color\s*:|background-color\s*:|background\s*:)/.test(lower), label: 'Text or background color' },
+        { id: 'req-background', ok: /(background\s*:)/.test(lower), label: 'Background styling' },
+        { id: 'req-font', ok: /(font-family|font-size|font-weight)\s*:/.test(lower), label: 'Font styling' },
+        { id: 'req-spacing', ok: /(padding\s*:|margin\s*:|padding-\w+|margin-\w+)/.test(lower), label: 'Padding or margin' },
+        { id: 'req-flex', ok: /(display\s*:\s*flex|display\s*:\s*grid)/.test(lower), label: 'Flexbox or grid layout' }
+    ];
+    var passed = checks.every(function(c){ return c.ok; });
+    return { passed: passed, checks: checks };
+}
+
+function _updateL3FinalChecklist(checks) {
+    var checklist = document.getElementById('validationChecklist');
+    if (!checklist) return;
+    
+    var labels = checklist.querySelectorAll('label');
+    var checkboxLabels = [
+        'text color',
+        'background',
+        'font',
+        'padding/margin',
+        'flexbox'
+    ];
+    
+    checks.forEach(function(c, index) {
+        if (index < labels.length && labels[index]) {
+            var input = labels[index].querySelector('input');
+            if (input) input.checked = c.ok;
+        }
+    });
+}
+
+function initL3FinalActivity() {
+    var editor = document.getElementById('cssEditor');
+    var runBtn = document.getElementById('runBtn');
+    var previewBox = document.getElementById('previewBox');
+    var submitBtn = document.getElementById('submitActivity');
+    var resetBtn = document.getElementById('resetActivity');
+    var resultEl = document.getElementById('activityResult');
+    var nextBtn = document.getElementById('nextLessonBtn');
+
+    if (!editor || !runBtn || !previewBox) return;
+
+    /* Pre-fill starter template if nothing saved */
+    if (!editor.value || editor.value.includes('Your webpage content')) {
+        editor.value = '<header>\n  <!-- Your header here -->\n</header>\n\n<style>\n  body {\n    font-family: Arial, sans-serif;\n  }\n  /* Add your CSS rules here */\n</style>\n\n<main>\n  <!-- Your webpage content -->\n</main>';
+    }
+
+    /* Live checklist update as user types */
+    editor.addEventListener('input', function() {
+        var res = validateL3FinalActivity(editor.value);
+        _updateL3FinalChecklist(res.checks);
+    });
+    /* Run initial check on the starter template */
+    _updateL3FinalChecklist(validateL3FinalActivity(editor.value).checks);
+
+    /* ▶ Preview — render into the preview box */
+    runBtn.addEventListener('click', function() {
+        try {
+            previewBox.innerHTML = '<iframe id="cssPreview" style="width:100%; height:400px; border:none; border-radius:6px; background:#fff;" sandbox="allow-same-origin"></iframe>';
+            var frame = document.getElementById('cssPreview');
+            if (frame) {
+                var doc = frame.contentDocument || frame.contentWindow.document;
+                doc.open();
+                doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:12px;color:#111;line-height:1.6;}</style></head><body>' + editor.value + '</body></html>');
+                doc.close();
+            }
+        } catch (e) {
+            previewBox.innerHTML = '<div style="color:#d32f2f; padding:12px; background:#ffebee; border-radius:6px;">❌ Error in your code: ' + e.message + '</div>';
+        }
+        showToast('Preview updated!', 'info', 1500);
+    });
+
+    /* Restore completed state if already done */
+    if (L3.activityCompleted) {
+        _setL3ActivityCompleted(editor, submitBtn, resetBtn, resultEl, nextBtn);
+        return;
+    }
+
+    /* Topics must be done before Submit unlocks */
+    _updateL3DoneBtn();
+
+    /* Submit */
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function() {
+            if (L3.activityCompleted) return;
+            /* Guard: topics not done yet */
+            var topicsComplete = true;
+            for (var i = 1; i <= 7; i++) {
+                if (!L3.visitedTopics['topic' + i]) { topicsComplete = false; break; }
+            }
+            if (!topicsComplete) {
+                showToast('Complete all 7 topics first, then submit your CSS styling.', 'info');
+                return;
+            }
+            /* Validate CSS content */
+            var res = validateL3FinalActivity(editor.value);
+            _updateL3FinalChecklist(res.checks);
+            if (!res.passed) {
+                var missing = res.checks.filter(function(c){ return !c.ok; }).map(function(c){ return c.label; });
+                showToast('Missing: ' + missing.join(', ') + '. Add them and try again!', 'error', 5000);
+                if (resultEl) {
+                    resultEl.innerHTML = '❌ Your CSS is missing: <strong>' + missing.join(', ') + '</strong>. Add them and resubmit!';
+                    resultEl.classList.remove('success');
+                    resultEl.classList.add('error');
+                    resultEl.style.display = 'block';
+                }
+                return;
+            }
+            /* All good — complete the lesson */
+            L3.activityCompleted = true;
+            L3.lessonCompleted = true;
+            saveL3State();
+            if (typeof markLessonComplete === 'function') markLessonComplete(3);
+            var card = document.getElementById('activity-card');
+            if (card) setCardBorder(card, '#4caf50');
+            _setL3ActivityCompleted(editor, submitBtn, resetBtn, resultEl, nextBtn);
+            showToast('🎉 Activity complete! Lesson 4 is now unlocked.', 'success', 4000);
+        });
+    }
+
+    /* Reset */
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            if (!confirm('Reset your CSS styling? Your code will be cleared.')) return;
+            editor.value = '<header>\n  <!-- Your header here -->\n</header>\n\n<style>\n  body {\n    font-family: Arial, sans-serif;\n  }\n  /* Add your CSS rules here */\n</style>\n\n<main>\n  <!-- Your webpage content -->\n</main>';
+            previewBox.innerHTML = '<p style="color:#999; text-align:center;">Preview will appear here</p>';
+            if (resultEl) { resultEl.innerHTML = ''; resultEl.style.display = 'none'; resultEl.classList.remove('success','error'); }
+            submitBtn.style.display = 'inline-block';
+            resetBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+            submitBtn.innerHTML = '✅ Submit Your CSS Styling';
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('locked');
+            editor.readOnly = false;
+            L3.activityCompleted = false;
+            saveL3State();
+            /* Cascade: don't wipe lesson 4, just mark activity incomplete */
+            var cp = loadCourseProgress();
+            cp.lessonsCompleted[3] = false;
+            saveCourseProgress(cp);
+            var card = document.getElementById('activity-card');
+            if (card) setCardBorder(card, null);
+            _updateL3FinalChecklist(validateL3FinalActivity(editor.value).checks);
+            _updateL3DoneBtn();
+        });
+    }
+}
+
+function _setL3ActivityCompleted(editor, submitBtn, resetBtn, resultEl, nextBtn) {
+    if (submitBtn) { submitBtn.innerHTML = '✅ Submitted!'; submitBtn.disabled = true; submitBtn.style.display = 'none'; }
+    if (resetBtn)  resetBtn.style.display = 'inline-block';
+    if (nextBtn)   nextBtn.style.display  = 'inline-block';
+    if (resultEl) {
+        resultEl.innerHTML = '✅ Great work! Your CSS styling has all required elements. Lesson 4 is now unlocked!';
+        resultEl.classList.remove('error');
+        resultEl.classList.add('success');
+        resultEl.style.display = 'block';
+    }
+    if (editor) editor.readOnly = true;
+    var card = document.getElementById('activity-card');
+    if (card) setCardBorder(card, '#4caf50');
+    _updateL3FinalChecklist(validateL3FinalActivity(editor ? editor.value : '').checks);
+}
+
+function _updateL3DoneBtn() {
+    var submitBtn = document.getElementById('submitActivity');
+    if (!submitBtn) return;
+
+    var topicsComplete = true;
+    for (var i = 1; i <= 7; i++) {
+        if (!L3.visitedTopics['topic' + i]) { topicsComplete = false; break; }
+    }
+
+    if (!L3.activityCompleted) {
+        submitBtn.innerHTML = topicsComplete ? '✅ Submit Your CSS Styling' : '🔒 Complete Topics First';
+        submitBtn.disabled  = !topicsComplete;
+        if (!topicsComplete) submitBtn.classList.add('locked'); else submitBtn.classList.remove('locked');
+    }
+}

@@ -110,32 +110,84 @@
             <button class="btn" data-href="topic-3.7.html">Learn →</button>
         </div>
 
-        <!-- Final Activity — mirrors Lesson 1 & 2's gated completion pattern -->
+        <!-- Final Activity — Code editor with validation, like Lesson 2 -->
         <div id="activity-card" class="card">
-            <h3>⭐ Activity 3</h3>
+            <h3>⭐ Activity 3: Style Your Personal Webpage</h3>
             <p class="competency">
-                Final Activity: Style Your Personal Webpage
+                Apply CSS to make your Lesson 2 webpage beautiful!
             </p>
             <p>
-                Apply the CSS concepts from this lesson to the personal webpage you built in Lesson 2.
+                Build on the HTML you created in Lesson 2 by adding CSS styling. Your stylesheet must include all the requirements below to pass.
             </p>
+
             <br>
-            <p>Your stylesheet should include:</p>
+
+            <h3>📋 CSS Requirements (all must be included):</h3>
             <ul class="list-indent">
-                <li> Custom colors </li>
-                <li> A chosen font family and font sizes </li>
-                <li> Padding, border, and margin on at least one element </li>
-                <li> A Flexbox layout for at least one section </li>
-                <li> A responsive media query for smaller screens </li>
+                <li>✓ <strong>Custom text color</strong> on at least one element (e.g., headings, paragraphs)</li>
+                <li>✓ <strong>Background color or image</strong> on a section or container</li>
+                <li>✓ <strong>Font styling</strong> (font-family, font-size, or font-weight changed)</li>
+                <li>✓ <strong>Spacing</strong> (padding or margin used on at least 2 elements)</li>
+                <li>✓ <strong>Flexbox layout</strong> on a container with display: flex</li>
             </ul>
 
             <br>
 
-            <h3>Goodluck!</h3>
+            <p class="black-box">
+                💡 <strong>Tip:</strong> Copy your HTML from Lesson 2, then add a &lt;style&gt; tag with your CSS rules.
+            </p>
 
             <br>
 
-            <button id="doneBtn" type="button" class="btn">🔒 Complete Topics First</button>
+            <h3>✏️ Code Editor:</h3>
+            <textarea class="black-box" id="cssEditor" placeholder="Paste your HTML with CSS styling here..." >
+<header>
+  <!-- Your header here -->
+</header>
+
+<style>
+  /* Add your CSS rules here */
+  body {
+    font-family: Arial, sans-serif;
+  }
+</style>
+
+<main>
+  <!-- Your webpage content -->
+</main></textarea>
+
+            <br><br>
+
+            <button id="runBtn">▶ Preview Code</button>
+
+            <br><br>
+
+            <h3>📺 Preview:</h3>
+            <div id="previewBox" class="black-box">
+                <p style="color:#999; text-align:center;">Preview will appear here</p>
+            </div>
+
+            <br>
+
+            <h3>✅ Validation Checklist:</h3>
+            <div id="validationChecklist" class="black-box"">
+                <label><input type="checkbox" disabled> Has text color</label><br>
+                <label><input type="checkbox" disabled> Has background color/image</label><br>
+                <label><input type="checkbox" disabled> Has font styling</label><br>
+                <label><input type="checkbox" disabled> Has padding/margin</label><br>
+                <label><input type="checkbox" disabled> Has flexbox layout</label>
+            </div>
+
+            <br>
+
+            <div id="activityResult" class="quiz-result"></div>
+
+            <br>
+
+            <div class="actions-flex">
+                <button id="submitActivity" type="button" class="btn btn-primary">✅ Submit Your CSS Styling</button>
+                <button id="resetActivity" type="button" class="btn" style="display:none">🔄 Reset</button>
+            </div>
 
             <div class="nav-buttons" style="display:flex;gap:8px;margin-top:12px">
                 <button class="btn" id="returnHomeBtn" data-href="/index.html" aria-label="Return Home">← Return Home</button>

@@ -71,6 +71,9 @@
                         '<button type="button" id="devCompleteAll" class="devtools-btn devtools-btn-good">✅ Complete All Lessons</button>' +
                     '</div>' +
                     '<div class="devtools-row">' +
+                        '<button type="button" id="devModeToggle" class="devtools-btn devtools-btn-warn">🧪 Dev Mode: OFF</button>' +
+                    '</div>' +
+                    '<div class="devtools-row">' +
                         '<button type="button" id="devUnlockInstall" class="devtools-btn devtools-btn-good">📲 Force Install-Unlock</button>' +
                         '<button type="button" id="devLockInstall" class="devtools-btn devtools-btn-warn">📲 Re-lock Install</button>' +
                     '</div>' +
@@ -104,20 +107,20 @@
 
         /* Per-lesson quick buttons (complete / lock individually) */
         var perLessonWrap = panel.querySelector('#devPerLesson');
-        [1, 2, 3, 4].forEach(function (n) {
+        [1, 2, 3, 4].forEach(function (lessonNum) {
             var completeBtn = document.createElement('button');
             completeBtn.type = 'button';
             completeBtn.className = 'devtools-btn devtools-chip';
-            completeBtn.textContent = '✅ L' + n;
-            completeBtn.title = 'Mark Lesson ' + n + ' as completed';
-            completeBtn.addEventListener('click', function () { devCompleteLesson(n); });
+            completeBtn.textContent = '✅ L' + lessonNum;
+            completeBtn.title = 'Mark Lesson ' + lessonNum + ' as completed';
+            completeBtn.addEventListener('click', function () { devCompleteLesson(lessonNum); });
 
             var lockBtn = document.createElement('button');
             lockBtn.type = 'button';
             lockBtn.className = 'devtools-btn devtools-chip devtools-chip-warn';
-            lockBtn.textContent = '🔒 L' + n;
-            lockBtn.title = 'Reset/lock Lesson ' + n + ' only';
-            lockBtn.addEventListener('click', function () { devLockLesson(n); });
+            lockBtn.textContent = '🔒 L' + lessonNum;
+            lockBtn.title = 'Reset/lock Lesson ' + lessonNum + ' only';
+            lockBtn.addEventListener('click', function () { devLockLesson(lessonNum); });
 
             perLessonWrap.appendChild(completeBtn);
             perLessonWrap.appendChild(lockBtn);
@@ -127,6 +130,7 @@
         panel.querySelector('#devToolsClose').addEventListener('click', hideDevPanel);
         panel.querySelector('#devUnlockAll').addEventListener('click', devUnlockAll);
         panel.querySelector('#devCompleteAll').addEventListener('click', devCompleteAll);
+        panel.querySelector('#devModeToggle').addEventListener('click', devModeToggle);
         panel.querySelector('#devUnlockInstall').addEventListener('click', devForceInstallUnlock);
         panel.querySelector('#devLockInstall').addEventListener('click', devRelockInstall);
         panel.querySelector('#devFillProfile').addEventListener('click', devFillDummyProfile);
@@ -137,6 +141,9 @@
             devLog('Gate check re-run.');
         });
         panel.querySelector('#devRefreshStorage').addEventListener('click', renderStorageView);
+        
+        /* Update dev mode button on panel open */
+        updateDevModeButton();
     }
 
     function toggleDevPanel() {
@@ -160,17 +167,17 @@
 
     function devUnlockAll() {
         var cp = loadCourseProgress();
+        /* Only UNLOCK lessons — don't mark as completed yet */
         cp.lessonsUnlocked[1] = true;
         cp.lessonsUnlocked[2] = true;
         cp.lessonsUnlocked[3] = true;
         cp.lessonsUnlocked[4] = true;
+        /* DO NOT mark as completed — let dev test the actual lessons */
         saveCourseProgress(cp);
 
         /* Lesson 1's gate isn't a numbered prereq — it's "install" +
            "profile" (see data-prereq="install,profile" on index.html).
-           Satisfy both so "Unlock All" actually opens Lesson 1 too,
-           instead of leaving it stuck behind a gate this button
-           doesn't otherwise touch. */
+           Satisfy both so dev can freely navigate without restrictions. */
         if (typeof setInstallUnlocked === 'function') setInstallUnlocked();
         if (typeof isProfileComplete === 'function' && !isProfileComplete() && typeof saveProfile === 'function') {
             saveProfile({
@@ -182,8 +189,41 @@
             });
         }
 
+        /* Also clear any lesson-specific localStorage keys to avoid conflicts */
+        try { localStorage.removeItem('lesson1State'); } catch (e) {}
+        try { localStorage.removeItem('lesson2State'); } catch (e) {}
+        try { localStorage.removeItem('lesson3State'); } catch (e) {}
+
         refreshEverything();
-        devLog('All lessons unlocked (not marked complete).');
+        devLog('🔓 All lessons unlocked — prerequisites cleared! Use "Complete All" to mark them done.');
+    }
+
+    function devModeToggle() {
+        var isEnabled = localStorage.getItem('__devModeEnabled') === 'true';
+        if (isEnabled) {
+            localStorage.removeItem('__devModeEnabled');
+            devLog('🧪 Dev Mode: OFF — Gates are now active again.');
+        } else {
+            localStorage.setItem('__devModeEnabled', 'true');
+            devLog('🧪 Dev Mode: ON — All lesson gates bypassed! Access any lesson freely.');
+        }
+        refreshEverything();
+        updateDevModeButton();
+    }
+
+    function updateDevModeButton() {
+        var btn = document.getElementById('devModeToggle');
+        if (!btn) return;
+        var isEnabled = localStorage.getItem('__devModeEnabled') === 'true';
+        if (isEnabled) {
+            btn.textContent = '🧪 Dev Mode: ON';
+            btn.classList.remove('devtools-btn-warn');
+            btn.classList.add('devtools-btn-good');
+        } else {
+            btn.textContent = '🧪 Dev Mode: OFF';
+            btn.classList.remove('devtools-btn-good');
+            btn.classList.add('devtools-btn-warn');
+        }
     }
 
     function devCompleteAll() {
@@ -197,13 +237,16 @@
             }));
         } catch (e) { console.warn('[devtools] could not write lesson1State', e); }
 
-        if (typeof markLessonComplete === 'function') {
-            markLessonComplete(2);
-            markLessonComplete(3);
-            markLessonComplete(4);
-        }
+        /* Also update central courseProgress for consistency */
+        var cp = loadCourseProgress();
+        cp.lessonsCompleted[1] = true;
+        cp.lessonsCompleted[2] = true;
+        cp.lessonsCompleted[3] = true;
+        cp.lessonsCompleted[4] = true;
+        saveCourseProgress(cp);
+
         refreshEverything();
-        devLog('All 4 lessons marked completed.');
+        devLog('✅ All 4 lessons marked completed — full access granted!');
     }
 
     function devCompleteLesson(n) {
@@ -216,16 +259,36 @@
                     lessonCompleted: true
                 }));
             } catch (e) { console.warn('[devtools] could not write lesson1State', e); }
+            /* Also update courseProgress for consistency */
+            var cp = loadCourseProgress();
+            cp.lessonsCompleted[1] = true;
+            cp.lessonsUnlocked[1]  = true;
+            saveCourseProgress(cp);
         } else if (typeof markLessonComplete === 'function') {
             markLessonComplete(n);
         }
         refreshEverything();
-        devLog('Lesson ' + n + ' marked completed.');
+        devLog('✅ Lesson ' + n + ' marked completed — you can now access it freely!');
+    }
+
+    function devUnlockSingleLesson(n) {
+        /* Unlock + complete a single lesson so it's immediately accessible */
+        var cp = loadCourseProgress();
+        cp.lessonsUnlocked[n] = true;
+        cp.lessonsCompleted[n] = true;
+        saveCourseProgress(cp);
+        refreshEverything();
+        devLog('🔓 Lesson ' + n + ' unlocked — prerequisites bypassed!');
     }
 
     function devLockLesson(n) {
         if (n === 1) {
             localStorage.removeItem('lesson1State');
+            /* Also update courseProgress for consistency */
+            var cp = loadCourseProgress();
+            cp.lessonsCompleted[1] = false;
+            cp.lessonsUnlocked[1]  = false;
+            saveCourseProgress(cp);
         } else {
             var cp = loadCourseProgress();
             cp.lessonsCompleted[n] = false;
@@ -233,7 +296,7 @@
             saveCourseProgress(cp);
         }
         refreshEverything();
-        devLog('Lesson ' + n + ' reset/locked.');
+        devLog('🔒 Lesson ' + n + ' reset/locked.');
     }
 
     function devForceInstallUnlock() {
