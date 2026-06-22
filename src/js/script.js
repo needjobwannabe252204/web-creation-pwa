@@ -108,6 +108,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var r3 = document.getElementById('reset-lesson3-btn');
     if (r3) _initResetLesson3Button(r3);
 
+    var r4 = document.getElementById('reset-lesson4-btn');
+    if (r4) _initResetLesson4Button(r4);
+
     /* -------------------------------------------------------
        5) Index-page: lesson gate initialisation
        ------------------------------------------------------- */
@@ -223,6 +226,18 @@ function _clearLesson3Data() {
 }
 
 /**
+ * Wipe ONLY lesson 4 progress (Final Project).
+ * Called by reset-4 handler.
+ */
+function _clearLesson4Data() {
+    localStorage.removeItem('lesson4State');
+    var cp = loadCourseProgress();
+    cp.lessonsCompleted[4] = false;
+    cp.lessonsUnlocked[4]  = false;
+    saveCourseProgress(cp);
+}
+
+/**
  * Wipe ALL progress for lesson 2 and below.
  * Also cascades into lesson 3 (calls _clearLesson3Data).
  */
@@ -291,6 +306,22 @@ function _initResetLesson3Button(resetBtn) {
     resetBtn.addEventListener('click', function () {
         if (!confirm('Clear Lesson 3 progress? This will lock Lesson 4 again.')) return;
         _clearLesson3Data();
+        location.reload();
+    });
+}
+
+function _initResetLesson4Button(resetBtn) {
+    try {
+        var cp   = loadCourseProgress();
+        var show = !!(cp.lessonsCompleted && cp.lessonsCompleted[4]);
+        resetBtn.style.display = show ? 'inline-flex' : 'none';
+    } catch (_) {
+        resetBtn.style.display = 'none';
+    }
+
+    resetBtn.addEventListener('click', function () {
+        if (!confirm('Clear Lesson 4 (Final Project) progress? You can start over.')) return;
+        _clearLesson4Data();
         location.reload();
     });
 }

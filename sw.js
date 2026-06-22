@@ -161,9 +161,11 @@ self.addEventListener('fetch', function (event) {
   if (request.mode === 'navigate' || (request.method === 'GET' && request.headers.get('accept') && request.headers.get('accept').includes('text/html'))) {
     event.respondWith(
       fetch(request).then(function (response) {
-        // Put a copy in the runtime cache
-        var copy = response.clone();
-        caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
+        // Put a copy in the runtime cache (only cache full 200 responses, not partial 206)
+        if (response && response.ok && response.status === 200) {
+          var copy = response.clone();
+          caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
+        }
         return response;
       }).catch(function () {
         return caches.match(request).then(function (cached) {
@@ -182,7 +184,7 @@ self.addEventListener('fetch', function (event) {
   event.respondWith(
     caches.match(request).then(function (cached) {
       var networkFetch = fetch(request).then(function (response) {
-        if (response && response.ok && request.url.startsWith('http')) {
+        if (response && response.ok && response.status === 200 && request.url.startsWith('http')) {
           var resClone = response.clone();
           caches.open(CACHE_NAME).then(function (cache) {
             cache.put(request, resClone);
