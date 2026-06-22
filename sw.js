@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.2';
+var APP_VERSION = '1.1.3';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -45,7 +45,19 @@ var PRECACHE_URLS = [
   '/src/html/lesson-1/lesson-1.html',
   '/src/html/lesson-2/lesson-2.html',
   '/src/html/lesson-3/lesson-3.html',
-  '/src/html/lesson-4/lesson-4.html'
+  '/src/html/lesson-4/lesson-4.html',
+  // lesson 1 videos
+  '/assets/video/lesson-1/topic-1.1.mp4',
+  '/assets/video/lesson-1/topic-1.4.mp4',
+  // lesson 2 videos
+  '/assets/video/lesson-2/topic-2.1.mp4',
+  '/assets/video/lesson-2/topic-2.2.mp4',
+  '/assets/video/lesson-2/topic-2.3.mp4',
+  '/assets/video/lesson-2/topic-2.4.mp4',
+  '/assets/video/lesson-2/topic-2.5.mp4',
+  '/assets/video/lesson-2/topic-2.6.mp4',
+  '/assets/video/lesson-2/topic-2.7.mp4',
+  '/assets/video/lesson-2/topic-2.8.mp4'
 ];
 
 /**
