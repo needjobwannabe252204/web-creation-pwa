@@ -667,6 +667,16 @@ body {
     white-space: pre;
 }
 
+/* Preview boxes need white background for displaying rendered content */
+#previewBox {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 2px solid #f6ff00 !important;
+    border-radius: 10px !important;
+    padding: 12px !important;
+    font-family: inherit !important;
+}
+
 .run-btn {
     margin-top: 15px;
     padding: 12px 20px;
