@@ -137,18 +137,24 @@ self.addEventListener('install', function (event) {
     caches.open(CACHE_NAME).then(function (cache) {
       var total = PRECACHE_URLS.length;
       var done = 0;
+      var failed = [];
 
       /* Cache requests one at a time (in parallel) but count each as it
          resolves, so the page can show a live X / total progress bar. */
       var tasks = PRECACHE_URLS.map(function (url) {
         return fetch(url, { cache: 'no-cache' }).then(function (response) {
           if (response && response.ok && response.status === 200) {
+            console.log('[SW] Cached: ' + url);
             return cache.put(url, response);
           }
           /* Non-fatal: skip files that 404 or return partial content (206) */
+          console.warn('[SW] Skipped (status ' + (response ? response.status : 'unknown') + '): ' + url);
+          failed.push(url);
           return null;
-        }).catch(function () {
+        }).catch(function (err) {
           /* Network hiccup on one file shouldn't break the whole install */
+          console.error('[SW] Fetch error for ' + url + ': ' + err.message);
+          failed.push(url);
           return null;
         }).then(function () {
           done++;
@@ -162,7 +168,10 @@ self.addEventListener('install', function (event) {
       });
 
       return Promise.all(tasks).then(function () {
-        return broadcast({ type: 'precache-done', total: total });
+        if (failed.length > 0) {
+          console.warn('[SW] ' + failed.length + ' files failed to cache:', failed);
+        }
+        return broadcast({ type: 'precache-done', total: total, failed: failed.length });
       });
     }).then(function () {
       /* First-ever install (nobody currently controls any open tab):
@@ -247,6 +256,15 @@ self.addEventListener('fetch', function (event) {
           return response;
         }).catch(function () {
           // If both cache and network fail, serve offline page
+          // First check if it's a nav-page that should be in PRECACHE
+          var pathname = new URL(request.url).pathname;
+          var isNavPage = pathname.includes('/src/html/nav-pages/');
+          if (isNavPage) {
+            // Nav pages should be in cache; if fetch failed, something went wrong
+            return caches.match(request).then(function (cached) {
+              return cached || caches.match('/offline.html');
+            });
+          }
           return caches.match('/offline.html');
         });
       })
