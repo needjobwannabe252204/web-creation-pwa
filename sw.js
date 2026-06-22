@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.8';
+var APP_VERSION = '1.1.9';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -142,18 +142,18 @@ self.addEventListener('install', function (event) {
       /* Cache requests one at a time (in parallel) but count each as it
          resolves, so the page can show a live X / total progress bar. */
       var tasks = PRECACHE_URLS.map(function (url) {
-        return fetch(url, { cache: 'no-cache' }).then(function (response) {
+        return fetch(url).then(function (response) {
           if (response && response.ok && response.status === 200) {
-            console.log('[SW] Cached: ' + url);
+            console.log('[SW] ✅ Cached: ' + url + ' (status: ' + response.status + ')');
             return cache.put(url, response);
           }
           /* Non-fatal: skip files that 404 or return partial content (206) */
-          console.warn('[SW] Skipped (status ' + (response ? response.status : 'unknown') + '): ' + url);
+          console.warn('[SW] ⚠️ Skipped: ' + url + ' (status ' + (response ? response.status : 'unknown') + ')');
           failed.push(url);
           return null;
         }).catch(function (err) {
           /* Network hiccup on one file shouldn't break the whole install */
-          console.error('[SW] Fetch error for ' + url + ': ' + err.message);
+          console.error('[SW] ❌ Fetch error for ' + url + ': ' + err.message);
           failed.push(url);
           return null;
         }).then(function () {
@@ -244,21 +244,9 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
       // Try cache first (for offline support)
       caches.match(request).then(function (cached) {
-        var isProfilePage = request.url.includes('profile.html');
-        if (isProfilePage) {
-          console.log('[SW] Profile page request - checking cache...');
-        }
-        
         if (cached) {
-          if (isProfilePage) {
-            console.log('[SW] ✅ Profile page FOUND in cache');
-          }
           console.log('[SW] HTML from cache: ' + request.url);
           return cached;
-        }
-        
-        if (isProfilePage) {
-          console.log('[SW] Profile page NOT in cache, trying network...');
         }
         
         // If not in cache, try network
@@ -267,27 +255,11 @@ self.addEventListener('fetch', function (event) {
           if (response && response.ok && response.status === 200) {
             var copy = response.clone();
             caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
-            if (isProfilePage) {
-              console.log('[SW] Profile page fetched from network and cached');
-            }
           }
           return response;
         }).catch(function (err) {
           console.error('[SW] HTML fetch failed: ' + request.url + ' - ' + err.message);
           // If both cache and network fail, serve offline page
-          // First check if it's a nav-page that should be in PRECACHE
-          var pathname = new URL(request.url).pathname;
-          var isNavPage = pathname.includes('/src/html/nav-pages/');
-          if (isNavPage) {
-            // Nav pages should be in cache; if fetch failed, something went wrong
-            console.warn('[SW] Nav-page not in cache (unexpected): ' + pathname);
-            if (isProfilePage) {
-              console.error('[SW] ❌ Profile page FAILED - showing offline.html');
-            }
-            return caches.match(request).then(function (cached) {
-              return cached || caches.match('/offline.html');
-            });
-          }
           return caches.match('/offline.html');
         });
       })

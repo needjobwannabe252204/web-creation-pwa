@@ -43,6 +43,25 @@
         <div class="card">
             <h2>📋 What's New</h2>
 
+            <p class="competency">Version 1.1.9</p>
+            <ul class="list-indent">
+                <li>🔧 CRITICAL REGRESSION FIX: Fixed offline fallback for all nav pages.</li>
+                <li>Simplified fetch handler to properly return cached HTML pages when offline.</li>
+                <li>Removed cache header option during precache to improve file caching reliability.</li>
+                <li>All nav pages (profile, delete-app, updates, about, contact) now work offline.</li>
+            </ul>
+            <br>
+
+            <p class="competency">Version 1.1.8</p>
+            <ul class="list-indent">
+                <li>🔧 CRITICAL OFFLINE FIX: Enhanced offline fallback for JS/CSS files.</li>
+                <li>If a resource fails to load offline but was previously cached, serve stale cache copy instead of error.</li>
+                <li>Fixes profile.html, delete-app.html, updates.html offline loading issues.</li>
+                <li>Added comprehensive debug logging to identify offline caching failures.</li>
+                <li>Pages now gracefully degrade offline instead of showing blank page.</li>
+            </ul>
+            <br>
+
             <p class="competency">Version 1.1.7</p>
             <ul class="list-indent">
                 <li>🔧 FINAL CRITICAL FIX: Added ALL image assets to offline cache (44+ images).</li>
