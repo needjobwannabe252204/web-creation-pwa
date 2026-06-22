@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.4';
+var APP_VERSION = '1.1.6';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -43,8 +43,42 @@ var PRECACHE_URLS = [
   '/src/html/nav-pages/delete-app.html',
   // main lesson pages (cache core content for offline review)
   '/src/html/lesson-1/lesson-1.html',
+  '/src/html/lesson-1/topic-1.1.html',
+  '/src/html/lesson-1/topic-1.2.html',
+  '/src/html/lesson-1/topic-1.3.html',
+  '/src/html/lesson-1/test-1.1.html',
   '/src/html/lesson-2/lesson-2.html',
+  '/src/html/lesson-2/topic-2.1.html',
+  '/src/html/lesson-2/topic-2.2.html',
+  '/src/html/lesson-2/topic-2.3.html',
+  '/src/html/lesson-2/topic-2.4.html',
+  '/src/html/lesson-2/topic-2.5.html',
+  '/src/html/lesson-2/topic-2.6.html',
+  '/src/html/lesson-2/topic-2.7.html',
+  '/src/html/lesson-2/topic-2.8.html',
+  '/src/html/lesson-2/test-2.1.html',
+  '/src/html/lesson-2/test-2.2.html',
+  '/src/html/lesson-2/test-2.3.html',
+  '/src/html/lesson-2/test-2.4.html',
+  '/src/html/lesson-2/test-2.5.html',
+  '/src/html/lesson-2/test-2.6.html',
+  '/src/html/lesson-2/test-2.7.html',
+  '/src/html/lesson-2/test-2.8.html',
   '/src/html/lesson-3/lesson-3.html',
+  '/src/html/lesson-3/topic-3.1.html',
+  '/src/html/lesson-3/topic-3.2.html',
+  '/src/html/lesson-3/topic-3.3.html',
+  '/src/html/lesson-3/topic-3.4.html',
+  '/src/html/lesson-3/topic-3.5.html',
+  '/src/html/lesson-3/topic-3.6.html',
+  '/src/html/lesson-3/topic-3.7.html',
+  '/src/html/lesson-3/test-3.1.html',
+  '/src/html/lesson-3/test-3.2.html',
+  '/src/html/lesson-3/test-3.3.html',
+  '/src/html/lesson-3/test-3.4.html',
+  '/src/html/lesson-3/test-3.5.html',
+  '/src/html/lesson-3/test-3.6.html',
+  '/src/html/lesson-3/test-3.7.html',
   '/src/html/lesson-4/lesson-4.html',
   // lesson 1 videos
   '/assets/video/lesson-1/topic-1.1.mp4',
