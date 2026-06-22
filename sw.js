@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.9';
+var APP_VERSION = '1.1.10';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -141,7 +141,20 @@ self.addEventListener('install', function (event) {
 
       /* Cache requests one at a time (in parallel) but count each as it
          resolves, so the page can show a live X / total progress bar. */
+      var cssFiles = [];
+      var jsFiles = [];
+      var htmlFiles = [];
+      var imageFiles = [];
+      var otherFiles = [];
+      
       var tasks = PRECACHE_URLS.map(function (url) {
+        // Categorize file for logging
+        if (url.includes('.css')) cssFiles.push(url);
+        else if (url.includes('.js')) jsFiles.push(url);
+        else if (url.includes('.html')) htmlFiles.push(url);
+        else if (url.includes('.png') || url.includes('.jpg') || url.includes('.jpeg') || url.includes('.gif') || url.includes('.svg')) imageFiles.push(url);
+        else otherFiles.push(url);
+        
         return fetch(url).then(function (response) {
           if (response && response.ok && response.status === 200) {
             console.log('[SW] ✅ Cached: ' + url + ' (status: ' + response.status + ')');
@@ -169,7 +182,16 @@ self.addEventListener('install', function (event) {
 
       return Promise.all(tasks).then(function () {
         if (failed.length > 0) {
-          console.warn('[SW] ' + failed.length + ' files failed to cache:', failed);
+          var failedCss = failed.filter(function(f) { return f.includes('.css'); });
+          var failedJs = failed.filter(function(f) { return f.includes('.js'); });
+          var failedHtml = failed.filter(function(f) { return f.includes('.html'); });
+          console.warn('[SW] PRECACHE SUMMARY:');
+          console.warn('[SW]   - Total failed: ' + failed.length);
+          if (failedCss.length > 0) console.warn('[SW]   - CSS failed (' + failedCss.length + '): ' + failedCss.join(', '));
+          if (failedJs.length > 0) console.warn('[SW]   - JS failed (' + failedJs.length + '): ' + failedJs.join(', '));
+          if (failedHtml.length > 0) console.warn('[SW]   - HTML failed (' + failedHtml.length + '): ' + failedHtml.join(', '));
+        } else {
+          console.log('[SW] ✅ PRECACHE SUCCESS: All ' + total + ' files cached!');
         }
         return broadcast({ type: 'precache-done', total: total, failed: failed.length });
       });
