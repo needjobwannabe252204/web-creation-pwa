@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.3';
+var APP_VERSION = '1.1.4';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -169,19 +169,24 @@ self.addEventListener('message', function (event) {
 self.addEventListener('fetch', function (event) {
   var request = event.request;
 
-  // For navigation requests, try network first then fall back to cache and offline page
+  // For navigation requests (HTML pages): TRY CACHE FIRST, then network
   if (request.mode === 'navigate' || (request.method === 'GET' && request.headers.get('accept') && request.headers.get('accept').includes('text/html'))) {
     event.respondWith(
-      fetch(request).then(function (response) {
-        // Put a copy in the runtime cache (only cache full 200 responses, not partial 206)
-        if (response && response.ok && response.status === 200) {
-          var copy = response.clone();
-          caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
-        }
-        return response;
-      }).catch(function () {
-        return caches.match(request).then(function (cached) {
-          return cached || caches.match('/offline.html');
+      // Try cache first (for offline support)
+      caches.match(request).then(function (cached) {
+        if (cached) return cached;
+        
+        // If not in cache, try network
+        return fetch(request).then(function (response) {
+          // Put a copy in the runtime cache (only cache full 200 responses, not partial 206)
+          if (response && response.ok && response.status === 200) {
+            var copy = response.clone();
+            caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
+          }
+          return response;
+        }).catch(function () {
+          // If both cache and network fail, serve offline page
+          return caches.match('/offline.html');
         });
       })
     );
