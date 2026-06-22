@@ -713,6 +713,11 @@ function initL3FinalActivity() {
         editor.value = '<header>\n  <!-- Your header here -->\n</header>\n\n<style>\n  body {\n    font-family: Arial, sans-serif;\n  }\n  /* Add your CSS rules here */\n</style>\n\n<main>\n  <!-- Your webpage content -->\n</main>';
     }
 
+    /* Enable auto-height expansion as the user types */
+    if (typeof autoResizeTextarea === 'function') {
+        autoResizeTextarea(editor);
+    }
+
     /* Live checklist update as user types */
     editor.addEventListener('input', function() {
         var res = validateL3FinalActivity(editor.value);

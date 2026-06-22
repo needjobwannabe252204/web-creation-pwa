@@ -204,14 +204,16 @@ function initActivityBuilder() {
     if (!editor.value) editor.value = ACTIVITY_STARTER;
 
     /* Disable line wrapping and enable horizontal scrolling so long
-       lines do not wrap into new visual lines. Keep a max height. */
+       lines do not wrap into new visual lines. Auto-expand height. */
     try {
         editor.wrap = 'off';
         editor.style.whiteSpace = 'pre';
         editor.style.overflowX = 'auto';
-        editor.style.overflowY = 'auto';
-        editor.style.maxHeight = '480px';
+        editor.style.overflowY = 'hidden';
     } catch (_) {}
+
+    /* Enable auto-height expansion as the user types */
+    autoResizeTextarea(editor);
 
     /* Live checklist update as user types */
     editor.addEventListener('input', function() {

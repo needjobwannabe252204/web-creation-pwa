@@ -655,10 +655,11 @@ body {
     padding: 12px;
     font-family: Consolas, monospace;
     font-size: 15px;
-    resize: vertical;
+    resize: none;
     box-sizing: border-box;
     overflow-x: auto;
-    overflow-y: auto;
+    overflow-y: hidden;
+    line-height: 1.5;
 }
 
 .black-box pre {
