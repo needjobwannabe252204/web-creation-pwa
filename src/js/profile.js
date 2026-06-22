@@ -18,7 +18,17 @@
 
 "use strict";
 
+console.log('[profile.js] Loading profile.js');
+
+if (typeof loadProfile !== 'function') {
+    console.error('[profile.js] CRITICAL: loadProfile not found - utils.js may not be loaded');
+}
+if (typeof saveProfile !== 'function') {
+    console.error('[profile.js] CRITICAL: saveProfile not found - utils.js may not be loaded');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('[profile.js] DOMContentLoaded event fired');
 
     var form        = document.getElementById('profileForm');
     var savedNote    = document.getElementById('profileSavedNote');

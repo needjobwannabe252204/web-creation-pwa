@@ -14,7 +14,10 @@
 
 "use strict";
 
+console.log('[delete-app.js] Loading delete-app.js');
+
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('[delete-app.js] DOMContentLoaded event fired');
 
     /* -------------------------------------------------------
        1) Detect platform and show the right uninstall steps

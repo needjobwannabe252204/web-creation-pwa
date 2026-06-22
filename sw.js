@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.7';
+var APP_VERSION = '1.1.8';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -244,9 +244,21 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
       // Try cache first (for offline support)
       caches.match(request).then(function (cached) {
+        var isProfilePage = request.url.includes('profile.html');
+        if (isProfilePage) {
+          console.log('[SW] Profile page request - checking cache...');
+        }
+        
         if (cached) {
+          if (isProfilePage) {
+            console.log('[SW] ✅ Profile page FOUND in cache');
+          }
           console.log('[SW] HTML from cache: ' + request.url);
           return cached;
+        }
+        
+        if (isProfilePage) {
+          console.log('[SW] Profile page NOT in cache, trying network...');
         }
         
         // If not in cache, try network
@@ -255,6 +267,9 @@ self.addEventListener('fetch', function (event) {
           if (response && response.ok && response.status === 200) {
             var copy = response.clone();
             caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
+            if (isProfilePage) {
+              console.log('[SW] Profile page fetched from network and cached');
+            }
           }
           return response;
         }).catch(function (err) {
@@ -266,6 +281,9 @@ self.addEventListener('fetch', function (event) {
           if (isNavPage) {
             // Nav pages should be in cache; if fetch failed, something went wrong
             console.warn('[SW] Nav-page not in cache (unexpected): ' + pathname);
+            if (isProfilePage) {
+              console.error('[SW] ❌ Profile page FAILED - showing offline.html');
+            }
             return caches.match(request).then(function (cached) {
               return cached || caches.match('/offline.html');
             });

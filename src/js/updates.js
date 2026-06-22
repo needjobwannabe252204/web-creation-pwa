@@ -22,7 +22,10 @@
 
 "use strict";
 
+console.log('[updates.js] Loading updates.js');
+
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('[updates.js] DOMContentLoaded event fired');
 
     var versionLabel  = document.getElementById('updateCurrentVersion');
     var statusText    = document.getElementById('updateStatusText');
