@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.6';
+var APP_VERSION = '1.1.7';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -26,7 +26,7 @@ var PRECACHE_URLS = [
   '/src/js/lesson-2.js',
   '/src/js/lesson-3.js',
   '/src/js/lesson-4.js',
-  // icons
+  // icons and logos
   '/assets/image/logo/icon-48.png',
   '/assets/image/logo/icon-72.png',
   '/assets/image/logo/icon-96.png',
@@ -35,6 +35,33 @@ var PRECACHE_URLS = [
   '/assets/image/logo/icon-512.png',
   '/assets/image/logo/app-logo.png',
   '/assets/image/logo/cdm-logo.jpeg',
+  // code editor images
+  '/assets/image/code-editor/notepad++.png',
+  '/assets/image/code-editor/sublime.png',
+  '/assets/image/code-editor/vs-code.png',
+  '/assets/image/code-editor/web-code.png',
+  // browser images
+  '/assets/image/browser/chrome.png',
+  '/assets/image/browser/edge.png',
+  '/assets/image/browser/firefox.png',
+  // design tools images
+  '/assets/image/design-tools/adobe.png',
+  '/assets/image/design-tools/canva.png',
+  '/assets/image/design-tools/figma.png',
+  // css example images
+  '/assets/image/css-example/Facebook_mobile.png',
+  '/assets/image/css-example/netflix.png',
+  '/assets/image/css-example/youtube.png',
+  '/assets/image/css-example/yt.jpg',
+  // web example images
+  '/assets/image/web-example-image/1.png',
+  '/assets/image/web-example-image/2.png',
+  '/assets/image/web-example-image/3.png',
+  '/assets/image/web-example-image/apple.png',
+  '/assets/image/web-example-image/google.png',
+  '/assets/image/web-example-image/microsoft.png',
+  // animal images
+  '/assets/image/animal/cat.png',
   // nav pages
   '/src/html/nav-pages/about.html',
   '/src/html/nav-pages/contact.html',
