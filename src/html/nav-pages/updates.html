@@ -43,6 +43,15 @@
         <div class="card">
             <h2>📋 What's New</h2>
 
+            <p class="competency">Version 1.1.12</p>
+            <ul class="list-indent">
+                <li>🔧 AGGRESSIVE RETRY FIX: Increased precache retries from 1 to 3 attempts.</li>
+                <li>Progressive backoff delays: 200ms → 500ms → 800ms between retries.</li>
+                <li>Handles Netlify's transient network issues more robustly.</li>
+                <li>Console now shows retry attempt numbers and wait times for debugging.</li>
+            </ul>
+            <br>
+
             <p class="competency">Version 1.1.11</p>
             <ul class="list-indent">
                 <li>🔧 NETLIFY RETRY FIX: Added retry logic for precache fetch failures.</li>

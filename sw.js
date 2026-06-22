@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.11';
+var APP_VERSION = '1.1.12';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -155,13 +155,17 @@ self.addEventListener('install', function (event) {
         else if (url.includes('.png') || url.includes('.jpg') || url.includes('.jpeg') || url.includes('.gif') || url.includes('.svg')) imageFiles.push(url);
         else otherFiles.push(url);
         
-        /* Retry logic: try up to 2 times if fetch fails */
+        /* Retry logic: try up to 3 times if fetch fails */
         function fetchWithRetry(fetchUrl, retryCount) {
           if (retryCount === undefined) retryCount = 0;
           
           return fetch(fetchUrl).then(function (response) {
             if (response && response.ok && response.status === 200) {
-              console.log('[SW] ✅ Cached: ' + fetchUrl + ' (status: ' + response.status + ')');
+              if (retryCount > 0) {
+                console.log('[SW] ✅ Cached (attempt ' + (retryCount + 1) + '): ' + fetchUrl);
+              } else {
+                console.log('[SW] ✅ Cached: ' + fetchUrl + ' (status: ' + response.status + ')');
+              }
               return cache.put(fetchUrl, response);
             }
             /* Non-fatal: skip files that 404 or return partial content (206) */
@@ -169,13 +173,14 @@ self.addEventListener('install', function (event) {
             failed.push(fetchUrl);
             return null;
           }).catch(function (err) {
-            /* Retry once on network error */
-            if (retryCount < 1) {
-              console.warn('[SW] ⚠️ Retry ' + (retryCount + 1) + ' for ' + fetchUrl + ' after error: ' + err.message);
-              return new Promise(function(resolve) { setTimeout(resolve, 100); })
+            /* Retry up to 3 times on network error */
+            if (retryCount < 3) {
+              var delay = 200 + (retryCount * 300); // 200ms, 500ms, 800ms
+              console.warn('[SW] ⚠️ Retry ' + (retryCount + 1) + '/3 for ' + fetchUrl + ' (waiting ' + delay + 'ms)...');
+              return new Promise(function(resolve) { setTimeout(resolve, delay); })
                 .then(function() { return fetchWithRetry(fetchUrl, retryCount + 1); });
             }
-            console.error('[SW] ❌ Fetch error for ' + fetchUrl + ': ' + err.message);
+            console.error('[SW] ❌ Fetch error for ' + fetchUrl + ' (after 3 retries): ' + err.message);
             failed.push(fetchUrl);
             return null;
           });
