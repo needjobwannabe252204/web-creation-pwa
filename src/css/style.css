@@ -660,8 +660,8 @@ body {
     overflow-x: auto;
     overflow-y: hidden;
     line-height: 1.5;
-    margin-top: 5rem;
-    margin-bottom: 5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .black-box pre {
