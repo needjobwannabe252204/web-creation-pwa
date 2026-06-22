@@ -244,7 +244,10 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
       // Try cache first (for offline support)
       caches.match(request).then(function (cached) {
-        if (cached) return cached;
+        if (cached) {
+          console.log('[SW] HTML from cache: ' + request.url);
+          return cached;
+        }
         
         // If not in cache, try network
         return fetch(request).then(function (response) {
@@ -254,13 +257,15 @@ self.addEventListener('fetch', function (event) {
             caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
           }
           return response;
-        }).catch(function () {
+        }).catch(function (err) {
+          console.error('[SW] HTML fetch failed: ' + request.url + ' - ' + err.message);
           // If both cache and network fail, serve offline page
           // First check if it's a nav-page that should be in PRECACHE
           var pathname = new URL(request.url).pathname;
           var isNavPage = pathname.includes('/src/html/nav-pages/');
           if (isNavPage) {
             // Nav pages should be in cache; if fetch failed, something went wrong
+            console.warn('[SW] Nav-page not in cache (unexpected): ' + pathname);
             return caches.match(request).then(function (cached) {
               return cached || caches.match('/offline.html');
             });
@@ -287,7 +292,10 @@ self.addEventListener('fetch', function (event) {
           });
         }
         return response;
-      }).catch(function () { return null; });
+      }).catch(function (err) {
+        console.warn('[SW] Network fetch failed for ' + request.url + ': ' + err.message);
+        return null;
+      });
 
       // Cached copy wins the race for speed; network result silently
       // updates the cache for the next time this file is requested.
@@ -295,7 +303,16 @@ self.addEventListener('fetch', function (event) {
         networkFetch.catch(function () {}); // don't let rejection bubble
         return cached;
       }
-      return networkFetch.then(function (response) { return response || Response.error(); });
+      
+      // If not cached and network fails, try to serve from cache anyway
+      // as a final fallback for offline support (even if stale)
+      return networkFetch.then(function (response) {
+        if (response) return response;
+        // Last resort: return cached even if we tried fresh network
+        return caches.match(request).then(function (fallbackCached) {
+          return fallbackCached || Response.error();
+        });
+      });
     })
   );
 });
