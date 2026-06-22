@@ -4,13 +4,6 @@
   publish = "."
   command = ""
 
-# Redirect all 404s to index.html (SPA-like behavior)
-# But exclude explicit file requests
-[[redirects]]
-  from = "/src/*"
-  to = "/src/:splat"
-  status = 200
-
 # Service worker must not be cached
 [[headers]]
   for = "/sw.js"

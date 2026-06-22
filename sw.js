@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.10';
+var APP_VERSION = '1.1.11';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -155,21 +155,33 @@ self.addEventListener('install', function (event) {
         else if (url.includes('.png') || url.includes('.jpg') || url.includes('.jpeg') || url.includes('.gif') || url.includes('.svg')) imageFiles.push(url);
         else otherFiles.push(url);
         
-        return fetch(url).then(function (response) {
-          if (response && response.ok && response.status === 200) {
-            console.log('[SW] ✅ Cached: ' + url + ' (status: ' + response.status + ')');
-            return cache.put(url, response);
-          }
-          /* Non-fatal: skip files that 404 or return partial content (206) */
-          console.warn('[SW] ⚠️ Skipped: ' + url + ' (status ' + (response ? response.status : 'unknown') + ')');
-          failed.push(url);
-          return null;
-        }).catch(function (err) {
-          /* Network hiccup on one file shouldn't break the whole install */
-          console.error('[SW] ❌ Fetch error for ' + url + ': ' + err.message);
-          failed.push(url);
-          return null;
-        }).then(function () {
+        /* Retry logic: try up to 2 times if fetch fails */
+        function fetchWithRetry(fetchUrl, retryCount) {
+          if (retryCount === undefined) retryCount = 0;
+          
+          return fetch(fetchUrl).then(function (response) {
+            if (response && response.ok && response.status === 200) {
+              console.log('[SW] ✅ Cached: ' + fetchUrl + ' (status: ' + response.status + ')');
+              return cache.put(fetchUrl, response);
+            }
+            /* Non-fatal: skip files that 404 or return partial content (206) */
+            console.warn('[SW] ⚠️ Skipped: ' + fetchUrl + ' (status ' + (response ? response.status : 'unknown') + ')');
+            failed.push(fetchUrl);
+            return null;
+          }).catch(function (err) {
+            /* Retry once on network error */
+            if (retryCount < 1) {
+              console.warn('[SW] ⚠️ Retry ' + (retryCount + 1) + ' for ' + fetchUrl + ' after error: ' + err.message);
+              return new Promise(function(resolve) { setTimeout(resolve, 100); })
+                .then(function() { return fetchWithRetry(fetchUrl, retryCount + 1); });
+            }
+            console.error('[SW] ❌ Fetch error for ' + fetchUrl + ': ' + err.message);
+            failed.push(fetchUrl);
+            return null;
+          });
+        }
+        
+        return fetchWithRetry(url).then(function () {
           done++;
           broadcast({
             type: 'precache-progress',
