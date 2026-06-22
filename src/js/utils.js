@@ -419,12 +419,14 @@ function swapActivityButtons(ids, showReset) {
 /**
  * Make a textarea grow with its content instead of showing a
  * scrollbar. Call once per textarea element after DOM ready.
+ * Preserves horizontal scrolling for long lines.
  *
  * @param {HTMLTextAreaElement} area
  */
 function autoResizeTextarea(area) {
     if (!area) return;
-    area.style.overflow = 'hidden';
+    area.style.overflowY = 'hidden';
+    area.style.overflowX = 'auto';
     function resize() {
         area.style.height = 'auto';
         area.style.height = (area.scrollHeight + 2) + 'px';
