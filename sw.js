@@ -8,7 +8,7 @@
      detect when a newer service worker is ready to take over.
 */
 
-var APP_VERSION = '1.1.12';
+var APP_VERSION = '1.1.13';
 var CACHE_NAME = 'webcreation-v' + APP_VERSION;
 var PRECACHE_URLS = [
   '/',
@@ -277,6 +277,11 @@ self.addEventListener('message', function (event) {
 
 self.addEventListener('fetch', function (event) {
   var request = event.request;
+
+  // Bypass service worker for Vercel Speed Insights and Analytics
+  if (request.url.includes('/_vercel/')) {
+    return;
+  }
 
   // For navigation requests (HTML pages): TRY CACHE FIRST, then network
   if (request.mode === 'navigate' || (request.method === 'GET' && request.headers.get('accept') && request.headers.get('accept').includes('text/html'))) {
