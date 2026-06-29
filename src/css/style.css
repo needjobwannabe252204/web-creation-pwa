@@ -60,7 +60,7 @@
 body {
     font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Helvetica Neue', sans-serif;
     color: var(--color-text);
-    background-color: var(--color-bg);
+    background-color: rgb(196, 255, 220);
 }
 
 .container {
@@ -240,14 +240,14 @@ body {
 .card .competency {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--color-ict-blue);
+    color: var(--color-ict-blue-dark);
     margin-bottom: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .card .description {
-    color: rgba(230,238,248,0.9);
+    color: rgba(0, 0, 0, 0.9);
     flex-grow: 1; /* pushes button to bottom */
     margin-bottom: 1rem;
 }
@@ -294,7 +294,7 @@ body {
 }
 .install-progress-label {
     font-size: 0.8rem;
-    color: rgba(230,238,248,0.85);
+    color: rgba(0, 0, 0, 0.85);
     margin-bottom: 0.35rem;
     display: flex;
     justify-content: space-between;
@@ -302,7 +302,7 @@ body {
 .install-progress-track {
     width: 100%;
     height: 10px;
-    background: rgba(0,0,0,0.35);
+    background: rgba(0, 0, 0, 0.35);
     border-radius: 999px;
     overflow: hidden;
     border: 1px solid rgba(255,255,255,0.08);
@@ -317,7 +317,7 @@ body {
 .install-status-text {
     margin-top: 0.5rem;
     font-size: 0.85rem;
-    color: rgba(230,238,248,0.9);
+    color: rgba(0, 0, 0, 0.9);
     text-align: center;
 }
 
@@ -762,7 +762,7 @@ table td {
 }
 
 .instructions {
-    background: #eef4ff;
+    background: #000000;
     border-left: 5px solid #3b82f6;
     padding: 12px;
     border-radius: 8px;
@@ -1011,15 +1011,15 @@ table td {
   padding-left: 0;
 }
 #requirementsList li {
-  color: #ffffff;
+  color: #000000;
   padding: 5px 0;
   transition: color 0.25s ease, opacity 0.25s ease;
   line-height: 1.5;
 }
 /* code snippets inside the checklist — dark pill so they contrast on green */
 #requirementsList code {
-  background: rgba(0, 0, 0, 0.35);
-  color: #a8f5b0;
+  background: rgba(250, 129, 129, 0.35);
+  color: #00ff1a;
   padding: 2px 7px;
   border-radius: 4px;
   font-size: 0.82em;
