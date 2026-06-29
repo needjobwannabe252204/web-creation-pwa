@@ -42,7 +42,7 @@
 :root {
     --color-bg: #0b1220;
     --color-surface: #0f1a2b;
-    --color-text: #e6eef8;
+    --color-text: #000000;
     /* Adjusted greens: keep a lighter main green and a moderate dark variant */
     --color-green: #2e8b57;
     --color-green-dark: #196d2f;
@@ -218,7 +218,7 @@ body {
 
 .card {
     /* Darker card surface for better contrast with text */
-    background: linear-gradient(140deg,  #23a727 0%,  #05174d 100%);
+    background: white;
     color: var(--color-text);
     padding: 1.25rem;
     margin: 0; /* spacing handled by grid gap above */
